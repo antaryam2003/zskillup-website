@@ -14,9 +14,12 @@ export function Container({
 }
 
 /**
- * Section shell. Vertical rhythm is deliberately generous - the brief treats
- * whitespace as part of the premium visual language, and repeatedly asks for
- * freed-up space to stay empty rather than be filled with decoration.
+ * Section shell.
+ *
+ * The updated designs alternate quiet background bands between sections rather
+ * than running everything on flat white - lavender for Institutions and Events,
+ * cream for Prephasz and Testimonials, mint for Commerce. They stay very pale, so
+ * the page still reads as predominantly white.
  */
 export function Section({
   id,
@@ -28,14 +31,16 @@ export function Section({
   id?: string;
   children: React.ReactNode;
   className?: string;
-  /** ~80% of the site is white / warm off-white. Keep it that way. */
-  tone?: "white" | "cloud" | "warm" | "navy";
+  tone?: "white" | "cloud" | "warm" | "lavender" | "cream" | "mint" | "navy";
   labelledBy?: string;
 }) {
   const tones = {
     white: "bg-white",
     cloud: "bg-cloud",
     warm: "bg-warm",
+    lavender: "bg-[#f7f5fd]",
+    cream: "bg-[#fdfaf4]",
+    mint: "bg-[#f2f9f7]",
     navy: "bg-navy text-white",
   } as const;
 
@@ -50,28 +55,49 @@ export function Section({
   );
 }
 
+/**
+ * Eyebrow label.
+ *
+ * `rule` places the short accent line the designs put before or after the label;
+ * "none" is used where the design shows the label on its own.
+ */
 export function Eyebrow({
   children,
   tone = "muted",
+  rule = "before",
   className = "",
 }: {
   children: React.ReactNode;
-  tone?: "muted" | "brand" | Vertical | "light";
+  tone?: "muted" | "brand" | "gold" | Vertical | "light";
+  rule?: "before" | "after" | "above" | "none";
   className?: string;
 }) {
   const tones = {
     muted: "text-muted",
     brand: "text-brand",
+    gold: "text-gold",
     institutions: "text-inst",
     prephasz: "text-prep-ink",
     commerce: "text-com",
     light: "text-white/60",
   } as const;
 
+  const line = <span aria-hidden="true" className="h-px w-7 shrink-0 bg-current opacity-60" />;
+
+  if (rule === "above") {
+    return (
+      <div className={className}>
+        <span aria-hidden="true" className={`block h-0.5 w-9 ${tone === "gold" ? "bg-gold" : "bg-current"}`} />
+        <p className={`eyebrow mt-4 ${tones[tone]}`}>{children}</p>
+      </div>
+    );
+  }
+
   return (
     <p className={`eyebrow flex items-center gap-3 ${tones[tone]} ${className}`}>
-      <span aria-hidden="true" className="h-px w-7 bg-current opacity-50" />
+      {rule === "before" ? line : null}
       {children}
+      {rule === "after" ? line : null}
     </p>
   );
 }
@@ -79,45 +105,51 @@ export function Eyebrow({
 /**
  * Section heading.
  *
- * SEO rule from the brief: one H1 per page (the Hero headline), H2 for major
- * section headlines, H3 for sub-sections and cards. `as` makes that explicit at
- * every call site rather than leaving it to chance.
+ * One H1 per page (the Hero headline), H2 per section, H3 for sub-sections and
+ * cards - `as` makes that explicit at every call site.
+ *
+ * `accentTone` covers the two treatments the designs use: a solid accent colour
+ * (most sections) or the full brand gradient (the Education-to-Career headline).
  */
 export function Heading({
   as: Tag = "h2",
   id,
   plain,
   accent,
-  accentTone = "gradient",
+  accentTone = "brand",
+  size = "md",
   className = "",
 }: {
   as?: "h1" | "h2" | "h3";
   id?: string;
-  plain: string;
-  /** The highlighted fragment. Rendered inline so the sentence stays one string for screen readers. */
+  plain?: string;
   accent?: string;
-  accentTone?: "gradient" | Vertical;
+  accentTone?: "gradient" | "brand" | "gold" | Vertical | "navy";
+  size?: "sm" | "md" | "lg";
   className?: string;
 }) {
   const sizes = {
-    h1: "text-[2.6rem] leading-[1.06] sm:text-6xl lg:text-[4.1rem]",
-    h2: "text-[2rem] leading-[1.12] sm:text-[2.6rem] lg:text-[3.1rem]",
-    h3: "text-[1.4rem] leading-[1.2] sm:text-[1.7rem]",
+    sm: "text-[1.5rem] leading-[1.18] sm:text-[1.875rem]",
+    md: "text-[2rem] leading-[1.12] sm:text-[2.5rem] lg:text-[3rem]",
+    lg: "text-[2.4rem] leading-[1.06] sm:text-[3.2rem] lg:text-[3.9rem]",
   } as const;
 
   const accentClass = {
     gradient: "text-gradient",
+    brand: "text-brand",
+    gold: "text-gold",
+    navy: "text-navy",
     institutions: "text-inst",
     prephasz: "text-prep-ink",
     commerce: "text-com",
   } as const;
 
   return (
-    <Tag id={id} className={`font-extrabold ${sizes[Tag]} ${className}`}>
+    <Tag id={id} className={`font-extrabold ${sizes[size]} ${className}`}>
       {plain}
       {accent ? (
         <>
-          {" "}
+          {plain ? " " : null}
           <span className={accentClass[accentTone]}>{accent}</span>
         </>
       ) : null}
@@ -142,27 +174,30 @@ export function Lede({
 /** Soft tint + accent colour per vertical. Tints only - never a saturated fill. */
 export const verticalStyles: Record<
   Vertical,
-  { tint: string; border: string; text: string; ring: string; dot: string }
+  { tint: string; band: string; border: string; text: string; icon: string; dot: string }
 > = {
   institutions: {
-    tint: "bg-inst-soft",
-    border: "border-inst-line",
+    tint: "bg-[#f6f4fc]",
+    band: "bg-[#efeafa]",
+    border: "border-[#e4defa]",
     text: "text-inst",
-    ring: "ring-inst/15",
+    icon: "bg-[#e8e1fa] text-inst",
     dot: "bg-inst",
   },
   prephasz: {
-    tint: "bg-prep-soft",
-    border: "border-prep-line",
+    tint: "bg-[#fdf9f0]",
+    band: "bg-[#fbf2dd]",
+    border: "border-[#f5e7c4]",
     text: "text-prep-ink",
-    ring: "ring-prep/25",
+    icon: "bg-[#fbeec4] text-prep-ink",
     dot: "bg-prep",
   },
   commerce: {
-    tint: "bg-com-soft",
-    border: "border-com-line",
+    tint: "bg-[#eef8f7]",
+    band: "bg-[#e0f1ee]",
+    border: "border-[#cfe8e4]",
     text: "text-com",
-    ring: "ring-com/15",
+    icon: "bg-[#d6ecea] text-com",
     dot: "bg-com",
   },
 };

@@ -29,7 +29,7 @@ export const hero = {
   supporting: "Real skills. Practical exposure. Global opportunities.",
   /** Scrolls straight to Choose Your Route. "Programs" is no longer an architecture term. */
   cta: { label: "Explore What We Offer", href: "#choose-your-route" },
-  /** Handwritten accent 1 of 3 allowed on the whole homepage. */
+  /** Handwritten accent 1 of 2 on the homepage. */
   handwritten: "More Than a Degree",
   /** Reappears as the Testimonials headline - deliberate echo. */
   footNote: "Real people. Real progress.",
@@ -51,8 +51,11 @@ export type PathwayCta = { label: string; href: string };
 export type HeroCard = {
   vertical: Vertical;
   eyebrow: string;
-  /** Prephasz / B.Com + ACCA name the offering outright; Institutions does not. */
-  brand?: string;
+  /**
+   * Prephasz / B.Com + ACCA name the offering outright, set inline in a tinted
+   * pill after an en dash. Institutions has no second half.
+   */
+  brandLabel?: string;
   description: string;
   primary: PathwayCta;
   secondary: PathwayCta;
@@ -66,27 +69,26 @@ export const heroCards: readonly HeroCard[] = [
     description: "Build employability into the student journey.",
     primary: { label: "Explore", href: "#institutions" },
     secondary: { label: "Partner With Us", href: "#partner-with-us" },
-    video: { label: "Watch Video", href: "#institutions" },
+    video: { label: "Watch Now", href: "#institutions" },
   },
   {
     vertical: "prephasz",
     eyebrow: "For Placement Preparation",
-    /** Prephasz keeps its own wordmark here so it reads as a distinct product. */
-    brand: "Prephasz",
+    brandLabel: "Prephasz",
     description: "Stop guessing what to prepare next.",
     primary: { label: "Explore Prephasz", href: "#prephasz" },
     secondary: { label: "Get Started", href: "#partner-with-us" },
-    video: { label: "Watch Video", href: "#prephasz" },
+    video: { label: "Watch Now", href: "#prephasz" },
   },
   {
     vertical: "commerce",
     eyebrow: "For Commerce Careers",
     /** "For Commerce Careers" alone does not tell a new visitor what the offering is. */
-    brand: "B.Com + ACCA",
+    brandLabel: "B.Com + ACCA",
     description: "Start with a degree. Build toward a profession.",
     primary: { label: "Explore Program", href: "#bcom-acca" },
     secondary: { label: "Talk to an Advisor", href: "#partner-with-us" },
-    video: { label: "Watch Video", href: "#bcom-acca" },
+    video: { label: "Watch Now", href: "#bcom-acca" },
   },
 ];
 
@@ -240,7 +242,7 @@ export const institutions = {
     },
   ],
 
-  programsHeadline: "Programs for your campus.",
+  programsHeadline: "Programs for your campus",
   programsBody:
     "Choose a focused program or combine tracks into a broader employability initiative.",
   /** Stays a table - the brief is explicit that this must not become cards. */
@@ -278,22 +280,22 @@ export const institutions = {
   method: [
     {
       step: "01",
-      title: "Assess Student Needs",
+      title: "Assess",
       body: "Understand your student cohorts, skill gaps and placement objectives.",
     },
     {
       step: "02",
-      title: "Build the Program",
+      title: "Build",
       body: "Select relevant tracks and align delivery with your academic calendar.",
     },
     {
       step: "03",
-      title: "Train & Practice",
-      body: "Combine guided learning with assessments, projects and interview preparation.",
+      title: "Train",
+      body: "Combine guided learning with workshops, projects and interview preparation.",
     },
     {
       step: "04",
-      title: "Track Progress & Support Placements",
+      title: "Track",
       body: "Monitor readiness and provide focused support as students approach recruitment.",
     },
   ],
@@ -316,8 +318,6 @@ export const prephasz = {
     "Prephasz is built around the actual recruitment journey — helping students identify gaps, practise the right areas, prepare for target companies and track their progress.",
   primaryCta: { label: "Start on Prephasz", href: "https://prephasz.com" },
   secondaryCta: { label: "Explore Prephasz", href: "#prephasz-journey" },
-  /** Handwritten accent 2 of 3. Earns its place by drawing attention to the demo. */
-  handwritten: "See how prephasz helps students prepare",
   videoLabel: "Watch prephasz in action",
   videoDuration: "2 min",
 
@@ -363,8 +363,8 @@ export const commerce = {
   headline: { plain: "B.Com + ACCA, planned around the", highlight: "career beyond the degree." },
   supporting:
     "A career-focused commerce pathway combining a university degree, ACCA preparation, employability development and industry exposure.",
-  /** Handwritten accent 3 of 3 - the last one allowed on this page. */
-  handwritten: "More opportunities ahead.",
+  /** Handwritten accent 2 of 2 on the homepage. */
+  handwritten: "More opportunities ahead",
   /** Four connected blocks reading as ONE integrated pathway, one colour family. */
   pathway: [
     { title: "B.Com", body: "Strong academic foundation." },

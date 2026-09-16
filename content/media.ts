@@ -36,16 +36,16 @@ export const media = {
   hero: {
     src: "/images/campus-student-hero.jpg",
     alt: "A student looking up at a university campus building, with other students walking behind her",
-    width: 2020,
-    height: 639,
+    width: 2016,
+    height: 664,
   },
 
   /** B.Com + ACCA section. Aspirational, natural, no floating elements around it. */
   commerceStudent: {
     src: "/images/commerce-student.jpg",
     alt: "A commerce student at her desk with a laptop and an open notebook, looking up thoughtfully",
-    width: 322,
-    height: 610,
+    width: 609,
+    height: 750,
   },
 
   /** Leadership portraits - keep natural and prominent. */
@@ -53,20 +53,20 @@ export const media = {
     "lokesh-mathur": {
       src: "/images/team/lokesh-mathur.jpg",
       alt: "Portrait of Lokesh Mathur, Founder and Director of ZSkillup",
-      width: 512,
-      height: 512,
+      width: 231,
+      height: 245,
     },
     "gaurav-singh": {
       src: "/images/team/gaurav-singh.jpg",
       alt: "Portrait of Gaurav Singh, Founder and Director of ZSkillup",
-      width: 512,
-      height: 512,
+      width: 231,
+      height: 245,
     },
     "manish-temani": {
       src: "/images/team/manish-temani.jpg",
       alt: "Portrait of Manish Temani, Director of ZSkillup",
-      width: 512,
-      height: 512,
+      width: 231,
+      height: 245,
     },
   },
 } satisfies Record<string, MediaAsset | Record<string, MediaAsset>>;

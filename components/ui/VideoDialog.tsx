@@ -15,8 +15,9 @@ import { Icon } from "./Icon";
  * hero's LCP clean.
  *
  * Trigger variants:
- *   text    - play glyph + label. The lightest of the three card actions, per the
- *             brief's CTA hierarchy ("Watch Video should be visually light").
+ *   text    - play glyph + label, no chrome.
+ *   pill    - outlined pill with a play glyph. What the hero cards use: still the
+ *             lightest of the three actions, but a clear target.
  *   overlay - large centred play control, used on the Prephasz product visual.
  */
 export function VideoDialog({
@@ -27,7 +28,7 @@ export function VideoDialog({
 }: {
   video: VideoSource;
   label: string;
-  variant?: "text" | "overlay";
+  variant?: "text" | "pill" | "overlay";
   className?: string;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -49,7 +50,16 @@ export function VideoDialog({
 
   return (
     <>
-      {variant === "text" ? (
+      {variant === "pill" ? (
+        <button
+          type="button"
+          onClick={open}
+          className={`group inline-flex items-center gap-1.5 rounded-full border border-line bg-white/80 px-2.5 py-2 text-xs font-medium whitespace-nowrap text-navy transition-colors hover:border-navy/25 hover:bg-white ${className}`}
+        >
+          <Icon name="play" className="h-3 w-3" />
+          {label}
+        </button>
+      ) : variant === "text" ? (
         <button
           type="button"
           onClick={open}

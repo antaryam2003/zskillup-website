@@ -29,7 +29,7 @@ export const faqIntro = {
     "Find quick answers about ZSkillup, our offerings, institutional partnerships and career pathways.",
   leftHeading: "What would you like to know?",
   leftBody:
-    "Browse the questions most people ask about how ZSkillup works with institutions, students and industry.",
+    "Explore the most common questions about our offerings, partnerships and how ZSkillup supports students, institutions and careers.",
   contactPrompt: "Can't find what you're looking for?",
   contactCta: { label: "Contact Our Team", href: "#partner-with-us" },
 } as const;
@@ -41,7 +41,7 @@ export const faqCategories = [
     label: "For Institutions",
     blurb: "Partnerships, delivery and campus programs.",
   },
-  { id: "prephasz", label: "Prephasz", blurb: "The placement-preparation platform." },
+  { id: "prephasz", label: "Prephasz", blurb: "Placement preparation and platform." },
   {
     id: "commerce",
     label: "B.Com + ACCA",
@@ -62,7 +62,7 @@ export const faqs: readonly Faq[] = [
   {
     category: "general",
     q: "What does ZSkillup do?",
-    a: "ZSkillup works to close the gap between education and employment. We partner with universities and colleges to build employability into the student journey, run Prephasz as a placement-preparation platform for students, and offer a B.Com + ACCA pathway for commerce careers.",
+    a: "ZSkillup supports career readiness across campuses through institutional programs, the Prephasz placement-preparation platform, and the B.Com + ACCA career pathway — combining skills, practice and industry exposure.",
   },
   {
     category: "general",

@@ -56,13 +56,17 @@ export const testimonialsEndCard = {
 } as const;
 
 /**
- * ORDER MATTERS. Three cards are visible at a time, and the brief asks that the
- * carousel "deliberately mix testimonials from Institutional Programs + Prephasz
- * + Commerce/B.Com + ACCA, rather than making all three visible stories belong to
- * one offering."
+ * ORDER MATTERS, for two reasons at once.
  *
- * So the sequence cycles commerce -> institutions -> prephasz. Keep that rotation
- * when adding entries, rather than appending by offering.
+ * The brief asks that the carousel "deliberately mix testimonials from
+ * Institutional Programs + Prephasz + Commerce/B.Com + ACCA, rather than making
+ * all three visible stories belong to one offering" - AND that the learner
+ * photographs are kept, because they are what make the section credible.
+ *
+ * The updated design resolves those together: the three photographed learners
+ * lead, labelled across all three offerings. So the first three entries are the
+ * ones with photographs, in commerce -> institutions -> prephasz order. Keep that
+ * rotation when adding entries rather than appending by offering.
  */
 export const testimonials: readonly Testimonial[] = [
   {
@@ -74,6 +78,26 @@ export const testimonials: readonly Testimonial[] = [
     vertical: "commerce",
     quote:
       "ZSkillup gave me the right guidance to combine my B.Com degree with ACCA. The mentorship and structured learning made a huge difference in my confidence and career clarity.",
+  },
+  {
+    slug: "aman-raj",
+    name: "Aman Raj",
+    role: "ACCA Aspirant",
+    institution: "Christ University",
+    category: "Institutional Program",
+    vertical: "institutions",
+    quote:
+      "The practical exposure and industry sessions helped me understand how classroom learning applies in the real world. ZSkillup truly bridges the gap between education and a meaningful career.",
+  },
+  {
+    slug: "sneha-patel",
+    name: "Sneha Patel",
+    role: "B.Com Student",
+    institution: "Mumbai University",
+    category: "Prephasz",
+    vertical: "prephasz",
+    quote:
+      "From resume building to interview preparation, the employability support at ZSkillup is exceptional. I feel more prepared and confident about my career in finance.",
   },
   {
     slug: "arjun-menon",
@@ -96,16 +120,6 @@ export const testimonials: readonly Testimonial[] = [
       "Prephasz showed me exactly which areas were holding me back instead of leaving me to guess. Practising against real company patterns changed how I prepared for every round.",
   },
   {
-    slug: "aman-raj",
-    name: "Aman Raj",
-    role: "ACCA Aspirant",
-    institution: "Christ University",
-    category: "Commerce Career Pathway",
-    vertical: "commerce",
-    quote:
-      "The practical exposure and industry sessions helped me understand how classroom learning applies in the real world. ZSkillup truly bridges the gap between education and a meaningful career.",
-  },
-  {
     slug: "rahul-verma",
     name: "Rahul Verma",
     role: "Placement Coordinator",
@@ -114,15 +128,5 @@ export const testimonials: readonly Testimonial[] = [
     vertical: "institutions",
     quote:
       "Having readiness data across a whole cohort meant we could target support where it mattered. Our students walked into recruitment far better prepared than in previous years.",
-  },
-  {
-    slug: "sneha-patel",
-    name: "Sneha Patel",
-    role: "B.Com Student",
-    institution: "Mumbai University",
-    category: "Commerce Career Pathway",
-    vertical: "commerce",
-    quote:
-      "From resume building to interview preparation, the employability support at ZSkillup is exceptional. I feel more prepared and confident about my career in finance.",
   },
 ];

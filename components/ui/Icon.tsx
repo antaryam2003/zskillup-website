@@ -42,6 +42,7 @@ export type IconName =
   | "minus"
   | "check"
   | "linkedin"
+  | "xTwitter"
   | "phone"
   | "mail"
   | "pin"
@@ -237,6 +238,13 @@ const paths: Record<IconName, React.ReactNode> = {
       <path d="M11.5 17v-3.6a2.4 2.4 0 0 1 4.8 0V17" />
       <path d="M11.5 10.5V17" />
     </>
+  ),
+  xTwitter: (
+    <path
+      d="M3.2 3h4.1l4.3 5.9L16.5 3h3.4l-6.3 7.4L21 21h-4.1l-4.7-6.4L6.6 21H3.2l6.7-7.9L3.2 3Z"
+      fill="currentColor"
+      stroke="none"
+    />
   ),
   phone: (
     <path d="M6.2 3.8h3l1.5 3.8-1.9 1.4a11.5 11.5 0 0 0 5.2 5.2l1.4-1.9 3.8 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.2 6a2 2 0 0 1 2-2.2Z" />

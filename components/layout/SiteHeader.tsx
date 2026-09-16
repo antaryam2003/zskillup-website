@@ -59,12 +59,16 @@ export function SiteHeader() {
           </Link>
 
           <nav aria-label="Primary" className="hidden lg:block">
-            <ul className="flex items-center gap-1">
-              {nav.map((item) => (
-                <li key={item.label}>
+            {/* Divider pipes between items, as in the design. */}
+            <ul className="flex items-center">
+              {nav.map((item, i) => (
+                <li key={item.label} className="flex items-center">
+                  {i > 0 ? (
+                    <span aria-hidden="true" className="h-4 w-px bg-navy/15" />
+                  ) : null}
                   <Link
                     href={item.href}
-                    className="rounded-full px-3.5 py-2 text-[0.9375rem] font-medium text-navy/80 transition-colors hover:bg-cloud hover:text-navy"
+                    className="rounded-full px-4 py-2 text-[0.9375rem] font-medium text-navy/85 transition-colors hover:text-navy"
                   >
                     {item.label}
                   </Link>

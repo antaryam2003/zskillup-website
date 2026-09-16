@@ -70,32 +70,29 @@ export const partnerStats: readonly Stat[] = [
 /**
  * INSTITUTIONS section credibility trio.
  *
- * The brief says: "Keep the three hero credibility numbers, but use only final
- * verified ZSkillup numbers. Do not hard-code 100+, 50K+ or 80%+ until validated."
- * It also forbids repeating corporate statistics outside the Partners section -
- * so the comp's "100+ Partner Institutions" has been re-scoped to "Campuses
- * Engaged" to avoid duplicating the 55+ Institution Partners figure above.
- *
- * All three need sign-off before they can ship. See CONTENT-TODO.md.
+ * The updated design resolves the brief's "do not hard-code 100+, 50K+ or 80%+
+ * until validated" instruction literally: it prints a dash in each slot. That is
+ * what ships, so the layout is right and no unverified claim is published.
+ * Replace each `value` and set `verified: true` once the figures are signed off.
  */
 export const institutionStats: readonly Stat[] = [
   {
-    value: "100+",
-    label: "Campuses Engaged",
+    value: "--",
+    label: "Partner Institutions",
     verified: false,
-    note: "Comp said '100+ Partner Institutions', which duplicates the Partners 55+ figure. Re-scoped label; confirm the real number.",
+    note: "Design shows a dash until the figure is confirmed. Comp previously said 100+.",
   },
   {
-    value: "50K+",
+    value: "--",
     label: "Students Trained",
     verified: false,
-    note: "Carried from the comp. Brief explicitly says do not hard-code 50K+ until validated.",
+    note: "Design shows a dash until the figure is confirmed. Comp previously said 50K+.",
   },
   {
-    value: "80%+",
-    label: "Placement Readiness Improvement",
+    value: "--",
+    label: "Placement Readiness Verified",
     verified: false,
-    note: "Carried from the comp. Needs a defined measurement method before it can be claimed.",
+    note: "Design shows a dash. Needs a defined measurement method before it can be claimed.",
   },
 ];
 
@@ -111,12 +108,8 @@ export const institutionStats: readonly Stat[] = [
  * them and no number has been invented to fill the gap.
  */
 export const activityStats: readonly Stat[] = [
-  {
-    value: "50+",
-    label: "Programs Conducted",
-    verified: false,
-    note: "Carried from the comp. Confirm the current figure.",
-  },
-  { value: "Regular", label: "Workshops & Events", verified: true },
-  { value: "Multi-city", label: "Campuses Reached", verified: true },
+  { value: "50+", label: "Programs Conducted", verified: false, note: "From the design. Confirm." },
+  { value: "100+", label: "Workshops & Events", verified: false, note: "From the design. Confirm." },
+  { value: "15+", label: "Cities & Campuses Reached", verified: false, note: "From the design. Confirm." },
+  { value: "", label: "Student Community", verified: true },
 ];

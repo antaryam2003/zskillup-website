@@ -1,25 +1,27 @@
 /**
- * Brand marks, drawn as SVG so they stay crisp, theme-able and - importantly for
- * the brief - REAL TEXT rather than flattened imagery wherever a name is shown.
+ * Brand marks, drawn as SVG/text so they stay crisp, theme-able and - importantly
+ * for the brief - REAL TEXT rather than flattened imagery wherever a name shows.
  *
- * The Z-arrow glyph is redrawn from the live ZSkillup mark (brand purple #60174F
- * on the favicon). Here it renders in the master gradient or in currentColor so it
- * sits correctly on both light and dark surfaces.
- *
- * If the brand team supplies official SVG artwork, replace the <path> data in
- * `ZMark` and nothing else needs to change.
+ * If the brand team supplies official SVG artwork, replace the path data in
+ * `ZMark` / `PrephaszArrow` and nothing else needs to change.
  */
 
-export function ZMark({ className = "h-7 w-7", gradient = true }: { className?: string; gradient?: boolean }) {
+export function ZMark({
+  className = "h-7 w-7",
+  gradient = true,
+}: {
+  className?: string;
+  gradient?: boolean;
+}) {
   const id = gradient ? "zmark-gradient" : undefined;
   return (
     <svg viewBox="0 0 100 100" className={className} aria-hidden="true" focusable="false">
       {gradient ? (
         <defs>
           <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#4F39F6" />
-            <stop offset="55%" stopColor="#7C3AED" />
-            <stop offset="100%" stopColor="#FF6B6B" />
+            <stop offset="0%" stopColor="#5B2BCB" />
+            <stop offset="55%" stopColor="#9147C4" />
+            <stop offset="100%" stopColor="#E8776A" />
           </linearGradient>
         </defs>
       ) : null}
@@ -54,15 +56,31 @@ export function ZSkillupLogo({
   );
 }
 
+/** The Prephasz "z" terminal: a bold Z whose top bar lifts into an arrowhead. */
+function PrephaszArrow({ className }: { className: string }) {
+  return (
+    <svg viewBox="0 0 100 100" className={className} aria-hidden="true" focusable="false">
+      <path
+        fill="currentColor"
+        d="M14 16h72v10L38 74h48v12H12V76L60 28H14V16Z"
+        opacity="0"
+      />
+      {/* Drawn as a Z with a rising arrow, matching the product mark. */}
+      <path
+        fill="currentColor"
+        d="M10 14h62v40L58.5 40 40 58.5h32V86H10V70l40-40H10V14Z"
+      />
+    </svg>
+  );
+}
+
 /**
- * Prephasz wordmark. Kept clearly visible wherever Prephasz appears, so users
- * read it as a distinct ZSkillup product rather than another programme.
+ * Prephasz wordmark.
  *
- * The live mark sets "pre" in Prephasz yellow against a dark ground. Pure
- * #FFCA09 on white measures about 1.6:1, so on light surfaces the wordmark
- * follows the treatment used in the approved comps instead: navy letterforms
- * with the yellow carried by the trailing arrow glyph. Same identity, legible on
- * both grounds.
+ * The updated design sets the word in navy with the trailing "z" carried by the
+ * yellow/orange arrow glyph, and "by ZSkillup" beneath. Pure yellow letterforms
+ * measure about 1.6:1 on white, so the word itself is never set in yellow on a
+ * light surface - only the mark is.
  */
 export function PrephaszWordmark({
   className = "text-2xl",
@@ -76,30 +94,17 @@ export function PrephaszWordmark({
   const light = tone === "light";
   return (
     <span className={`inline-flex flex-col leading-none ${className}`}>
-      <span className={`font-extrabold tracking-[-0.035em] ${light ? "text-white" : "text-navy"}`}>
-        {light ? <span className="text-prep">pre</span> : "pre"}
-        phas
-        {/* The Z-arrow terminal carries the Prephasz yellow on light grounds. */}
-        <span className="text-prep-ink">z</span>
-        <svg
-          viewBox="0 0 24 24"
-          className="ml-0.5 inline-block h-[0.52em] w-[0.52em] align-baseline text-prep"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path
-            d="M6 18 18 6M9 6h9v9"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+      <span
+        className={`inline-flex items-start font-extrabold tracking-[-0.035em] ${
+          light ? "text-white" : "text-navy"
+        }`}
+      >
+        prephas
+        <PrephaszArrow className="-mt-[0.26em] ml-[0.01em] h-[1.05em] w-[0.82em] text-[#F0A020]" />
       </span>
       {showParent ? (
         <span
-          className={`mt-1.5 text-[0.46em] font-semibold tracking-[0.04em] ${
+          className={`mt-[0.30em] self-center text-[0.36em] font-semibold tracking-[0.02em] ${
             light ? "text-white/70" : "text-muted"
           }`}
         >

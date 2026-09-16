@@ -1,214 +1,199 @@
 """
-Extracts the real photography and partner logos from the approved design comps
-in ZSkillup_Parent_Website_Final_Feedback.docx.
+Extracts the photography and partner logos from the APPROVED UPDATED DESIGNS
+(the eleven per-section renders supplied after the original brief).
 
-The comps are flat PNG renders, so every crop below is chosen to avoid the text,
-badges, captions and UI chrome baked over the artwork. Crop boxes are expressed in
-each comp's 1400px-wide preview space and scaled to the source resolution.
+These renders are flat images, so every crop below is positioned to avoid the
+text, badges, captions and UI chrome painted over the artwork. Boxes are given as
+fractions of each source image so they stay correct regardless of its pixel size.
 
-These are the client's own approved images, so the site now shows the intended
-photography rather than stand-ins. They are still comp-resolution: for final
-production quality, replace them with the original full-resolution assets (same
-paths, see CONTENT-TODO.md).
+Output is comp-resolution: good enough that the site shows the intended artwork,
+but not production masters. Replace each file with the original full-resolution
+asset at the same path when available - see CONTENT-TODO.md.
 
 Usage:
-    python scripts/extract-comp-assets.py <path-to-extracted-docx-media-dir>
+    python scripts/extract-comp-assets.py [--designs <dir>]
 """
 
 import os
 import sys
 
-from PIL import Image, ImageFilter
+from PIL import Image
 
-MEDIA = sys.argv[1] if len(sys.argv) > 1 else "docx/word/media"
+DESIGNS = "C:/Users/monda/Downloads"
+if "--designs" in sys.argv:
+    DESIGNS = sys.argv[sys.argv.index("--designs") + 1]
+
 OUT = os.path.join(os.path.dirname(__file__), "..", "public", "images")
 
-# Which comp render holds which section.
-COMP = {
-    "hero": "image10.png",
-    "about": "image5.png",
-    "bcom": "image4.png",
-    "testimonials": "image2.png",
-    "events": "image11.png",
-    "partners": "image7.png",
+SRC = {
+    "hero": "zskillup_hero_clean-1-overall-keep-design-13-as-the-base-preserve-the.jpg",
+    "about": "zskillup_about_section_redesign-1-use-design-4-for-layout-and-information-architec.jpg",
+    "partners": "image_a46704--lock-design-2s-overall-structure-left-side-messag.jpg",
+    "commerce": "commerce_pathway_redesign-1-use-design-1-as-the-base-layout-do-not-redesign.jpg",
+    "testi": "real_people_testimonials_editorial-1-keep-the-overall-layout-and-composition-of-desig.jpg",
+    "events": "image_75ce01-1-use-design-1-as-the-base-2-keep-eyebrow-events-m.jpg",
 }
 
-VIEW_W = 1400  # the preview width all crop boxes below were measured against
+_cache = {}
 
 
 def load(key):
-    im = Image.open(os.path.join(MEDIA, COMP[key])).convert("RGB")
-    return im, im.size[0] / VIEW_W
+    if key not in _cache:
+        _cache[key] = Image.open(os.path.join(DESIGNS, SRC[key])).convert("RGB")
+    return _cache[key]
 
 
-def crop(key, box, scale_to=None, resample=Image.LANCZOS):
-    im, s = load(key)
-    c = im.crop(tuple(int(round(v * s)) for v in box))
-    if scale_to:
-        c = c.resize(scale_to, resample)
-    return c
+def crop(key, box):
+    im = load(key)
+    w, h = im.size
+    return im.crop((int(box[0] * w), int(box[1] * h), int(box[2] * w), int(box[3] * h)))
 
 
-def save(img, path, quality=90):
+def save(img, path, quality=90, max_w=None):
+    if max_w and img.size[0] > max_w:
+        img = img.resize((max_w, int(img.size[1] * max_w / img.size[0])), Image.LANCZOS)
     full = os.path.normpath(os.path.join(OUT, path))
     os.makedirs(os.path.dirname(full), exist_ok=True)
     img.save(full, "JPEG", quality=quality, optimize=True, progressive=True)
-    print("  {:46s} {}x{}  {}KB".format(path, img.size[0], img.size[1],
+    print("  {:44s} {}x{}  {}KB".format(path, img.size[0], img.size[1],
                                         os.path.getsize(full) // 1024))
 
 
-def square(img):
-    """Centre-crop to a square, biased slightly up so faces sit well."""
+def square(img, bias=0.3):
     w, h = img.size
     n = min(w, h)
     left = (w - n) // 2
-    top = max(0, int((h - n) * 0.32))
+    top = max(0, int((h - n) * bias))
     return img.crop((left, top, left + n, top + n))
 
 
-print("Extracting artwork from the design comps...")
+print("Extracting artwork from the updated design renders...")
 
 # ---------------------------------------------------------------------------
-# 01 HERO - campus + student, full width.
+# 01 HERO - full-bleed campus photograph.
 #
-# The comp is a flat render, so the headline, the handwritten notes and the
-# "SAME STUDENTS. BIGGER TOMORROWS." wall lettering are baked into the photograph.
-# Cropping around them would have discarded most of the frame and zoomed the
-# student far past the comp's composition, so the full width is kept and the text
-# is removed instead:
-#
-#   * Left third - the comp already renders this as a heavy white wash with the
-#     photograph barely showing through, which is what makes the headline legible.
-#     It is rebuilt as exactly that: a per-row wash sampled from the photograph's
-#     own colour at the wash boundary, so vertical variation is preserved, then
-#     ramped back into the untouched photograph before it reaches the student.
-#   * The wall lettering sits on flat stone, so it is interpolated across.
-#
-# The crop starts below the comp's navigation bar, which is also baked in.
+# The render bakes the headline, the circled handwritten note and the navigation
+# into the photograph, so all three are removed here:
+#   * the left third is rebuilt as the same white wash the design uses to keep the
+#     headline legible - a per-row tone sampled from the photograph's own colour,
+#     smoothed down the column so it cannot band, then ramped back into the
+#     untouched photograph before it reaches the walking students;
+#   * the circled note sits on open sky, so it is interpolated across;
+#   * the crop starts below the navigation bar.
+# The plate stops just above the three cards, which the site draws itself.
 # ---------------------------------------------------------------------------
-hero_im, hs = load("hero")
-
-CROP_TOP, CROP_BOTTOM = 85, 528          # below the comp nav, above the cards
-plate = hero_im.crop((0, int(CROP_TOP * hs), hero_im.size[0], int(CROP_BOTTOM * hs)))
+hero_im = load("hero")
+HW, HH = hero_im.size
+plate = hero_im.crop((0, int(0.072 * HH), HW, int(0.648 * HH)))
 PW, PH = plate.size
-
-# --- rebuild the left wash --------------------------------------------------
-FLAT_TO = int(690 * hs)      # everything left of this is pure wash in the comp
-RAMP_TO = int(792 * hs)      # ...ramping back to the photograph before the student
-SAMPLE_X = int(838 * hs)     # a clean column of photograph to take each row's hue from
-WASH = 0.88                  # how far toward white the comp pushes that column
-
 px = plate.load()
 
-# Smooth the sampled column down its length first. Sampling row by row straight
-# from foliage leaves faint horizontal banding across the wash; averaging over a
-# window removes it while keeping the top-to-bottom shift in tone.
+FLAT_TO = int(0.327 * PW)
+RAMP_TO = int(0.381 * PW)
+SAMPLE_X = int(0.425 * PW)
+WASH = 0.90
+
 column = [px[SAMPLE_X, y] for y in range(PH)]
-WINDOW = 45
-smoothed = []
+WINDOW = 40
 for y in range(PH):
     lo, hi = max(0, y - WINDOW), min(PH, y + WINDOW + 1)
     n = hi - lo
-    smoothed.append(tuple(sum(column[i][c] for i in range(lo, hi)) / n for c in range(3)))
-
-for y in range(PH):
-    r, g, b = smoothed[y]
-    tone = (
-        int(r + (255 - r) * WASH),
-        int(g + (255 - g) * WASH),
-        int(b + (255 - b) * WASH),
-    )
-    for x in range(0, FLAT_TO):
+    r, g, b = (sum(column[i][c] for i in range(lo, hi)) / n for c in range(3))
+    tone = tuple(int(v + (255 - v) * WASH) for v in (r, g, b))
+    for x in range(FLAT_TO):
         px[x, y] = tone
     for x in range(FLAT_TO, RAMP_TO):
         t = (x - FLAT_TO) / (RAMP_TO - FLAT_TO)
         o = px[x, y]
         px[x, y] = tuple(int(tone[c] + (o[c] - tone[c]) * t) for c in range(3))
 
-# --- remove the wall lettering ----------------------------------------------
-wx0, wy0 = int(1204 * hs), int((262 - CROP_TOP) * hs)
-wx1, wy1 = int(1356 * hs), int((402 - CROP_TOP) * hs)
-for y in range(wy0, wy1):
-    left = px[wx0 - 2, y]
-    right = px[min(PW - 1, wx1 + 1), y]
-    span = max(1, wx1 - wx0)
-    for x in range(wx0, wx1):
-        t = (x - wx0) / span
+# The circled "More Than a Degree" note, which sits on open sky.
+ox0, ox1 = int(0.363 * PW), int(0.487 * PW)
+oy0, oy1 = int(0.115 * PH), int(0.420 * PH)
+for y in range(oy0, oy1):
+    left, right = px[ox0 - 2, y], px[min(PW - 1, ox1 + 1), y]
+    span = max(1, ox1 - ox0)
+    for x in range(ox0, ox1):
+        t = (x - ox0) / span
         px[x, y] = tuple(int(left[c] + (right[c] - left[c]) * t) for c in range(3))
 
-save(plate, "campus-student-hero.jpg", quality=90)
-print("      (clean plate {}x{})".format(PW, PH))
+save(plate, "campus-student-hero.jpg", quality=88)
 
 # ---------------------------------------------------------------------------
-# 02 ABOUT - leadership portraits
+# 02 ABOUT - leadership portraits. The updated design shows these large and
+# portrait-shaped at the top of each card.
 # ---------------------------------------------------------------------------
 PORTRAITS = {
-    "lokesh-mathur": (387, 406, 512, 549),
-    "gaurav-singh": (736, 406, 862, 549),
-    "manish-temani": (1071, 406, 1197, 549),
+    "lokesh-mathur": (0.3050, 0.5360, 0.4215, 0.7280),
+    "gaurav-singh": (0.5220, 0.5360, 0.6385, 0.7280),
+    "manish-temani": (0.7035, 0.5360, 0.8200, 0.7280),
 }
 for slug, box in PORTRAITS.items():
-    p = square(crop("about", box))
-    save(p.resize((512, 512), Image.LANCZOS), "team/{}.jpg".format(slug), quality=92)
+    save(crop("about", box), "team/{}.jpg".format(slug), quality=92)
 
 # ---------------------------------------------------------------------------
-# 06 B.COM + ACCA - student at her desk.
-# Cropped clear of the handwritten note, the floating white box, the book-spine
-# labels and the dark "Build skills" panel, all of which are comp overlays.
+# 06 B.COM + ACCA - the student at her desk, cropped clear of the handwritten
+# note, which the site renders as live text.
 # ---------------------------------------------------------------------------
-save(crop("bcom", (930, 88, 1150, 505)), "commerce-student.jpg", quality=91)
+save(crop("commerce", (0.6650, 0.0250, 0.9960, 0.6850)), "commerce-student.jpg", quality=91)
 
 # ---------------------------------------------------------------------------
-# 09 TESTIMONIALS - learner photographs
+# 09 TESTIMONIALS - learner photographs.
 # ---------------------------------------------------------------------------
 AVATARS = {
-    "ritika-singh": (72, 494, 140, 562),
-    "aman-raj": (436, 494, 502, 562),
-    "sneha-patel": (806, 494, 872, 562),
+    "ritika-singh": (0.0505, 0.6270, 0.1055, 0.7280),
+    "aman-raj": (0.3015, 0.6270, 0.3565, 0.7280),
+    "sneha-patel": (0.5625, 0.6270, 0.6175, 0.7280),
 }
 for slug, box in AVATARS.items():
-    save(square(crop("testimonials", box)).resize((256, 256), Image.LANCZOS),
+    save(square(crop("testi", box), bias=0.15).resize((256, 256), Image.LANCZOS),
          "learners/{}.jpg".format(slug), quality=92)
 
 # ---------------------------------------------------------------------------
-# 10 ZSKILLUP IN ACTION - featured photograph + eight gallery photographs.
-# Each crop stops above the caption band the comp paints over the image, because
-# the site renders those captions as real HTML text.
+# 10 ZSKILLUP IN ACTION - featured photograph plus eight gallery photographs.
+# Each crop stops above the caption band the design paints over the image.
 # ---------------------------------------------------------------------------
-# Cropped from x=815 so the comp's own "Featured Event" badge (which the site
-# renders itself, as real text) is left out rather than showing through.
-save(crop("events", (815, 22, 1355, 286)), "events/industry-expert-session.jpg", quality=89)
+save(crop("events", (0.5880, 0.0250, 0.9620, 0.3050)),
+     "events/industry-expert-session.jpg", quality=89)
 
 GALLERY = {
-    "acca-career-workshop-session": (54, 424, 362, 562),
-    "student-community-cohort": (371, 424, 679, 562),
-    "hands-on-learning-lab": (719, 424, 1029, 562),
-    "expert-talk-series": (1041, 424, 1351, 562),
-    "certificate-distribution": (54, 617, 362, 737),
-    "group-activity-workshop": (371, 617, 679, 737),
-    "institutional-collaboration": (689, 617, 983, 737),
-    "interactive-workshop": (991, 617, 1243, 737),
+    "acca-career-workshop-session": (0.0377, 0.4650, 0.2586, 0.6050),
+    "student-community-cohort": (0.2667, 0.4650, 0.4876, 0.6050),
+    "hands-on-learning-lab": (0.5146, 0.4650, 0.7354, 0.6050),
+    "expert-talk-series": (0.7409, 0.4650, 0.9644, 0.6050),
+    "certificate-distribution": (0.0377, 0.6810, 0.2586, 0.8000),
+    "group-activity-workshop": (0.2667, 0.6810, 0.4838, 0.8000),
+    "institutional-collaboration": (0.4914, 0.6810, 0.7004, 0.8000),
+    "interactive-workshop": (0.7085, 0.6810, 0.8846, 0.8000),
 }
 for slug, box in GALLERY.items():
     save(crop("events", box), "events/{}.jpg".format(slug), quality=89)
 
 # ---------------------------------------------------------------------------
-# 08 PARTNERS - institution logo marks (the comp renders each name as text below
-# the mark, and the site does the same, so only the mark is cropped).
+# 08 PARTNERS - institution logo marks only; names are live text on the site.
 # ---------------------------------------------------------------------------
-LOGOS = {
-    "swami-vivekanand": (548, 110, 658, 200),
-    "viva-college": (706, 110, 816, 200),
-    "wctm": (864, 110, 974, 200),
-    "sharda-university": (1030, 110, 1146, 200),
-    "cet-varur": (1204, 110, 1314, 200),
-    "ap-shah": (548, 248, 658, 338),
-    "ajeenkya-dy-patil": (706, 248, 816, 338),
-    "atharva-college": (864, 248, 974, 338),
-    "sanjivani-college": (1030, 248, 1140, 338),
-    "mgm-college": (1204, 248, 1314, 338),
+ROW1 = (0.2480, 0.3990)
+ROW2 = (0.5250, 0.6760)
+HALF = 0.0380
+ROW1_LOGOS = {
+    "swami-vivekanand": 0.4265,
+    "viva-college": 0.5385,
+    "wctm": 0.6535,
+    "sharda-university": 0.7745,
+    "cet-varur": 0.8975,
 }
-for slug, box in LOGOS.items():
-    save(crop("partners", box), "partners/{}.jpg".format(slug), quality=92)
+ROW2_LOGOS = {
+    "ap-shah": 0.4265,
+    "ajeenkya-dy-patil": 0.5385,
+    "atharva-college": 0.6535,
+    "sanjivani-college": 0.7745,
+    "mgm-college": 0.8975,
+}
+for slug, cx in ROW1_LOGOS.items():
+    save(crop("partners", (cx - HALF, ROW1[0], cx + HALF, ROW1[1])),
+         "partners/{}.jpg".format(slug), quality=92)
+for slug, cx in ROW2_LOGOS.items():
+    save(crop("partners", (cx - HALF, ROW2[0], cx + HALF, ROW2[1])),
+         "partners/{}.jpg".format(slug), quality=92)
 
 print("Done. Comp-resolution artwork - see CONTENT-TODO.md for the originals.")

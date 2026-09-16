@@ -35,6 +35,7 @@ export const partners = {
   supporting:
     "We collaborate with leading institutions and companies to create industry-ready talent and meaningful career opportunities.",
   viewAll: { label: "View All Partners", href: "#partner-with-us" },
+  explore: { label: "Explore Our Partners", href: "#partner-with-us" },
 } as const;
 
 /**

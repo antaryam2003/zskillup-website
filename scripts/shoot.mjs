@@ -69,7 +69,7 @@ const consoleErrors = [];
 page.on("console", (m) => m.type() === "error" && consoleErrors.push(m.text()));
 page.on("pageerror", (e) => consoleErrors.push("pageerror: " + e.message));
 await page.setViewport({ ...desktop, deviceScaleFactor: 1 });
-await page.goto(base, { waitUntil: "load", timeout: 90000 });
+await page.goto(base, { waitUntil: "networkidle2", timeout: 90000 });
 await page.evaluate(() => document.fonts.ready);
 await new Promise((r) => setTimeout(r, 600));
 await page.evaluate(async () => {

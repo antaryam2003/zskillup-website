@@ -199,20 +199,20 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
     <article
       className={`flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-5 shadow-card sm:p-6`}
     >
-      <div className="flex items-start gap-4">
-        <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-full ${style.icon}`}>
-          <Icon name={cardIcon[card.vertical]} className="h-[1.3rem] w-[1.3rem]" />
+      <div className="flex items-start gap-3">
+        <span className={`grid h-14 w-14 shrink-0 place-items-center rounded-full ${style.icon}`}>
+          <Icon name={cardIcon[card.vertical]} className="h-6 w-6" />
         </span>
 
         <div className="min-w-0">
           {/* The offering is named inline, in a tinted pill - "For Commerce
               Careers" alone would not tell a new visitor what is on offer. */}
-          <h2 className="text-[1.0625rem] leading-snug font-bold text-navy">
+          <h2 className="text-[0.9375rem] leading-snug font-bold text-navy">
             {card.eyebrow}
             {card.brandLabel ? (
               <>
                 {" – "}
-                <span className={`inline-block rounded-md ${style.band} px-1.5 py-0.5 ${style.text}`}>
+                <span className={`inline-block rounded-full ${style.band} px-2 py-0.5 ${style.text}`}>
                   {card.brandLabel}
                 </span>
               </>
@@ -224,12 +224,21 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
 
       {/* CTA hierarchy: filled button, then text link, then the lightest video
           action. All three journeys stay available without the card feeling
-          overloaded. */}
-      <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-2.5 pt-6">
+          overloaded.
+
+          `flex-nowrap` only from 1400px up (checked directly against this
+          layout, not a stock Tailwind step: `xl` starts at 1280px, and at
+          1280px the three-across cards - widened further still by the
+          `xl:mx-[-5.5rem]` bleed - are still too narrow to force all three
+          actions onto one row without clipping). Below that width the row can
+          wrap onto a second line at full size instead, and a wrapped fourth
+          line there was what forced the whole grid row to stretch every card
+          to match it in the first place. */}
+      <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-2.5 pt-5 min-[1400px]:flex-nowrap">
         <Button href={card.primary.href} variant="primary" size="sm">
           {card.primary.label}
         </Button>
-        <Button href={card.secondary.href} variant="link">
+        <Button href={card.secondary.href} variant="link" className="whitespace-nowrap">
           {card.secondary.label}
         </Button>
         <VideoDialog video={video} label={card.video.label} variant="pill" />

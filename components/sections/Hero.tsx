@@ -54,6 +54,16 @@ export function Hero() {
         className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
       />
 
+      {/* A soft gradient, not a panel. With nothing at all behind it the purple
+          half of the headline measures 1.4:1 against the stonework - unreadable.
+          This lifts it past the threshold while leaving the photograph plainly
+          visible through it, and clears entirely by the middle of the frame so
+          the student is untouched. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgba(255,255,255,0.90)_0%,rgba(255,255,255,0.78)_26%,rgba(255,255,255,0.42)_44%,rgba(255,255,255,0)_62%)]"
+      />
+
       <Container>
         <div className="grid items-start gap-6 pt-12 sm:pt-14 lg:grid-cols-12 lg:pt-16">
           <div className="lg:col-span-7">

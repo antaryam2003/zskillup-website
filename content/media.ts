@@ -29,16 +29,17 @@ export const media = {
   /**
    * Hero / LCP image. Deliberately NOT lazy-loaded (see Hero.tsx `priority`).
    *
-   * Composed to cover the WHOLE hero with no white wash: the sharp half of the
-   * design's photograph over a soft-focus field built from the same frame, so the
-   * headline sits on campus rather than on a white panel. See
-   * scripts/extract-comp-assets.py.
+   * The untouched, sharp half of the design's photograph, mirrored so the student
+   * sits on the right and the stonework falls under the headline. Nothing is
+   * blurred or reconstructed: the design paints a solid white field behind its own
+   * headline, so there is no image to recover there and none is invented.
+   * See scripts/extract-comp-assets.py.
    */
   hero: {
     src: "/images/campus-student-hero.jpg",
     alt: "A student looking up at a university campus building, with other students walking behind her",
-    width: 2016,
-    height: 1134,
+    width: 1008,
+    height: 642,
   },
 
   /** B.Com + ACCA section. Aspirational, natural, no floating elements around it. */

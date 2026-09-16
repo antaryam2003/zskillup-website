@@ -70,72 +70,49 @@ def square(img, bias=0.3):
 print("Extracting artwork from the updated design renders...")
 
 # ---------------------------------------------------------------------------
-# 01 HERO - full-frame campus photograph, no white wash.
+# 01 HERO - the real, sharp photograph, used untouched.
 #
-# The render bakes the navigation, the headline and the circled handwritten note
-# into the picture, and fades its left third almost to white so that headline
-# stays legible. The site draws all of that itself and runs the photograph at full
-# strength behind the text, so none of it can be kept.
+# Important finding: the design render does NOT have photograph behind its
+# headline. Boost that area's contrast 6x and it is pure white - the render paints
+# a solid field there to carry the type. There is no image to recover, so any
+# attempt to rebuild it can only invent something, which is what made earlier
+# passes look washed or blurred.
 #
-# There is no un-faded pixel data for that left third - it does not exist in a
-# flat render - so it is rebuilt from the photograph rather than refilled with
-# white: the clean right-hand half is enlarged and defocused to form a continuous
-# soft-focus background, then the sharp half is laid back over it and feathered
-# in. The result is campus all the way across, with a naturally quieter area
-# behind the headline.
+# So the hero uses the part of the frame that IS photograph: everything right of
+# the headline is untouched, sharp campus. That region is cropped and mirrored so
+# the student sits on the RIGHT (where the design places her) and the plain, pale
+# stone wall falls on the left, under the headline, where it gives the type the
+# most contrast the frame has to offer. Nothing is blurred, softened, enlarged or
+# painted - beyond removing the one circled note that intrudes into the crop.
 #
-# Replacing this file with the original photograph removes the need for any of it.
+# Supplying the original photograph would remove the need for the mirror.
 # ---------------------------------------------------------------------------
 hero_im = load("hero")
 HW, HH = hero_im.size
-plate = hero_im.crop((0, int(0.105 * HH), HW, int(0.652 * HH)))
+
+TOP, BOTTOM = 0.095, 0.652           # below the nav bar, above the cards
+LEFT = 0.500                         # clear of the headline block and the circled note
+plate = hero_im.crop((0, int(TOP * HH), HW, int(BOTTOM * HH)))
 PW, PH = plate.size
+px = plate.load()
 
-# Everything from here rightwards is untouched photograph: clear of the headline
-# (which ends at ~0.32) and of the circled note (which ends at ~0.49).
-CLEAN_FROM = int(0.50 * PW)
-clean = plate.crop((CLEAN_FROM, 0, PW, PH))
-CW = clean.size[0]
 
-# The hero runs this as a full-bleed background, so the plate is composed at the
-# hero's own proportion (about 16:9). Cropped as a narrow band it would have to be
-# scaled ~1.9x to cover, which blows straight past the design's composition.
-OUT_W, OUT_H = PW, int(PW * 9 / 16)
+def to_plate_y(src_y):
+    return int((src_y - TOP) / (BOTTOM - TOP) * PH)
 
-# Soft-focus field. Built from the upper RIGHT corner of the clean half - sky,
-# stonework and treetops only - because that region contains no people, so
-# enlarging it cannot leave a recognisable blurred figure behind the headline.
-sky = clean.crop((int(CW * 0.32), 0, int(CW * 0.74), int(PH * 0.78)))
-base = sky.resize((OUT_W, OUT_H), Image.LANCZOS).filter(ImageFilter.GaussianBlur(22))
 
-# Lay the sharp half back over it, scaled a little and positioned so the student
-# lands at roughly 62% across - where the design places her.
-SHARP_W = int(CW * 1.45)
-sharp = clean.resize((SHARP_W, int(PH * 1.45)), Image.LANCZOS)
-sharp_x = int(0.62 * OUT_W - 0.24 * SHARP_W)   # she sits ~24% into the clean half
-base.paste(sharp, (sharp_x, 0))
+# The circled "More Than a Degree" note reaches into the crop. It sits on open
+# sky, so it is interpolated across from the pixels either side, row by row.
+ox0, ox1 = int(0.358 * PW), int(0.492 * PW)
+for y in range(max(0, to_plate_y(0.150)), min(PH, to_plate_y(0.330))):
+    left, right = px[max(0, ox0 - 2), y], px[min(PW - 1, ox1 + 2), y]
+    span = max(1, ox1 - ox0)
+    for x in range(ox0, ox1):
+        t = (x - ox0) / span
+        px[x, y] = tuple(int(left[c] + (right[c] - left[c]) * t) for c in range(3))
 
-# Feather the left and bottom edges of the sharp region into the soft field.
-px = base.load()
-blur_ref = sky.resize((OUT_W, OUT_H), Image.LANCZOS).filter(ImageFilter.GaussianBlur(22))
-bp = blur_ref.load()
-
-FEATHER_X = int(0.11 * OUT_W)
-for x in range(sharp_x, min(OUT_W, sharp_x + FEATHER_X)):
-    t = (x - sharp_x) / FEATHER_X
-    for y in range(min(OUT_H, sharp.size[1])):
-        a, b = bp[x, y], px[x, y]
-        px[x, y] = tuple(int(a[c] + (b[c] - a[c]) * t) for c in range(3))
-
-sharp_bottom = min(OUT_H, sharp.size[1])
-FEATHER_Y = int(0.10 * OUT_H)
-for y in range(max(0, sharp_bottom - FEATHER_Y), sharp_bottom):
-    t = (sharp_bottom - y) / FEATHER_Y
-    for x in range(max(0, sharp_x), OUT_W):
-        a, b = bp[x, y], px[x, y]
-        px[x, y] = tuple(int(a[c] + (b[c] - a[c]) * t) for c in range(3))
-
-save(base, "campus-student-hero.jpg", quality=88)
+hero_plate = plate.crop((int(LEFT * PW), 0, PW, PH)).transpose(Image.FLIP_LEFT_RIGHT)
+save(hero_plate, "campus-student-hero.jpg", quality=92)
 
 # ---------------------------------------------------------------------------
 # 02 ABOUT - leadership portraits. The updated design shows these large and

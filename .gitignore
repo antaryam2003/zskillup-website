@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...opting in: these hold only public NEXT_PUBLIC_ build config, no secrets.
+!.env.example
+!.env.production
 
 # vercel
 .vercel

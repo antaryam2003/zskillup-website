@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "build:pages": "next build && node scripts/postbuild-pages.mjs"
   },
   "dependencies": {
     "next": "16.3.5",

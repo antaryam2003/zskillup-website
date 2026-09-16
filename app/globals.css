@@ -1,26 +1,211 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   ZSkillup design tokens
+
+   Colour philosophy from the brief:
+     - Master brand  = Navy + restrained Purple-to-Coral gradient
+     - Institutions  = Purple / Blue
+     - Prephasz      = Yellow / Orange
+     - B.Com + ACCA  = Teal / Green
+     - ~80% white / warm off-white, navy typography
+     - Vertical colours are IDENTIFIERS AND ACCENTS, never large background fills.
+
+   Brand values were sampled from the approved design comps and from the live
+   ZSkillup / Prephasz brand marks.
+   ========================================================================== */
+
+@theme {
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-hand: var(--font-caveat), "Segoe Script", cursive;
+
+  /* --- Neutrals ---------------------------------------------------------- */
+  --color-navy: #0a1733;
+  --color-navy-deep: #03112e;
+  --color-navy-soft: #1b2a55;
+  --color-body: #48536f;
+  /* #6b7590 measured 4.41:1 on the off-white surfaces - just short of AA.
+     Darkened so secondary text clears 4.5:1 on white, cloud, warm and prep-soft. */
+  --color-muted: #646e89;
+  /* Non-text / decorative only (rules, disabled glyphs). Never for copy. */
+  --color-faint: #99a1b5;
+  --color-line: #e8eaf2;
+  --color-line-soft: #f1f2f7;
+  --color-cloud: #fafafc;
+  --color-warm: #fbfaf7;
+
+  /* --- Master brand gradient (Purple -> Coral) ---------------------------- */
+  --color-brand: #5b3fe8;
+  --color-brand-from: #4f39f6;
+  --color-brand-via: #7c3aed;
+  --color-brand-to: #ff6b6b;
+  --color-brand-soft: #f1eefe;
+
+  /* --- Vertical: Institutions (Purple / Blue) ---------------------------- */
+  --color-inst: #4c2fc9;
+  --color-inst-ink: #3b23a0;
+  --color-inst-soft: #efecfd;
+  --color-inst-line: #ddd6fb;
+
+  /* --- Vertical: Prephasz (Yellow / Orange) ------------------------------ */
+  --color-prep: #ffca09;
+  --color-prep-ink: #7a5600;
+  --color-prep-soft: #fff8e3;
+  --color-prep-line: #ffeaa8;
+
+  /* --- Vertical: B.Com + ACCA (Teal / Green) ----------------------------- */
+  /* #0e9384 measured 3.80:1 against white - fine for display type but not for
+     15px link/button labels. Darkened to clear AA both as text and behind white. */
+  --color-com: #0c8073;
+  --color-com-ink: #095f55;
+  --color-com-soft: #e7f5f2;
+  --color-com-line: #bfe5de;
+
+  --radius-card: 1.25rem;
+  --radius-tile: 0.875rem;
+
+  --shadow-card: 0 1px 2px rgb(10 23 51 / 0.04), 0 8px 24px -12px rgb(10 23 51 / 0.10);
+  --shadow-lift: 0 2px 4px rgb(10 23 51 / 0.05), 0 18px 40px -16px rgb(10 23 51 / 0.18);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --brand-gradient: linear-gradient(
+    115deg,
+    var(--color-brand-from) 0%,
+    var(--color-brand-via) 38%,
+    var(--color-brand-to) 88%
+  );
+  scroll-behavior: smooth;
+  /* Sticky header height, so in-page anchors do not land under the header. */
+  scroll-padding-top: 5.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@media (prefers-reduced-motion: reduce) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* These defaults MUST live in @layer base. Unlayered rules outrank every
+   layered utility, so an unlayered `h2 { color: navy }` would silently beat
+   `class="text-white"` and make headings vanish on navy panels. */
+@layer base {
+  body {
+    background: #ffffff;
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-navy);
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  /* Visible, consistent keyboard focus everywhere. */
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-brand-soft);
+    color: var(--color-navy);
+  }
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+/* The master-brand signature. Used sparingly - headline fragments, icons,
+   small rules - never as a large background fill. */
+.text-gradient {
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* Descenders get clipped by background-clip on some engines without this. */
+  padding-bottom: 0.08em;
+}
+
+.bg-gradient-brand {
+  background: var(--brand-gradient);
+}
+
+/* Prephasz's highlight. Painted as a background band on the text itself rather
+   than a stacked pseudo-element, so it can never end up behind the section
+   background. Yellow stays an accent - it is never the section fill. */
+.highlight-prephasz {
+  background-image: linear-gradient(
+    to top,
+    rgb(255 202 9 / 0.62) 0.06em,
+    rgb(255 202 9 / 0.62) 0.46em,
+    transparent 0.46em
+  );
+  padding-inline: 0.08em;
+}
+
+/* Keeps hyphenated compounds such as "industry-ready" from breaking across
+   lines mid-word in large display type. */
+.no-hyphen-break {
+  word-break: keep-all;
+}
+
+/* Eyebrow / kicker label above section headings. */
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Handwritten accents. The brief caps these at 2-3 across the whole homepage:
+   "More Than a Degree" (hero), the Prephasz demo cue, and "More opportunities
+   ahead" (B.Com + ACCA). Do not add more. */
+.handwritten {
+  font-family: var(--font-hand);
+  color: var(--color-navy-soft);
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+/* Horizontal scrollers (carousels) - hide the bar, keep the scrolling. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Screen-reader-only, but focusable (skip link). */
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

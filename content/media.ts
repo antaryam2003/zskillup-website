@@ -29,15 +29,16 @@ export const media = {
   /**
    * Hero / LCP image. Deliberately NOT lazy-loaded (see Hero.tsx `priority`).
    *
-   * The comp paints the headline over a white wash on the left, so this file is
-   * composited the same way: photograph on the right, fading to near-white on the
-   * left. The section therefore adds only a very light extra wash.
+   * Composed to cover the WHOLE hero with no white wash: the sharp half of the
+   * design's photograph over a soft-focus field built from the same frame, so the
+   * headline sits on campus rather than on a white panel. See
+   * scripts/extract-comp-assets.py.
    */
   hero: {
     src: "/images/campus-student-hero.jpg",
     alt: "A student looking up at a university campus building, with other students walking behind her",
     width: 2016,
-    height: 664,
+    height: 1134,
   },
 
   /** B.Com + ACCA section. Aspirational, natural, no floating elements around it. */

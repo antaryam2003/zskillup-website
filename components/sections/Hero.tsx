@@ -38,40 +38,26 @@ export function Hero() {
          behind the navigation, as in the design. */
       className="relative isolate -mt-[4.5rem] overflow-hidden pt-[4.5rem]"
     >
-      {/* The photograph is a wide band, so it is given a fixed height and allowed
-          to crop horizontally rather than being stretched to fill the taller
-          hero - which would zoom straight past the design's composition.
+      {/* The photograph covers the WHOLE hero and carries the text directly -
+          no white wash. The plate is a wide band, so it is allowed to crop
+          horizontally. The plate is composed at roughly the hero's own
+          proportion, so covering barely crops it and the composition survives.
 
           LCP image: `priority`, never lazy-loaded, dimensions declared. */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-0 -z-20 h-[24rem] sm:h-[30rem] lg:h-[35rem]"
-      >
-        <Image
-          src={asset(media.hero.src)}
-          alt={media.hero.alt}
-          width={media.hero.width}
-          height={media.hero.height}
-          priority
-          sizes="100vw"
-          className="h-full w-full object-cover object-center"
-        />
-        {/* Melts the photograph's lower edge into the page so the cards do not
-            sit against a hard cut. */}
-        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[linear-gradient(to_top,#ffffff_0%,rgba(255,255,255,0.82)_45%,rgba(255,255,255,0)_100%)]" />
-      </div>
-
-      {/* The file already carries the design's own white wash on the left; this
-          only tops it up for headline legibility. */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-0 -z-10 h-[24rem] bg-[linear-gradient(100deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.38)_30%,rgba(255,255,255,0)_55%)] sm:h-[30rem] lg:h-[35rem]"
+      <Image
+        src={asset(media.hero.src)}
+        alt={media.hero.alt}
+        width={media.hero.width}
+        height={media.hero.height}
+        priority
+        sizes="100vw"
+        className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
       />
 
       <Container>
         <div className="grid items-start gap-6 pt-12 sm:pt-14 lg:grid-cols-12 lg:pt-16">
           <div className="lg:col-span-7">
-            <p className="eyebrow text-navy/55">{hero.eyebrow}</p>
+            <p className="eyebrow text-navy/80">{hero.eyebrow}</p>
 
             {/* Both halves stay inside one <h1> so the sentence reads as a unit.
                 The gradient half sweeps on every line, not once across the block. */}
@@ -85,7 +71,7 @@ export function Hero() {
               </span>
             </h1>
 
-            <p className="mt-6 max-w-[46ch] text-[1.0625rem] text-body sm:text-lg">
+            <p className="mt-6 max-w-[46ch] text-[1.0625rem] font-medium text-navy/85 sm:text-lg">
               {hero.supporting}
             </p>
 
@@ -115,16 +101,16 @@ export function Hero() {
         </ul>
 
         <div className="mt-10 flex items-center justify-between gap-4 pb-4">
-          <p className="eyebrow flex items-center gap-4 text-navy/45">
+          <p className="eyebrow flex items-center gap-4 text-navy/70">
             {hero.footNote}
             <span aria-hidden="true" className="hidden h-px w-16 bg-navy/20 sm:block" />
           </p>
           <a
             href={hero.cta.href}
-            className="hidden items-center gap-3 text-xs font-semibold tracking-[0.16em] text-navy/45 uppercase transition-colors hover:text-navy sm:flex"
+            className="hidden items-center gap-3 text-xs font-semibold tracking-[0.16em] text-navy/70 uppercase transition-colors hover:text-navy sm:flex"
           >
             Scroll
-            <span className="grid h-10 w-10 place-items-center rounded-full border border-navy/15">
+            <span className="grid h-10 w-10 place-items-center rounded-full border border-navy/25">
               <Icon name="arrowDown" className="h-4 w-4" />
             </span>
           </a>

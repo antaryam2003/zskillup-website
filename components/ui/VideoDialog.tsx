@@ -56,9 +56,10 @@ export function VideoDialog({
           onClick={open}
           className={`group inline-flex items-center gap-2 rounded-full border border-line bg-white py-1 pr-4 pl-1 text-[0.8125rem] font-semibold whitespace-nowrap text-navy transition-colors hover:border-navy/30 ${className}`}
         >
-          {/* The play glyph sits inside its own filled circle, not bare in the
-              pill - matches the reference's segmented control. */}
-          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-navy text-white transition-colors group-hover:bg-navy-soft">
+          {/* The play glyph sits inside its own outlined circle - a thin
+              border matching the pill's own, NOT a dark fill - so the whole
+              control reads as the lightest of the three actions. */}
+          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-line text-navy transition-colors group-hover:border-navy/30">
             <Icon name="play" className="ml-0.5 h-3 w-3" />
           </span>
           {label}

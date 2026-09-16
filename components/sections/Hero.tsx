@@ -218,7 +218,14 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
               </>
             ) : null}
           </h2>
-          <p className="mt-2 text-[0.9375rem] leading-relaxed text-body">{card.description}</p>
+          {/* Capped width so every description wraps to two lines, the same as
+              the longest one. Without this, the shorter two descriptions sat
+              on a single line while the grid still stretched every card to
+              match the longest card's height - which is what produced the
+              large empty gap above the CTA row. */}
+          <p className="mt-2 max-w-[15rem] text-[0.9375rem] leading-relaxed text-body">
+            {card.description}
+          </p>
         </div>
       </div>
 

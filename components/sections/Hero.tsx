@@ -120,19 +120,32 @@ export function Hero() {
       </div>
 
       {/* Three pathway cards, pulled up to overlap the photo band's lower
-          edge - never absorbed into its height. They run wider than the body
-          container on large screens, which is also what keeps all three CTAs
-          on one row. On mobile they stack BELOW the headline and primary CTA,
-          on their own plain background. */}
-      <Container>
-        <ul className="relative z-10 -mt-16 grid gap-5 sm:-mt-20 lg:-mt-24 lg:mx-[-4rem] lg:grid-cols-3 xl:mx-[-5.5rem]">
+          edge - never absorbed into its height. They run wider than the
+          headline's body container on large screens, which is also what
+          keeps all three CTAs on one row. On mobile they stack BELOW the
+          headline and primary CTA, on their own plain background.
+
+          This uses its OWN max-width (1480px vs the site's usual 1240px)
+          rather than the previous approach of bleeding the row out from
+          inside a narrower, already-centred <Container> with a negative
+          margin. That bled amount was sized relative to the 1240px cap, so it
+          only worked once the viewport was comfortably past that cap - at
+          exactly the width where a laptop screen commonly sits (~1280-1350px)
+          the maths went negative and pulled the whole row off the left edge
+          of the page, which is what let card 3's CTA row spill past its own
+          right border. A dedicated max-width, capped and centred the same way
+          the rest of the site's Container is, can't do that at any width. */}
+      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1480px] px-5 sm:-mt-20 sm:px-8 lg:-mt-24">
+        <ul className="grid gap-5 lg:grid-cols-3">
           {heroCards.map((card) => (
             <li key={card.eyebrow}>
               <HeroCard card={card} />
             </li>
           ))}
         </ul>
+      </div>
 
+      <Container>
         {/* Footer row sits on the page's own white background, below the
             photo band entirely - matching the design, where the photo ends
             at the cards and this strip reads as plain page chrome. */}

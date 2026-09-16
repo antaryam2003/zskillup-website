@@ -7,6 +7,8 @@ The ZSkillup marketing site, built from `ZSkillup_Parent_Website_Final_Feedback.
 testimonials and photography are deliberately unfinished and are held behind
 flags so they cannot ship by accident.
 
+**Live:** https://antaryam2003.github.io/zskillup-website/
+
 ---
 
 ## Running it
@@ -165,3 +167,40 @@ wall lettering all sit on the photograph. See CONTENT-TODO §3.
 These are comp-resolution. Drop the original full-resolution files at the same
 paths when they are available; `content/media.ts` holds every path, dimension and
 alt string, so nothing else changes.
+
+---
+
+## Deploying
+
+The site is published to GitHub Pages from the `gh-pages` branch.
+
+```bash
+npm run build:pages          # next build + scripts/postbuild-pages.mjs -> out/
+cd out
+git init -b gh-pages && git add -A && git commit -m "Deploy"
+git remote add origin https://github.com/antaryam2003/zskillup-website.git
+git push --force origin gh-pages
+```
+
+`.env.production` supplies the three public build values (`NEXT_PUBLIC_SITE_URL`,
+`NEXT_PUBLIC_BASE_PATH`, `NEXT_PUBLIC_STATIC_EXPORT`). No secrets.
+
+### What the static export costs
+
+GitHub Pages serves files, not a Node server, so two things behave differently
+from the local `npm run dev` build. Both are reversed by deleting the `output`
+block in `next.config.ts` and redeploying to any Node host:
+
+| | On Pages | On a Node host |
+|---|---|---|
+| Enquiry form | Opens a pre-filled email to ZSkillup | POSTs to `/api/enquiry` |
+| Images | Served as-is | Optimised to WebP/AVIF with responsive `srcset` |
+
+`app/api/enquiry/route.ts` was removed for this build; the code that calls it is
+still in `EnquiryForm.tsx` behind the `STATIC_BUILD` check, so restoring the route
+is all that is needed.
+
+### Moving to a custom domain
+
+Set `NEXT_PUBLIC_BASE_PATH=` (empty) and `NEXT_PUBLIC_SITE_URL` to the new origin,
+rebuild, and add a `CNAME` file to `public/`.

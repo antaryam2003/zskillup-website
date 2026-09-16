@@ -125,7 +125,7 @@ export function Hero() {
           keeps all three CTAs on one row. On mobile they stack BELOW the
           headline and primary CTA, on their own plain background.
 
-          This uses its OWN max-width (1480px vs the site's usual 1240px)
+          This uses its OWN max-width (1600px vs the site's usual 1240px)
           rather than the previous approach of bleeding the row out from
           inside a narrower, already-centred <Container> with a negative
           margin. That bled amount was sized relative to the 1240px cap, so it
@@ -134,8 +134,23 @@ export function Hero() {
           the maths went negative and pulled the whole row off the left edge
           of the page, which is what let card 3's CTA row spill past its own
           right border. A dedicated max-width, capped and centred the same way
-          the rest of the site's Container is, can't do that at any width. */}
-      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1480px] px-5 sm:-mt-20 sm:px-8 lg:-mt-24">
+          the rest of the site's Container is, can't do that at any width.
+
+          1680px, wider again than an earlier pass's 1600px, because that
+          pass's "~25px clearance at every width" reading turned out to be a
+          false negative: it compared the CTA row's own bounding box to the
+          card's edge, but `flex-wrap` avoids overflow BY wrapping onto a
+          second line, so a row that doesn't fit on one line reads as "safe"
+          on that box the same way a row that fits easily does - the box
+          itself never overflows either way. Measuring what the row's content
+          actually needs (each action's real rendered width, independent of
+          whether it's currently wrapped) against what was available showed
+          card 3's row was up to 94px short of fitting at common laptop
+          widths. Combined with the trimmed Watch Now pill and CTA gap below,
+          this keeps growing the row's genuine spare room well past the point
+          (see that breakpoint's own comment) where it switches to one line,
+          instead of plateauing right at the edge of fitting. */}
+      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1680px] px-5 sm:-mt-20 sm:px-8 lg:-mt-24">
         <ul className="grid gap-5 lg:grid-cols-3">
           {heroCards.map((card) => (
             <li key={card.eyebrow}>
@@ -246,15 +261,16 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
           action. All three journeys stay available without the card feeling
           overloaded.
 
-          `flex-nowrap` only from 1400px up (checked directly against this
-          layout, not a stock Tailwind step: `xl` starts at 1280px, and at
-          1280px the three-across cards - widened further still by the
-          `xl:mx-[-5.5rem]` bleed - are still too narrow to force all three
-          actions onto one row without clipping). Below that width the row can
-          wrap onto a second line at full size instead, and a wrapped fourth
-          line there was what forced the whole grid row to stretch every card
-          to match it in the first place. */}
-      <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-2.5 pt-5 min-[1400px]:flex-nowrap">
+          `flex-nowrap` only once the row has measurably reached the width
+          card 3's three actions actually need on one line - 1560px, checked
+          directly against this layout by summing each action's own rendered
+          width, not a rect that `flex-wrap` can quietly wrap out of trouble
+          and read as "fine" either way. A three-across grid this size simply
+          cannot fit that row on one line any earlier without either widening
+          the cards far past matching the reference photo, or shrinking the
+          actions' own text/padding - so below 1560px the row safely wraps
+          onto a second line instead of being forced into overflow. */}
+      <div className="mt-auto flex flex-wrap items-center gap-x-1.5 gap-y-2.5 pt-5 min-[1560px]:flex-nowrap">
         <Button href={card.primary.href} variant="primary" size="sm">
           {card.primary.label}
         </Button>

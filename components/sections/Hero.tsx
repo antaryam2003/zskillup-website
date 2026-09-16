@@ -36,73 +36,96 @@ export function Hero() {
       aria-labelledby="hero-heading"
       /* Pulled up under the sticky header so the photograph runs edge to edge
          behind the navigation, as in the design. */
-      className="relative isolate -mt-[4.5rem] overflow-hidden pt-[4.5rem]"
+      className="relative isolate -mt-[4.5rem] overflow-hidden"
     >
-      {/* The photograph covers the WHOLE hero and carries the text directly -
-          no white wash. The plate is a wide band, so it is allowed to crop
-          horizontally. The plate is composed at roughly the hero's own
-          proportion, so covering barely crops it and the composition survives.
+      {/* The "photo band" - its height comes ONLY from the nav + headline
+          content it wraps, never from the cards or footer row below. That
+          matters on mobile: the cards stack to three full-width blocks there,
+          and if the photo filled that entire stacked height too it would need
+          to scale - and therefore crop - far more aggressively just to cover
+          it. Bounding the band keeps the crop close to what desktop shows. */}
+      <div className="relative pt-[4.5rem]">
+        {/* A genuine, unaltered crop of the design's own photograph - see
+            content/media.ts and scripts/extract-comp-assets.py for exactly
+            what was cropped and why. object-position keeps the tower and the
+            student both in frame across viewport widths.
 
-          LCP image: `priority`, never lazy-loaded, dimensions declared. */}
-      <Image
-        src={asset(media.hero.src)}
-        alt={media.hero.alt}
-        width={media.hero.width}
-        height={media.hero.height}
-        priority
-        sizes="100vw"
-        className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
-      />
+            LCP image: `priority`, never lazy-loaded, dimensions declared. */}
+        <Image
+          src={asset(media.hero.src)}
+          alt={media.hero.alt}
+          width={media.hero.width}
+          height={media.hero.height}
+          priority
+          sizes="100vw"
+          className="absolute inset-0 -z-20 h-full w-full object-cover object-[58%_22%] sm:object-[50%_26%] lg:object-[42%_30%]"
+        />
 
-      {/* A soft gradient, not a panel. With nothing at all behind it the purple
-          half of the headline measures 1.4:1 against the stonework - unreadable.
-          This lifts it past the threshold while leaving the photograph plainly
-          visible through it, and clears entirely by the middle of the frame so
-          the student is untouched. */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgba(255,255,255,0.90)_0%,rgba(255,255,255,0.78)_26%,rgba(255,255,255,0.42)_44%,rgba(255,255,255,0)_62%)]"
-      />
+        {/* A soft, bright wash - not a panel - so the headline stays legible
+            over the sky and stonework while the photograph remains plainly
+            visible through it.
 
-      <Container>
-        <div className="grid items-start gap-6 pt-12 sm:pt-14 lg:grid-cols-12 lg:pt-16">
-          <div className="lg:col-span-7">
-            <p className="eyebrow text-navy/80">{hero.eyebrow}</p>
+            Below the two-column breakpoint the headline runs almost the full
+            container width (there is no separate 7-of-12-column text zone
+            yet), so the wash needs to reach nearly that far too, or the type
+            sits unprotected over the student's hair by the time it wraps to
+            three lines. From lg upward the text is confined to the left ~58%
+            of the band, so the wash can clear much sooner and leave the
+            student fully untouched. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgba(255,255,255,0.78)_0%,rgba(255,255,255,0.72)_28%,rgba(255,255,255,0.55)_52%,rgba(255,255,255,0.24)_76%,rgba(255,255,255,0)_94%)] lg:bg-[linear-gradient(100deg,rgba(255,255,255,0.74)_0%,rgba(255,255,255,0.66)_20%,rgba(255,255,255,0.42)_40%,rgba(255,255,255,0.08)_58%,rgba(255,255,255,0)_68%)]"
+        />
 
-            {/* Both halves stay inside one <h1> so the sentence reads as a unit.
-                The gradient half sweeps on every line, not once across the block. */}
-            <h1
-              id="hero-heading"
-              className="mt-5 max-w-[15ch] text-[2.4rem] leading-[1.06] font-extrabold tracking-[-0.03em] sm:text-[3rem] lg:text-[3.5rem]"
-            >
-              <span className="block">{hero.headline.plain}</span>
-              <span className="text-gradient-lines no-hyphen-break mt-1 block">
-                {hero.headline.gradient}
-              </span>
-            </h1>
+        <Container>
+          <div className="grid items-start gap-6 pt-14 sm:pt-16 lg:grid-cols-12 lg:pt-20">
+            <div className="lg:col-span-7">
+              <p className="eyebrow text-navy/80 drop-shadow-[0_1px_3px_rgba(255,255,255,0.7)]">{hero.eyebrow}</p>
 
-            <p className="mt-6 max-w-[46ch] text-[1.0625rem] font-medium text-navy/85 sm:text-lg">
-              {hero.supporting}
-            </p>
+              {/* Both halves stay inside one <h1> so the sentence reads as a
+                  unit. The gradient half sweeps on every line, not once
+                  across the block. */}
+              <h1
+                id="hero-heading"
+                className="mt-6 max-w-[15ch] text-[2.4rem] leading-[1.06] font-extrabold tracking-[-0.03em] drop-shadow-[0_2px_10px_rgba(255,255,255,0.55)] sm:text-[3rem] lg:text-[3.5rem]"
+              >
+                <span className="block">{hero.headline.plain}</span>
+                <span className="text-gradient-lines no-hyphen-break mt-1 block">
+                  {hero.headline.gradient}
+                </span>
+              </h1>
 
-            <div className="mt-8">
-              <Button href={hero.cta.href} variant="primary" size="lg">
-                {hero.cta.label}
-              </Button>
+              <p className="mt-6 max-w-[46ch] text-[1.0625rem] font-medium text-navy/85 drop-shadow-[0_1px_4px_rgba(255,255,255,0.75)] sm:text-lg">
+                {hero.supporting}
+              </p>
+
+              <div className="mt-9">
+                <Button href={hero.cta.href} variant="primary" size="lg">
+                  {hero.cta.label}
+                </Button>
+              </div>
+            </div>
+
+            {/* The circled handwritten note, in the open sky beside the headline. */}
+            <div className="hidden lg:col-span-5 lg:block">
+              <CircledNote>{hero.handwritten}</CircledNote>
             </div>
           </div>
 
-          {/* The circled handwritten note, in the open sky beside the headline. */}
-          <div className="hidden lg:col-span-5 lg:block">
-            <CircledNote>{hero.handwritten}</CircledNote>
-          </div>
-        </div>
+          {/* Reserves room below the CTA for the cards to overlap into - this
+              gives the band enough height without folding the cards' own
+              (much taller, on mobile) height into it. */}
+          <div aria-hidden="true" className="h-20 sm:h-24 lg:h-28" />
+        </Container>
+      </div>
 
-        {/* Three pathway cards, overlapping the photograph's lower edge. They run
-            wider than the body container, as the design shows, which is also what
-            keeps all three CTAs on one row. On mobile they stack BELOW the
-            headline and primary CTA. */}
-        <ul className="mt-12 grid gap-5 sm:mt-16 lg:mx-[-4rem] lg:grid-cols-3 xl:mx-[-5.5rem]">
+      {/* Three pathway cards, pulled up to overlap the photo band's lower
+          edge - never absorbed into its height. They run wider than the body
+          container on large screens, which is also what keeps all three CTAs
+          on one row. On mobile they stack BELOW the headline and primary CTA,
+          on their own plain background. */}
+      <Container>
+        <ul className="relative z-10 -mt-16 grid gap-5 sm:-mt-20 lg:-mt-24 lg:mx-[-4rem] lg:grid-cols-3 xl:mx-[-5.5rem]">
           {heroCards.map((card) => (
             <li key={card.eyebrow}>
               <HeroCard card={card} />
@@ -110,7 +133,10 @@ export function Hero() {
           ))}
         </ul>
 
-        <div className="mt-10 flex items-center justify-between gap-4 pb-4">
+        {/* Footer row sits on the page's own white background, below the
+            photo band entirely - matching the design, where the photo ends
+            at the cards and this strip reads as plain page chrome. */}
+        <div className="mt-12 flex items-center justify-between gap-4 pb-6">
           <p className="eyebrow flex items-center gap-4 text-navy/70">
             {hero.footNote}
             <span aria-hidden="true" className="hidden h-px w-16 bg-navy/20 sm:block" />

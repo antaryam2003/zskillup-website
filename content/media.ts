@@ -29,17 +29,16 @@ export const media = {
   /**
    * Hero / LCP image. Deliberately NOT lazy-loaded (see Hero.tsx `priority`).
    *
-   * The untouched, sharp half of the design's photograph, mirrored so the student
-   * sits on the right and the stonework falls under the headline. Nothing is
-   * blurred or reconstructed: the design paints a solid white field behind its own
-   * headline, so there is no image to recover there and none is invented.
-   * See scripts/extract-comp-assets.py.
+   * A genuine, unaltered crop of the design's own photograph - the wide right-hand
+   * portion of the frame, clear of the baked navigation, headline block and
+   * cards. Nothing is blurred, mirrored or invented. See
+   * scripts/extract-comp-assets.py for why the crop is shaped this way.
    */
   hero: {
     src: "/images/campus-student-hero.jpg",
     alt: "A student looking up at a university campus building, with other students walking behind her",
-    width: 1008,
-    height: 642,
+    width: 1371,
+    height: 623,
   },
 
   /** B.Com + ACCA section. Aspirational, natural, no floating elements around it. */

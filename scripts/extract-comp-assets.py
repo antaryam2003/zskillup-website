@@ -70,49 +70,51 @@ def square(img, bias=0.3):
 print("Extracting artwork from the updated design renders...")
 
 # ---------------------------------------------------------------------------
-# 01 HERO - the real, sharp photograph, used untouched.
+# 01 HERO - a genuine, unaltered crop of the design's own photograph.
 #
-# Important finding: the design render does NOT have photograph behind its
-# headline. Boost that area's contrast 6x and it is pure white - the render paints
-# a solid field there to carry the type. There is no image to recover, so any
-# attempt to rebuild it can only invent something, which is what made earlier
-# passes look washed or blurred.
+# The design render bakes the navigation and the headline block into the image,
+# and paints a flat white field directly behind the headline (confirmed by
+# boosting that specific region's contrast 8x: it goes to pure, textureless
+# white - there is no photograph there to recover). Reconstructing it can only
+# ever invent pixels, which is why every earlier pass looked blurred or hazy.
 #
-# So the hero uses the part of the frame that IS photograph: everything right of
-# the headline is untouched, sharp campus. That region is cropped and mirrored so
-# the student sits on the RIGHT (where the design places her) and the plain, pale
-# stone wall falls on the left, under the headline, where it gives the type the
-# most contrast the frame has to offer. Nothing is blurred, softened, enlarged or
-# painted - beyond removing the one circled note that intrudes into the crop.
+# So this crop simply does not include that region. It keeps the wide right-hand
+# portion of the frame - clear of the nav bar, the headline block and the three
+# UI cards - which is entirely real, sharp, untouched photograph: the tower, the
+# full building facade, students walking across the quad, the stone wall, the
+# steps, and the hero student herself, prominently on the right. Nothing in this
+# region is blurred, mirrored, enlarged or painted.
 #
-# Supplying the original photograph would remove the need for the mirror.
+# The one edit is erasing the "More Than a Degree" bubble that the render also
+# bakes in - the site draws its own live version of that note - by interpolating
+# across it from the sky on either side, which is a smooth, near-flat gradient
+# and so recovers cleanly.
+#
+# Supplying the original photograph makes this whole crop unnecessary.
 # ---------------------------------------------------------------------------
 hero_im = load("hero")
 HW, HH = hero_im.size
 
-TOP, BOTTOM = 0.095, 0.652           # below the nav bar, above the cards
-LEFT = 0.500                         # clear of the headline block and the circled note
-plate = hero_im.crop((0, int(TOP * HH), HW, int(BOTTOM * HH)))
+# Measured directly against this file: clears the nav bar (button + search
+# circle) at the top, the headline/eyebrow/CTA block on the left, and stops
+# above the three cards at the bottom.
+LEFT, TOP, RIGHT, BOTTOM = 645, 122, HW, 745
+plate = hero_im.crop((LEFT, TOP, RIGHT, BOTTOM))
 PW, PH = plate.size
 px = plate.load()
 
-
-def to_plate_y(src_y):
-    return int((src_y - TOP) / (BOTTOM - TOP) * PH)
-
-
-# The circled "More Than a Degree" note reaches into the crop. It sits on open
-# sky, so it is interpolated across from the pixels either side, row by row.
-ox0, ox1 = int(0.358 * PW), int(0.492 * PW)
-for y in range(max(0, to_plate_y(0.150)), min(PH, to_plate_y(0.330))):
-    left, right = px[max(0, ox0 - 2), y], px[min(PW - 1, ox1 + 2), y]
-    span = max(1, ox1 - ox0)
-    for x in range(ox0, ox1):
-        t = (x - ox0) / span
+# The circled note, in this crop's local coordinates. It sits on open sky, so
+# interpolating between the pixels just outside it reproduces that sky cleanly.
+bx0, bx1 = 90, 320
+by0, by1 = 60, 265
+for y in range(max(0, by0), min(PH, by1)):
+    left, right = px[max(0, bx0 - 3), y], px[min(PW - 1, bx1 + 3), y]
+    span = max(1, bx1 - bx0)
+    for x in range(bx0, bx1):
+        t = (x - bx0) / span
         px[x, y] = tuple(int(left[c] + (right[c] - left[c]) * t) for c in range(3))
 
-hero_plate = plate.crop((int(LEFT * PW), 0, PW, PH)).transpose(Image.FLIP_LEFT_RIGHT)
-save(hero_plate, "campus-student-hero.jpg", quality=92)
+save(plate, "campus-student-hero.jpg", quality=92)
 
 # ---------------------------------------------------------------------------
 # 02 ABOUT - leadership portraits. The updated design shows these large and

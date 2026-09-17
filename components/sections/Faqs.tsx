@@ -166,11 +166,33 @@ export function Faqs() {
                                 {faq.q}
                               </span>
                               <span
-                                className={`grid h-9 w-9 shrink-0 place-items-center rounded-full transition-colors ${
+                                className={`grid h-9 w-9 shrink-0 place-items-center rounded-full transition-colors duration-300 ${
                                   isOpen ? "bg-[#e0d1fb] text-brand" : "bg-cloud text-muted"
                                 }`}
                               >
-                                <Icon name={isOpen ? "minus" : "plus"} className="h-4 w-4" />
+                                {/* Same plus/minus stroke paths as Icon's "plus"/"minus" -
+                                    just the vertical bar animated to a morph instead of an
+                                    instant glyph swap. */}
+                                <svg
+                                  viewBox="0 0 24 24"
+                                  className="h-4 w-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth={1.6}
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  aria-hidden="true"
+                                  focusable="false"
+                                >
+                                  <path
+                                    d="M12 5.5v13"
+                                    style={{ transformOrigin: "12px 12px" }}
+                                    className={`transition-[transform,opacity] duration-300 ease-in-out ${
+                                      isOpen ? "scale-y-0 opacity-0" : "scale-y-100 opacity-100"
+                                    }`}
+                                  />
+                                  <path d="M5.5 12h13" />
+                                </svg>
                               </span>
                             </button>
                           </h3>
@@ -178,12 +200,19 @@ export function Faqs() {
                             id={panelId}
                             role="region"
                             aria-labelledby={buttonId}
-                            hidden={!isOpen}
-                            className="mx-3 mb-3 rounded-xl bg-[#ece3fd] px-5 py-4"
+                            aria-hidden={!isOpen}
+                            inert={!isOpen}
+                            className={`grid transition-[grid-template-rows] duration-[320ms] ease-in-out ${
+                              isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                            }`}
                           >
-                            <p className="max-w-[64ch] text-[0.9375rem] leading-relaxed text-body">
-                              {faq.a}
-                            </p>
+                            <div className="overflow-hidden">
+                              <div className="mx-3 mb-3 rounded-xl bg-[#ece3fd] px-5 py-4">
+                                <p className="max-w-[64ch] text-[0.9375rem] leading-relaxed text-body">
+                                  {faq.a}
+                                </p>
+                              </div>
+                            </div>
                           </div>
                         </li>
                       );

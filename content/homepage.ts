@@ -155,6 +155,8 @@ export type RouteCard = {
   eyebrow: string;
   brand?: string;
   title: string;
+  /** Optional short line between the title and body - not every card needs one. */
+  subtitle?: string;
   body: string;
   features: readonly string[];
   cta: PathwayCta;
@@ -177,6 +179,7 @@ export const chooseRoute: {
       kicker: "Stronger institutions",
       eyebrow: "For Institutions",
       title: "Tech & Management",
+      subtitle: "Build Employability into the student journey",
       body: "Plan, deliver and measure career readiness across cohorts with an approach designed around your institution.",
       features: ["Customised programmes", "Track outcomes", "Stronger student success"],
       cta: { label: "Explore Institutional Solutions", href: "#institutions" },

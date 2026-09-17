@@ -107,7 +107,21 @@ export function ChooseRoute() {
                       {card.title}
                     </h3>
 
-                    <p className="relative mt-3 text-[0.9375rem] leading-relaxed text-body">
+                    {/* Short bridging line some cards use between the title
+                        and the fuller body copy below - reuses the body
+                        paragraph's own styling so it doesn't introduce a new
+                        weight/size to the card. */}
+                    {card.subtitle ? (
+                      <p className="relative mt-2 text-[0.9375rem] leading-relaxed text-body">
+                        {card.subtitle}
+                      </p>
+                    ) : null}
+
+                    <p
+                      className={`relative text-[0.9375rem] leading-relaxed text-body ${
+                        card.subtitle ? "mt-2" : "mt-3"
+                      }`}
+                    >
                       {card.body}
                     </p>
 

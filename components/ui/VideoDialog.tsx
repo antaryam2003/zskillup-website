@@ -1,8 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { asset } from "@/lib/asset";
 import type { VideoSource } from "@/content/videos";
 import { Icon } from "./Icon";
+
+/** A direct media file (served from /public) rather than a YouTube/Vimeo
+    embed URL - these get a native <video controls> element instead of an
+    <iframe>, and are resolved through `asset()` for the GitHub Pages
+    basePath, since (unlike embed URLs) they're a same-origin /public path. */
+const isDirectVideoFile = (url: string) => /\.(mp4|webm|ogv|mov)$/i.test(url);
 
 /**
  * Accessible video player, opened on demand.
@@ -117,7 +124,23 @@ export function VideoDialog({
         </div>
 
         <div className="aspect-video w-full bg-navy-deep">
-          {mounted && video.url ? (
+          {mounted && video.url && isDirectVideoFile(video.url) ? (
+            // Native controls give play/pause, volume, a scrub bar and
+            // fullscreen for free - object-contain keeps the video's own
+            // aspect ratio intact rather than stretching it to fill this
+            // 16:9 well (harmless here since the source already is 16:9,
+            // but correct regardless of a future source's own ratio).
+            <video
+              key={video.url}
+              src={asset(video.url)}
+              controls
+              playsInline
+              autoPlay
+              className="h-full w-full object-contain"
+            >
+              Your browser does not support embedded video.
+            </video>
+          ) : mounted && video.url ? (
             <iframe
               src={video.url}
               title={video.title}

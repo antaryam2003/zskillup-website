@@ -17,7 +17,7 @@ import { FinalCta } from "@/components/sections/FinalCta";
 export const metadata: Metadata = {
   title: "ZSkillup | Industry-Ready Careers for Students & Institutions",
   description:
-    "Degrees create graduates. ZSkillup helps create industry-ready professionals - through employability programs for institutions, the Prephasz placement-preparation platform and the B.Com + ACCA career pathway.",
+    "Degrees create graduates. ZSkillup helps create industry-ready professionals - through employability programs for institutions, the prephasz placement-preparation platform and the B.Com + ACCA career pathway.",
   alternates: { canonical: "/" },
 };
 

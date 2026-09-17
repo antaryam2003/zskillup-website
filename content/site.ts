@@ -12,7 +12,7 @@ export const site = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.zskillup.com",
   tagline: "Higher education. Brighter careers.",
   description:
-    "ZSkillup works with universities, colleges and students to turn degrees into industry-ready careers - through institutional employability programs, the Prephasz placement-preparation platform and the B.Com + ACCA commerce pathway.",
+    "ZSkillup works with universities, colleges and students to turn degrees into industry-ready careers - through institutional employability programs, the prephasz placement-preparation platform and the B.Com + ACCA commerce pathway.",
 } as const;
 
 export const contact = {
@@ -43,7 +43,7 @@ export const social = [
  */
 export const nav = [
   { label: "Institutions", href: "/#institutions", page: "/institutions" },
-  { label: "Prephasz", href: "/#prephasz", page: "/prephasz" },
+  { label: "prephasz", href: "/#prephasz", page: "/prephasz" },
   { label: "B.Com + ACCA", href: "/#bcom-acca", page: "/bcom-acca" },
   { label: "Why ZSkillup", href: "/#education-to-career", page: "/why-zskillup" },
   { label: "Insights", href: "/insights", page: "/insights" },
@@ -61,7 +61,7 @@ export const footerColumns = [
     title: "What we do",
     links: [
       { label: "ZSkillup for Institutions", href: "/#institutions" },
-      { label: "Prephasz", href: "/#prephasz" },
+      { label: "prephasz", href: "/#prephasz" },
       { label: "B.Com + ACCA", href: "/#bcom-acca" },
       { label: "The Education-to-Career Path", href: "/#education-to-career" },
     ],

@@ -74,9 +74,9 @@ export const heroCards: readonly HeroCard[] = [
   {
     vertical: "prephasz",
     eyebrow: "For Placement Preparation",
-    brandLabel: "Prephasz",
+    brandLabel: "prephasz",
     description: "Stop guessing what to prepare next.",
-    primary: { label: "Explore Prephasz", href: "#prephasz" },
+    primary: { label: "Explore prephasz", href: "#prephasz" },
     secondary: { label: "Get Started", href: "#partner-with-us" },
     video: { label: "Watch Now", href: "#prephasz" },
   },
@@ -185,11 +185,11 @@ export const chooseRoute: {
       vertical: "prephasz",
       kicker: "Confident learners",
       eyebrow: "For Placement Preparation",
-      brand: "Prephasz",
+      brand: "prephasz",
       title: "Stop guessing what to prepare next.",
       body: "Practise for the stages recruiters use, find the areas holding you back and prepare with a clearer plan.",
       features: ["Mock tests & practice", "Personalised insights", "Get job ready"],
-      cta: { label: "Explore Prephasz", href: "#prephasz" },
+      cta: { label: "Explore prephasz", href: "#prephasz" },
     },
     {
       vertical: "commerce",
@@ -312,12 +312,12 @@ export const institutions = {
 /* ========================================================================== */
 
 export const prephasz = {
-  eyebrow: "Prephasz by ZSkillup",
+  eyebrow: "prephasz by ZSkillup",
   headline: { plain: "Preparation works better when you know", highlight: "what comes next." },
   supporting:
-    "Prephasz is built around the actual recruitment journey — helping students identify gaps, practise the right areas, prepare for target companies and track their progress.",
-  primaryCta: { label: "Start on Prephasz", href: "https://prephasz.com" },
-  secondaryCta: { label: "Explore Prephasz", href: "#prephasz-journey" },
+    "prephasz is built around the actual recruitment journey — helping students identify gaps, practise the right areas, prepare for target companies and track their progress.",
+  primaryCta: { label: "Start on prephasz", href: "https://prephasz.com" },
+  secondaryCta: { label: "Explore prephasz", href: "#prephasz-journey" },
   videoLabel: "Watch prephasz in action",
   videoDuration: "2 min",
 
@@ -425,7 +425,7 @@ export const journey = {
     },
     {
       vertical: "prephasz",
-      title: "Prephasz",
+      title: "prephasz",
       body: "Across practice, assessment, interview and recruitment preparation.",
       tags: ["Practice", "Assessments", "Interview Prep", "Recruitment Readiness"],
       href: "#prephasz",

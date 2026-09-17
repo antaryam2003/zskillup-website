@@ -94,7 +94,7 @@ export const testimonials: readonly Testimonial[] = [
     name: "Sneha Patel",
     role: "B.Com Student",
     institution: "Mumbai University",
-    category: "Prephasz",
+    category: "prephasz",
     vertical: "prephasz",
     quote:
       "From resume building to interview preparation, the employability support at ZSkillup is exceptional. I feel more prepared and confident about my career in finance.",
@@ -112,12 +112,12 @@ export const testimonials: readonly Testimonial[] = [
   {
     slug: "priya-nair",
     name: "Priya Nair",
-    role: "Prephasz User",
+    role: "prephasz User",
     institution: "Sanjivani College of Engineering",
-    category: "Prephasz",
+    category: "prephasz",
     vertical: "prephasz",
     quote:
-      "Prephasz showed me exactly which areas were holding me back instead of leaving me to guess. Practising against real company patterns changed how I prepared for every round.",
+      "prephasz showed me exactly which areas were holding me back instead of leaving me to guess. Practising against real company patterns changed how I prepared for every round.",
   },
   {
     slug: "rahul-verma",

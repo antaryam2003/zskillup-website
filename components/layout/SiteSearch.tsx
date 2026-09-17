@@ -20,7 +20,7 @@ type Target = { label: string; hint: string; href: string };
 
 const SECTION_TARGETS: Target[] = [
   { label: "For Institutions", hint: "Build a placement-ready campus", href: "#institutions" },
-  { label: "Prephasz", hint: "Placement preparation platform", href: "#prephasz" },
+  { label: "prephasz", hint: "Placement preparation platform", href: "#prephasz" },
   { label: "B.Com + ACCA", hint: "Commerce career pathway", href: "#bcom-acca" },
   { label: "About ZSkillup", hint: "Mission, vision and leadership", href: "#about" },
   { label: "Choose Your Route", hint: "Find the path that fits you", href: "#choose-your-route" },

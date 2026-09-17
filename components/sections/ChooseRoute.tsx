@@ -93,7 +93,7 @@ export function ChooseRoute() {
                       {card.eyebrow}
                     </p>
 
-                    {card.brand === "Prephasz" ? (
+                    {card.brand === "prephasz" ? (
                       <PrephaszWordmark className="relative mt-3 text-[1.55rem]" showParent />
                     ) : card.brand ? (
                       <p

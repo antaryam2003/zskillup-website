@@ -41,7 +41,7 @@ export const faqCategories = [
     label: "For Institutions",
     blurb: "Partnerships, delivery and campus programs.",
   },
-  { id: "prephasz", label: "Prephasz", blurb: "Placement preparation and platform." },
+  { id: "prephasz", label: "prephasz", blurb: "Placement preparation and platform." },
   {
     id: "commerce",
     label: "B.Com + ACCA",
@@ -62,7 +62,7 @@ export const faqs: readonly Faq[] = [
   {
     category: "general",
     q: "What does ZSkillup do?",
-    a: "ZSkillup supports career readiness across campuses through institutional programs, the Prephasz placement-preparation platform, and the B.Com + ACCA career pathway — combining skills, practice and industry exposure.",
+    a: "ZSkillup supports career readiness across campuses through institutional programs, the prephasz placement-preparation platform, and the B.Com + ACCA career pathway — combining skills, practice and industry exposure.",
   },
   {
     category: "general",
@@ -71,8 +71,8 @@ export const faqs: readonly Faq[] = [
   },
   {
     category: "general",
-    q: "What is Prephasz?",
-    a: "Prephasz is ZSkillup's placement-preparation platform. It is built around the actual recruitment journey, helping students identify gaps, practise the right areas, prepare for target companies and track their progress.",
+    q: "What is prephasz?",
+    a: "prephasz is ZSkillup's placement-preparation platform. It is built around the actual recruitment journey, helping students identify gaps, practise the right areas, prepare for target companies and track their progress.",
   },
   {
     category: "general",
@@ -82,7 +82,7 @@ export const faqs: readonly Faq[] = [
   {
     category: "general",
     q: "Who can use ZSkillup's programs and platforms?",
-    a: "Institutions partner with us to deliver programs to their students. Individual students can prepare for placements on Prephasz, and commerce students can explore the B.Com + ACCA pathway.",
+    a: "Institutions partner with us to deliver programs to their students. Individual students can prepare for placements on prephasz, and commerce students can explore the B.Com + ACCA pathway.",
   },
   {
     category: "general",
@@ -125,22 +125,22 @@ export const faqs: readonly Faq[] = [
   /* --- Prephasz ------------------------------------------------------------ */
   {
     category: "prephasz",
-    q: "How is Prephasz different from a general learning platform?",
-    a: "Prephasz is organised around the recruitment sequence rather than around courses. Students check where they stand, practise the areas holding them back, prepare for target companies and track progress.",
+    q: "How is prephasz different from a general learning platform?",
+    a: "prephasz is organised around the recruitment sequence rather than around courses. Students check where they stand, practise the areas holding them back, prepare for target companies and track progress.",
   },
   {
     category: "prephasz",
-    q: "What can students practise on Prephasz?",
+    q: "What can students practise on prephasz?",
     a: "Focused assessments, personalised practice based on performance and target roles, company-specific practice and patterns, and interview preparation resources.",
   },
   {
     category: "prephasz",
-    q: "Can students use Prephasz on their own?",
-    a: "Yes. Students can start on Prephasz directly, and institutions can also make it part of a wider campus program.",
+    q: "Can students use prephasz on their own?",
+    a: "Yes. Students can start on prephasz directly, and institutions can also make it part of a wider campus program.",
   },
   {
     category: "prephasz",
-    q: "How does Prephasz help students know what to work on next?",
+    q: "How does prephasz help students know what to work on next?",
     a: "Assessments highlight current strengths and gaps, and feedback turns weak areas into specific next actions rather than a generic study list.",
   },
 

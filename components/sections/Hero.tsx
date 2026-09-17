@@ -278,9 +278,17 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
           this section was already rewritten once to fix (see the title
           above). Forcing all three to stack together below the point where
           even card 3 comfortably fits on one line keeps their heights
-          matched regardless of label length. */}
+          matched regardless of label length.
+
+          Watch Now needs `self-start` here: it's the first item in this
+          flex-col, and a flex column's items default to `align-self:
+          stretch` on the cross axis - so despite VideoDialog's own pill
+          being `inline-flex` (content-sized on its own terms), this parent
+          was stretching it to the column's full width regardless. `self-start`
+          overrides just that one item's cross-axis sizing back to its
+          content width, without touching the row below it. */}
       <div className="mt-auto flex flex-col gap-3 pt-5">
-        <VideoDialog video={video} label={card.video.label} variant="pill" />
+        <VideoDialog video={video} label={card.video.label} variant="pill" className="self-start" />
         <div className="flex flex-col gap-2.5 min-[1350px]:flex-row min-[1350px]:items-center">
           <Button href={card.primary.href} variant="primary" size="sm">
             {card.primary.label}

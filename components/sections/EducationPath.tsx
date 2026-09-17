@@ -48,34 +48,18 @@ export function EducationPath() {
   return (
     <Section id="education-to-career" tone="white" labelledBy="journey-heading">
       <Container>
-        <div className="relative">
-          {/* OUR GOAL - light mint, one small accent, per the updated design. */}
-          <aside className="mb-10 rounded-card bg-[#e7f5ef] p-5 lg:ml-auto lg:w-[23rem]">
-            <div className="flex items-center gap-3">
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#cfeae0] text-com">
-                <Icon name="target" className="h-4 w-4" />
-              </span>
-              <p className="eyebrow text-[0.6875rem] text-navy">{journey.goal.eyebrow}</p>
-            </div>
-            <h3 className="mt-3 text-[1.0625rem] leading-snug font-bold text-navy">
-              {journey.goal.title}
-            </h3>
-            <p className="mt-1.5 text-[0.875rem] leading-relaxed text-body">{journey.goal.body}</p>
-          </aside>
-
-          <div className="text-center lg:-mt-16">
-            <p className="eyebrow justify-center text-navy/70">{journey.eyebrow}</p>
-            {/* One gradient sweep across the whole line, as the design shows. */}
-            <h2
-              id="journey-heading"
-              className="text-gradient mx-auto mt-5 w-fit text-[2rem] leading-[1.1] font-extrabold text-balance sm:text-[2.7rem] lg:text-[3.25rem] lg:text-nowrap"
-            >
-              {journey.headline.plain} {journey.headline.gradient}
-            </h2>
-            <p className="mx-auto mt-5 max-w-[62ch] text-[1.0625rem] leading-relaxed text-body sm:text-lg">
-              {journey.supporting}
-            </p>
-          </div>
+        <div className="text-center">
+          <p className="eyebrow justify-center text-navy/70">{journey.eyebrow}</p>
+          {/* One gradient sweep across the whole line, as the design shows. */}
+          <h2
+            id="journey-heading"
+            className="text-gradient mx-auto mt-5 w-fit text-[2rem] leading-[1.1] font-extrabold text-balance sm:text-[2.7rem] lg:text-[3.25rem] lg:text-nowrap"
+          >
+            {journey.headline.plain} {journey.headline.gradient}
+          </h2>
+          <p className="mx-auto mt-5 max-w-[62ch] text-[1.0625rem] leading-relaxed text-body sm:text-lg">
+            {journey.supporting}
+          </p>
         </div>
 
         {/* --- Seven stages: ONE connected journey, not seven products ------- */}

@@ -108,11 +108,15 @@ export function ChooseRoute() {
                     </h3>
 
                     {/* Short bridging line some cards use between the title
-                        and the fuller body copy below - reuses the body
-                        paragraph's own styling so it doesn't introduce a new
-                        weight/size to the card. */}
+                        and the fuller body copy below - styled identically to
+                        the title above it so the two read as one two-line
+                        heading. That has to include tracking-[-0.022em] and
+                        text-balance explicitly: h1-h4 get both from a global
+                        base rule keyed to the tag name (see globals.css),
+                        which a <p> doesn't pick up just by matching the
+                        title's own Tailwind classes. */}
                     {card.subtitle ? (
-                      <p className="relative mt-2 text-[0.9375rem] leading-relaxed text-body">
+                      <p className="relative mt-1 text-[1.25rem] leading-snug font-extrabold tracking-[-0.022em] text-navy text-balance">
                         {card.subtitle}
                       </p>
                     ) : null}

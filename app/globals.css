@@ -221,3 +221,40 @@
   white-space: nowrap;
   border-width: 0;
 }
+
+/* Testimonials marquee - the track holds two identical copies of the
+   sequence back to back, so sliding exactly half its own width loops
+   seamlessly with no visible reset. */
+@keyframes testimonial-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.testimonial-track {
+  animation-name: testimonial-marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.testimonial-marquee:hover .testimonial-track,
+.testimonial-marquee:focus-within .testimonial-track,
+.testimonial-marquee[data-paused="true"] .testimonial-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-marquee {
+    overflow-x: auto;
+  }
+  .testimonial-track {
+    animation: none;
+    transform: none;
+  }
+  .testimonial-track .testimonial-clone {
+    display: none;
+  }
+}

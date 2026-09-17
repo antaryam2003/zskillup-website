@@ -54,18 +54,16 @@ export function VideoDialog({
         <button
           type="button"
           onClick={open}
-          className={`group inline-flex items-center gap-1 rounded-full border border-line bg-white py-1 pr-2 pl-1 text-[0.8125rem] font-semibold whitespace-nowrap text-navy transition-colors hover:border-navy/30 ${className}`}
+          className={`group inline-flex items-center gap-2 rounded-full border border-line bg-white py-1.5 pr-4 pl-1.5 text-[0.875rem] font-semibold whitespace-nowrap text-navy transition-colors hover:border-navy/30 ${className}`}
         >
           {/* The play glyph sits inside its own outlined circle - a thin
               border matching the pill's own, NOT a dark fill - so the whole
-              control reads as the lightest of the three actions. Sized down
-              from the original h-7/w-7: at typical laptop widths this pill is
-              one of three things fighting for the same ~400px card row, and
-              every couple of pixels trimmed here is a couple of pixels less
-              width the card itself has to supply to avoid the row spilling
-              past its own edge. */}
-          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-line text-navy transition-colors group-hover:border-navy/30">
-            <Icon name="play" className="ml-0.5 h-2.5 w-2.5" />
+              control reads as the lightest of the three actions. This can
+              afford to sit roomier than the card's other two actions: it has
+              its own row now, rather than sharing one with them, so it isn't
+              competing for width the way it used to. */}
+          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-line text-navy transition-colors group-hover:border-navy/30">
+            <Icon name="play" className="ml-0.5 h-3 w-3" />
           </span>
           {label}
         </button>

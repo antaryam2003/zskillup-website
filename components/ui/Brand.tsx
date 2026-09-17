@@ -81,15 +81,21 @@ function PrephaszArrow({ className }: { className: string }) {
  * yellow/orange arrow glyph, and "by ZSkillup" beneath. Pure yellow letterforms
  * measure about 1.6:1 on white, so the word itself is never set in yellow on a
  * light surface - only the mark is.
+ *
+ * `accent` is opt-in and only used by the Hero card, which references a design
+ * that also picks out the "pre" out in the same gold as the arrow. Every other
+ * call site leaves it off and keeps the original all-navy word.
  */
 export function PrephaszWordmark({
   className = "text-2xl",
   tone = "dark",
   showParent = false,
+  accent = false,
 }: {
   className?: string;
   tone?: "dark" | "light";
   showParent?: boolean;
+  accent?: boolean;
 }) {
   const light = tone === "light";
   return (
@@ -99,7 +105,8 @@ export function PrephaszWordmark({
           light ? "text-white" : "text-navy"
         }`}
       >
-        prephas
+        {accent ? <span className="text-[#F0A020]">pre</span> : "pre"}
+        phas
         <PrephaszArrow className="-mt-[0.26em] ml-[0.01em] h-[1.05em] w-[0.82em] text-[#F0A020]" />
       </span>
       {showParent ? (

@@ -4,6 +4,7 @@ import { hero, heroCards, type Vertical } from "@/content/homepage";
 import { media } from "@/content/media";
 import { videos } from "@/content/videos";
 import { Button } from "@/components/ui/Button";
+import { PrephaszWordmark } from "@/components/ui/Brand";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { Container, verticalStyles } from "@/components/ui/Section";
 import { VideoDialog } from "@/components/ui/VideoDialog";
@@ -149,36 +150,27 @@ export function Hero() {
 
       {/* Three pathway cards, pulled up to overlap the photo band's lower
           edge - never absorbed into its height. They run wider than the
-          headline's body container on large screens, which is also what
-          keeps all three CTAs on one row. On mobile they stack BELOW the
-          headline and primary CTA, on their own plain background.
+          headline's body container on large screens. On mobile they stack
+          BELOW the headline and primary CTA, on their own plain background.
 
-          This uses its OWN max-width (1600px vs the site's usual 1240px)
-          rather than the previous approach of bleeding the row out from
-          inside a narrower, already-centred <Container> with a negative
-          margin. That bled amount was sized relative to the 1240px cap, so it
-          only worked once the viewport was comfortably past that cap - at
-          exactly the width where a laptop screen commonly sits (~1280-1350px)
-          the maths went negative and pulled the whole row off the left edge
-          of the page, which is what let card 3's CTA row spill past its own
-          right border. A dedicated max-width, capped and centred the same way
-          the rest of the site's Container is, can't do that at any width.
+          This uses its OWN max-width (1480px vs the site's usual 1240px)
+          rather than bleeding the row out from inside a narrower,
+          already-centred <Container> with a negative margin - that bled
+          amount is sized relative to the Container's own cap, so it only
+          works once the viewport is comfortably past it, and goes wrong
+          exactly where a laptop screen commonly sits. A dedicated max-width,
+          capped and centred the same way the rest of the site's Container is,
+          can't do that at any width.
 
-          1680px, wider again than an earlier pass's 1600px, because that
-          pass's "~25px clearance at every width" reading turned out to be a
-          false negative: it compared the CTA row's own bounding box to the
-          card's edge, but `flex-wrap` avoids overflow BY wrapping onto a
-          second line, so a row that doesn't fit on one line reads as "safe"
-          on that box the same way a row that fits easily does - the box
-          itself never overflows either way. Measuring what the row's content
-          actually needs (each action's real rendered width, independent of
-          whether it's currently wrapped) against what was available showed
-          card 3's row was up to 94px short of fitting at common laptop
-          widths. Combined with the trimmed Watch Now pill and CTA gap below,
-          this keeps growing the row's genuine spare room well past the point
-          (see that breakpoint's own comment) where it switches to one line,
-          instead of plateauing right at the edge of fitting. */}
-      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1680px] px-5 sm:-mt-20 sm:px-8 lg:-mt-24">
+          1480px keeps the cards noticeably narrower than the very wide
+          1680px this used previously - each card now stays close to the
+          proportions in the reference designs instead of stretching to fill
+          the full photograph width. That's safe to do now because the CTA
+          row below no longer needs to fit three actions on one line: Watch
+          Now sits on its own row, so the primary + secondary pair only ever
+          has to share a row with each other, which fits with room to spare
+          at any card width this produces - see that row's own comment. */}
+      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1480px] px-5 sm:-mt-20 sm:px-8 lg:-mt-24">
         <ul className="grid gap-5 lg:grid-cols-3">
           {heroCards.map((card) => (
             <li key={card.eyebrow}>
@@ -218,59 +210,85 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
 
   return (
     <article
-      className={`flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-5 shadow-card sm:p-6`}
+      className={`flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-6 shadow-card`}
     >
-      <div className="flex items-start gap-3">
-        <span className={`grid h-14 w-14 shrink-0 place-items-center rounded-full ${style.icon}`}>
-          <Icon name={cardIcon[card.vertical]} className="h-6 w-6" />
+      <div className="flex items-start gap-4">
+        <span className={`grid h-16 w-16 shrink-0 place-items-center rounded-full ${style.icon}`}>
+          <Icon name={cardIcon[card.vertical]} className="h-7 w-7" />
         </span>
 
-        <div className="min-w-0">
-          {/* The offering is named inline, in a tinted pill - "For Commerce
-              Careers" alone would not tell a new visitor what is on offer. */}
-          <h2 className="text-[0.9375rem] leading-snug font-bold text-navy">
+        <div className="min-w-0 pt-0.5">
+          {/* The offering is named inline. "For Commerce Careers" alone
+              wouldn't tell a new visitor what's on offer, so a tinted pill
+              names it directly after an en dash - except prephasz, which
+              gets its own wordmark there instead of a pill, matching how the
+              brand mark appears everywhere else it's named on the page.
+
+              Capped width, same reasoning as the description below: at this
+              card width "For Universities & Institutions" (the one card with
+              no badge) fits on a single line while the other two - each
+              carrying a badge or wordmark after their own, shorter eyebrow -
+              wrap to two, and that mismatch is what left card 1 shorter than
+              its siblings. Wrapping all three to two lines here keeps every
+              card's title block the same height regardless of vertical. */}
+          <h2 className="max-w-[15rem] text-[1.125rem] leading-snug font-bold text-navy">
             {card.eyebrow}
-            {card.brandLabel ? (
+            {card.vertical === "prephasz" ? (
               <>
                 {" – "}
-                <span className={`inline-block rounded-full ${style.band} px-2 py-0.5 ${style.text}`}>
+                <PrephaszWordmark className="inline-block align-[-0.34em] text-[1.5rem]" accent />
+              </>
+            ) : card.brandLabel ? (
+              <>
+                {" – "}
+                <span className={`inline-block rounded-full ${style.band} px-2.5 py-1 ${style.text}`}>
                   {card.brandLabel}
                 </span>
               </>
             ) : null}
           </h2>
           {/* Capped width so every description wraps to two lines, the same as
-              the longest one. Without this, the shorter two descriptions sat
-              on a single line while the grid still stretched every card to
-              match the longest card's height - which is what produced the
-              large empty gap above the CTA row. */}
-          <p className="mt-2 max-w-[15rem] text-[0.9375rem] leading-relaxed text-body">
+              the longest one. Without this, the shorter descriptions sat on a
+              single line while the grid still stretched every card to match
+              the longest card's height - which produced a large empty gap
+              above the CTA row. */}
+          <p className="mt-2 max-w-[14rem] text-[0.875rem] leading-relaxed text-body">
             {card.description}
           </p>
         </div>
       </div>
 
-      {/* CTA hierarchy: filled button, then text link, then the lightest video
-          action. All three journeys stay available without the card feeling
-          overloaded.
+      {/* CTA layout: Watch Now - the lightest of the three actions - sits
+          alone on its own row, with the filled primary and outlined
+          secondary sharing the row below. Splitting it this way (rather than
+          fitting all three actions on one row) is what let the cards get
+          narrower without any card's longest pair of actions running out of
+          room: two buttons sharing a row need roughly half the width three
+          did, so even card 3's "Explore Program" + "Talk to an Advisor" -
+          the pairing that used to spill past its card at this width - now
+          fits with margin at every width the grid uses.
 
-          `flex-nowrap` only once the row has measurably reached the width
-          card 3's three actions actually need on one line - 1560px, checked
-          directly against this layout by summing each action's own rendered
-          width, not a rect that `flex-wrap` can quietly wrap out of trouble
-          and read as "fine" either way. A three-across grid this size simply
-          cannot fit that row on one line any earlier without either widening
-          the cards far past matching the reference photo, or shrinking the
-          actions' own text/padding - so below 1560px the row safely wraps
-          onto a second line instead of being forced into overflow. */}
-      <div className="mt-auto flex flex-wrap items-center gap-x-1.5 gap-y-2.5 pt-5 min-[1560px]:flex-nowrap">
-        <Button href={card.primary.href} variant="primary" size="sm">
-          {card.primary.label}
-        </Button>
-        <Button href={card.secondary.href} variant="link" className="whitespace-nowrap">
-          {card.secondary.label}
-        </Button>
+          Below 1350px, though, that pair is switched to stack (flex-col)
+          rather than left to wrap on its own (flex-wrap): each card's two
+          labels are a different length, so leaving it to flex-wrap would
+          make each card decide independently whether IT personally still
+          fits on one line - card 1's short "Explore" pair keeps fitting
+          20px+ longer than card 3's does, which would leave card 1 sitting
+          one line shorter than its siblings and re-open the empty-gap bug
+          this section was already rewritten once to fix (see the title
+          above). Forcing all three to stack together below the point where
+          even card 3 comfortably fits on one line keeps their heights
+          matched regardless of label length. */}
+      <div className="mt-auto flex flex-col gap-3 pt-5">
         <VideoDialog video={video} label={card.video.label} variant="pill" />
+        <div className="flex flex-col gap-2.5 min-[1350px]:flex-row min-[1350px]:items-center">
+          <Button href={card.primary.href} variant="primary" size="sm">
+            {card.primary.label}
+          </Button>
+          <Button href={card.secondary.href} variant="outline" size="sm">
+            {card.secondary.label}
+          </Button>
+        </div>
       </div>
     </article>
   );

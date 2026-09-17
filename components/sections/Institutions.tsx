@@ -139,7 +139,11 @@ export function Institutions() {
           </div>
         </div>
 
-        {/* --- Programs: stays a TABLE, never cards -------------------------- */}
+        {/* --- Programs: six compact cards, not the table this used to be ----
+            Deliberate change from the earlier "stays a table, never cards"
+            rule - explicitly requested. Program name + focus are unchanged
+            from the table's own <th>/<td> content; only the wrapper markup
+            changed, so this is a straight structural swap, not a rewrite. */}
         <div
           id="institution-programs"
           className="mt-20 grid scroll-mt-24 gap-10 lg:mt-24 lg:grid-cols-12 lg:gap-12"
@@ -157,50 +161,27 @@ export function Institutions() {
             </div>
           </div>
 
-          <div className="lg:col-span-8">
-            <div className="overflow-x-auto rounded-card border border-line bg-white">
-              <table className="w-full min-w-[34rem] border-collapse text-left">
-                <caption className="sr-only">
-                  ZSkillup programs available to partner institutions, and the focus of each
-                </caption>
-                <thead>
-                  <tr className="bg-[#f1edfc]">
-                    <th
-                      scope="col"
-                      className="px-5 py-3.5 text-[0.8125rem] font-semibold text-muted"
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-8 lg:grid-cols-3">
+            {institutions.programs.map((program, i) => (
+              <li key={program.name}>
+                <div className="h-full rounded-tile border border-line bg-white p-4 shadow-card">
+                  <div className="flex items-start gap-3">
+                    <span
+                      className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg ${programWells[i]}`}
                     >
-                      Program
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-5 py-3.5 text-[0.8125rem] font-semibold text-muted"
-                    >
-                      Focus
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {institutions.programs.map((program, i) => (
-                    <tr key={program.name} className="border-t border-line-soft align-top">
-                      <th scope="row" className="px-5 py-4 font-bold text-navy">
-                        <span className="flex items-start gap-3">
-                          <span
-                            className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg ${programWells[i]}`}
-                          >
-                            <Icon name={programIcons[i]} className="h-[0.95rem] w-[0.95rem]" />
-                          </span>
-                          <span className="pt-1">{program.name}</span>
-                        </span>
-                      </th>
-                      <td className="px-5 py-4 pt-5 text-[0.875rem] leading-relaxed text-body">
-                        {program.focus}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                      <Icon name={programIcons[i]} className="h-[0.95rem] w-[0.95rem]" />
+                    </span>
+                    <h4 className="pt-0.5 text-[0.9375rem] leading-snug font-bold text-navy">
+                      {program.name}
+                    </h4>
+                  </div>
+                  <p className="mt-3 text-[0.8125rem] leading-relaxed text-body">
+                    {program.focus}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* --- How we customise: ONE connected process ----------------------- */}

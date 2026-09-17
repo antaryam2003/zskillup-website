@@ -45,10 +45,27 @@ export function Hero() {
           to scale - and therefore crop - far more aggressively just to cover
           it. Bounding the band keeps the crop close to what desktop shows. */}
       <div className="relative pt-[4.5rem]">
-        {/* A genuine, unaltered crop of the design's own photograph - see
-            content/media.ts and scripts/extract-comp-assets.py for exactly
-            what was cropped and why. object-position keeps the tower and the
-            student both in frame across viewport widths.
+        {/* The supplied production photograph, used directly - see
+            content/media.ts. object-position keeps the "More Than a Degree"
+            note, the buildings and the student in frame as the band's own
+            aspect ratio changes by viewport: short and wide on desktop (more
+            top/bottom gets cropped, so a higher focal point keeps her face
+            and the note in view rather than centering on her lower body),
+            taller and narrower on mobile (crops from the sides instead,
+            centered closer to her so she isn't pushed toward one edge).
+
+            The `lg` X value (8%, not a centered-looking number) only matters
+            between 1024px and ~1332px: below 1024 the mobile/tablet values
+            apply, and above ~1332 the band becomes wide enough relative to
+            this photo's own aspect ratio that `cover` shows its full width
+            with zero horizontal crop - at that point X has no effect at all,
+            it's simply the whole image, so there's nothing to tune further
+            up there. In that 1024-1332px band, though, the crop is still
+            live, and a higher X (centering on the student, as the mobile
+            values do) pulls the note far enough left to collide with the
+            headline - see the wrapper div below for the other half of that
+            fix. Lower X shows more open sky instead, pushing the note and
+            buildings further right, clear of the text column.
 
             LCP image: `priority`, never lazy-loaded, dimensions declared. */}
         <Image
@@ -58,7 +75,7 @@ export function Hero() {
           height={media.hero.height}
           priority
           sizes="100vw"
-          className="absolute inset-0 -z-20 h-full w-full object-cover object-[58%_22%] sm:object-[50%_26%] lg:object-[42%_30%]"
+          className="absolute inset-0 -z-20 h-full w-full object-cover object-[62%_30%] sm:object-[80%_24%] lg:object-[8%_20%]"
         />
 
         {/* A soft, bright wash - not a panel - so the headline stays legible
@@ -77,7 +94,18 @@ export function Hero() {
           className="absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgba(255,255,255,0.78)_0%,rgba(255,255,255,0.72)_28%,rgba(255,255,255,0.55)_52%,rgba(255,255,255,0.24)_76%,rgba(255,255,255,0)_94%)] lg:bg-[linear-gradient(100deg,rgba(255,255,255,0.74)_0%,rgba(255,255,255,0.66)_20%,rgba(255,255,255,0.42)_40%,rgba(255,255,255,0.08)_58%,rgba(255,255,255,0)_68%)]"
         />
 
-        <Container>
+        {/* Deliberately NOT <Container>: that component re-centers within
+            max-w-[1240px] once the viewport passes 1240px, so its left edge
+            marches rightward as the screen widens - while the "More Than a
+            Degree" note baked into the photo (full-bleed, un-centered) only
+            drifts rightward at ~0.36px per viewport px. A centered column
+            drifting at a faster rate eventually collides with a slower-moving
+            fixed point it started clear of, which is what actually caused the
+            headline to creep into the note at ordinary and wide desktop
+            widths alike. A flat left padding - no centering, no cap - keeps
+            the headline's start position stable instead, matching how the
+            photo's own content is positioned from the left edge. */}
+        <div className="w-full px-5 sm:px-8">
           <div className="grid items-start gap-6 pt-14 sm:pt-16 lg:grid-cols-12 lg:pt-20">
             <div className="lg:col-span-7">
               <p className="eyebrow text-navy/80 drop-shadow-[0_1px_3px_rgba(255,255,255,0.7)]">{hero.eyebrow}</p>
@@ -106,17 +134,17 @@ export function Hero() {
               </div>
             </div>
 
-            {/* The circled handwritten note, in the open sky beside the headline. */}
-            <div className="hidden lg:col-span-5 lg:block">
-              <CircledNote>{hero.handwritten}</CircledNote>
-            </div>
+            {/* The "More Than a Degree" note is no longer drawn live here -
+                the supplied photograph bakes it in directly (see
+                content/media.ts), so a second, separately-positioned copy
+                would just double up on top of it. */}
           </div>
 
           {/* Reserves room below the CTA for the cards to overlap into - this
               gives the band enough height without folding the cards' own
               (much taller, on mobile) height into it. */}
           <div aria-hidden="true" className="h-20 sm:h-24 lg:h-28" />
-        </Container>
+        </div>
       </div>
 
       {/* Three pathway cards, pulled up to overlap the photo band's lower
@@ -181,41 +209,6 @@ export function Hero() {
         </div>
       </Container>
     </section>
-  );
-}
-
-/** Hand-drawn ellipse with an underline swoosh, as in the design. */
-function CircledNote({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="relative mt-4 -ml-28 inline-block px-7 py-5 xl:-ml-20">
-      <svg
-        viewBox="0 0 200 130"
-        className="absolute inset-0 h-full w-full text-navy/70"
-        aria-hidden="true"
-        focusable="false"
-        preserveAspectRatio="none"
-      >
-        <ellipse
-          cx="100"
-          cy="60"
-          rx="93"
-          ry="52"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.6"
-        />
-        <path
-          d="M46 108c30 12 78 11 112-6"
-          fill="none"
-          stroke="#5B2BCB"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-        />
-      </svg>
-      <span className="handwritten relative block w-[8.5rem] text-center text-[1.45rem] text-navy">
-        {children}
-      </span>
-    </span>
   );
 }
 

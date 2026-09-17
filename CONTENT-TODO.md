@@ -82,20 +82,19 @@ needs to change — `content/media.ts` holds every path, dimension and alt text.
 
 | Slot | Path | Current | Note |
 |---|---|---|---|
-| Hero (LCP) | `campus-student-hero.jpg` | 2020×639 | Rebuilt plate — see below |
+| Hero (LCP) | `campus-student-hero.jpg` | 1670×942 | **Closed** — the real photograph, supplied directly |
 | Leadership ×3 | `team/*.jpg` | 512×512 | Cropped from the About comp |
 | B.Com + ACCA | `commerce-student.jpg` | 322×610 | Small; an original would help most here |
 | Learner photos ×3 | `learners/*.jpg` | 256×256 | Only Ritika, Aman and Sneha exist |
 | Featured event | `events/industry-expert-session.jpg` | 739×362 | Only **one** featured shot exists |
 | Gallery ×8 | `events/*.jpg` | ~422×189 | Cropped above each baked caption |
 
-**About the hero specifically.** The comp bakes the headline, both handwritten
-notes and the "SAME STUDENTS. BIGGER TOMORROWS." wall lettering directly into the
-photograph. The extraction script removes all of it: the left third is rebuilt as
-the same white wash the comp uses (sampled per row from the photo's own colour,
-then ramped back into the untouched photograph before it reaches the student), and
-the wall lettering is interpolated across the stone. The result is a clean
-full-width plate. An original photograph would remove the need for any of that.
+**The hero is done.** It now uses the real, full-composition photograph
+supplied for this slot — open sky on the left, the campus buildings and the
+"More Than a Degree" note in the middle, the student on the right, nothing
+reconstructed or painted over. `scripts/extract-comp-assets.py` still has the
+old comp-crop logic that used to fill this slot, but it's disabled (see the
+comment there) so it can't overwrite this file if the script is re-run.
 
 **Two gaps worth closing:**
 

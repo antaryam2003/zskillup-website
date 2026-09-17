@@ -29,16 +29,18 @@ export const media = {
   /**
    * Hero / LCP image. Deliberately NOT lazy-loaded (see Hero.tsx `priority`).
    *
-   * A genuine, unaltered crop of the design's own photograph - the wide right-hand
-   * portion of the frame, clear of the baked navigation, headline block and
-   * cards. Nothing is blurred, mirrored or invented. See
-   * scripts/extract-comp-assets.py for why the crop is shaped this way.
+   * The supplied production photograph - full composition, used as-is (not a
+   * crop out of a flat comp render like the rest of this file). It already
+   * frames everything the Hero needs: open sky on the left for the headline,
+   * the campus buildings and the "More Than a Degree" note in the middle, and
+   * the student on the right. See Hero.tsx for how `object-position` keeps
+   * all of that in frame as the band's own aspect ratio changes by viewport.
    */
   hero: {
     src: "/images/campus-student-hero.jpg",
-    alt: "A student looking up at a university campus building, with other students walking behind her",
-    width: 1371,
-    height: 623,
+    alt: "A student with a backpack walking across a university campus, smiling up at the historic stone buildings, with other students walking ahead of her and a handwritten \"More Than a Degree\" note beside the architecture",
+    width: 1670,
+    height: 942,
   },
 
   /** B.Com + ACCA section. Aspirational, natural, no floating elements around it. */

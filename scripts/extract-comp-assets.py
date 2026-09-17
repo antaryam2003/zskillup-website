@@ -70,51 +70,38 @@ def square(img, bias=0.3):
 print("Extracting artwork from the updated design renders...")
 
 # ---------------------------------------------------------------------------
-# 01 HERO - a genuine, unaltered crop of the design's own photograph.
-#
-# The design render bakes the navigation and the headline block into the image,
-# and paints a flat white field directly behind the headline (confirmed by
-# boosting that specific region's contrast 8x: it goes to pure, textureless
-# white - there is no photograph there to recover). Reconstructing it can only
-# ever invent pixels, which is why every earlier pass looked blurred or hazy.
-#
-# So this crop simply does not include that region. It keeps the wide right-hand
-# portion of the frame - clear of the nav bar, the headline block and the three
-# UI cards - which is entirely real, sharp, untouched photograph: the tower, the
-# full building facade, students walking across the quad, the stone wall, the
-# steps, and the hero student herself, prominently on the right. Nothing in this
-# region is blurred, mirrored, enlarged or painted.
-#
-# The one edit is erasing the "More Than a Degree" bubble that the render also
-# bakes in - the site draws its own live version of that note - by interpolating
-# across it from the sky on either side, which is a smooth, near-flat gradient
-# and so recovers cleanly.
-#
-# Supplying the original photograph makes this whole crop unnecessary.
+# 01 HERO - DISABLED. A real, full-composition photograph has since been
+# supplied directly for this slot (see content/media.ts and CONTENT-TODO.md) -
+# open sky on the left, the buildings and "More Than a Degree" note in the
+# middle, the student on the right, all real and unedited. That supersedes
+# this block, which only ever reconstructed a stand-in crop out of a flat comp
+# render (and had to paint over the note entirely, since it couldn't recover
+# real pixels for it). Left here for history; do not re-enable it, or it will
+# overwrite the supplied photograph with the old stand-in.
 # ---------------------------------------------------------------------------
-hero_im = load("hero")
-HW, HH = hero_im.size
-
-# Measured directly against this file: clears the nav bar (button + search
-# circle) at the top, the headline/eyebrow/CTA block on the left, and stops
-# above the three cards at the bottom.
-LEFT, TOP, RIGHT, BOTTOM = 645, 122, HW, 745
-plate = hero_im.crop((LEFT, TOP, RIGHT, BOTTOM))
-PW, PH = plate.size
-px = plate.load()
-
-# The circled note, in this crop's local coordinates. It sits on open sky, so
-# interpolating between the pixels just outside it reproduces that sky cleanly.
-bx0, bx1 = 90, 320
-by0, by1 = 60, 265
-for y in range(max(0, by0), min(PH, by1)):
-    left, right = px[max(0, bx0 - 3), y], px[min(PW - 1, bx1 + 3), y]
-    span = max(1, bx1 - bx0)
-    for x in range(bx0, bx1):
-        t = (x - bx0) / span
-        px[x, y] = tuple(int(left[c] + (right[c] - left[c]) * t) for c in range(3))
-
-save(plate, "campus-student-hero.jpg", quality=92)
+# hero_im = load("hero")
+# HW, HH = hero_im.size
+#
+# # Measured directly against this file: clears the nav bar (button + search
+# # circle) at the top, the headline/eyebrow/CTA block on the left, and stops
+# # above the three cards at the bottom.
+# LEFT, TOP, RIGHT, BOTTOM = 645, 122, HW, 745
+# plate = hero_im.crop((LEFT, TOP, RIGHT, BOTTOM))
+# PW, PH = plate.size
+# px = plate.load()
+#
+# # The circled note, in this crop's local coordinates. It sits on open sky, so
+# # interpolating between the pixels just outside it reproduces that sky cleanly.
+# bx0, bx1 = 90, 320
+# by0, by1 = 60, 265
+# for y in range(max(0, by0), min(PH, by1)):
+#     left, right = px[max(0, bx0 - 3), y], px[min(PW - 1, bx1 + 3), y]
+#     span = max(1, bx1 - bx0)
+#     for x in range(bx0, bx1):
+#         t = (x - bx0) / span
+#         px[x, y] = tuple(int(left[c] + (right[c] - left[c]) * t) for c in range(3))
+#
+# save(plate, "campus-student-hero.jpg", quality=92)
 
 # ---------------------------------------------------------------------------
 # 02 ABOUT - leadership portraits. The updated design shows these large and

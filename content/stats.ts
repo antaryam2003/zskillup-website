@@ -68,6 +68,23 @@ export const partnerStats: readonly Stat[] = [
 ];
 
 /**
+ * HOMEPAGE CREDIBILITY STRIP - between Hero and About.
+ *
+ * This is a deliberate, explicit exception to the "NO corporate statistics
+ * strip in the Hero" rule noted above: these six figures were supplied
+ * directly, by name, for this exact placement, so they're treated the same
+ * way `partnerStats` is - given, not invented, hence `verified: true`.
+ */
+export const heroCredibilityStats: readonly Stat[] = [
+  { value: "55+", label: "College Partnerships", verified: true },
+  { value: "300+", label: "Hiring Partners", verified: true },
+  { value: "250+", label: "Placements", verified: true },
+  { value: "₹19 LPA", label: "Highest Package", verified: true },
+  { value: "₹5.6 LPA", label: "Average Package", verified: true },
+  { value: "78%+", label: "Placement Success", verified: true },
+];
+
+/**
  * INSTITUTIONS section credibility trio.
  *
  * The updated design resolves the brief's "do not hard-code 100+, 50K+ or 80%+

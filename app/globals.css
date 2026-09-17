@@ -62,6 +62,12 @@
   --color-com-soft: #eaf5f3;
   --color-com-line: #bfe0da;
 
+  /* --- Homepage statistics strip: maroon numbers on a warm-pink field.
+     Sampled directly from the supplied reference image - not part of any
+     existing vertical, used only for the stat figures themselves. */
+  --color-maroon: #730d40;
+  --color-stats-bg: #f2ebec;
+
   --radius-card: 1.25rem;
   --radius-tile: 0.875rem;
 

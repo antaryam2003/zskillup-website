@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { faqs } from "@/content/faqs";
 import { contact, site } from "@/content/site";
 import { Hero } from "@/components/sections/Hero";
+import { HomepageStats } from "@/components/sections/HomepageStats";
 import { About } from "@/components/sections/About";
 import { ChooseRoute } from "@/components/sections/ChooseRoute";
 import { Institutions } from "@/components/sections/Institutions";
@@ -32,11 +33,17 @@ export const metadata: Metadata = {
  *
  * Heading hierarchy: the Hero headline is the page's only H1; every section
  * headline is an H2; cards and sub-sections use H3.
+ *
+ * HomepageStats sits between Hero and About as a later, explicit addition -
+ * a compact credibility strip, not part of the original locked flow above.
+ * It carries no heading of its own, so it doesn't participate in the H1/H2
+ * hierarchy.
  */
 export default function HomePage() {
   return (
     <>
       <Hero />
+      <HomepageStats />
       <About />
       <ChooseRoute />
       <Institutions />

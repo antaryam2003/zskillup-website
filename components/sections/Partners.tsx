@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { asset } from "@/lib/asset";
 import { partners, partnerTabs, type Partner } from "@/content/partners";
 import { partnerStats, publishable } from "@/content/stats";
@@ -17,8 +17,8 @@ import { Container, Eyebrow, Heading, Lede, Section } from "@/components/ui/Sect
  * any redesign of the homepage."
  *
  * How that is met:
- *   - a two-row horizontal scroller shows ten tiles at a time on desktop and two
- *     per row on mobile, and simply absorbs more entries;
+ *   - a two-row marquee shows the first 5 entries top, next 5 bottom, and simply
+ *     absorbs more by paging through 5 at a time if the source list ever grows;
  *   - every tile is the same fixed size, so logos never render at mixed scales;
  *   - the homepage communicates scale and quality of network, not a directory.
  *
@@ -30,6 +30,14 @@ import { Container, Eyebrow, Heading, Lede, Section } from "@/components/ui/Sect
  *
  * The tab is "Industry & Hiring Network" rather than "Hiring Partners", because
  * not every company shown is formally a hiring partner.
+ *
+ * The two rows run as a continuous marquee (top left-to-right, bottom
+ * right-to-left, `.partner-track` in globals.css) rather than the earlier
+ * manual snap-scroll - so the old prev/next buttons, which drove that
+ * scroller's `scrollLeft` directly, no longer apply and were removed with
+ * the interaction they belonged to. Hovering (or focusing) a row's tab panel
+ * pauses both its rows in place; `prefers-reduced-motion` freezes them and
+ * swaps in a manual scroller.
  */
 
 export function Partners() {
@@ -75,7 +83,7 @@ export function Partners() {
             </div>
           </div>
 
-          <div className="lg:col-span-8">
+          <div className="min-w-0 lg:col-span-8">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div role="tablist" aria-label="Partner categories" className="flex flex-wrap gap-2">
                 {partnerTabs.map((tab) => {
@@ -104,8 +112,6 @@ export function Partners() {
                   );
                 })}
               </div>
-
-              <PartnerNav />
             </div>
 
             {partnerTabs.map((tab) => (
@@ -133,50 +139,17 @@ export function Partners() {
   );
 }
 
-/* The scroller and its arrows live in sibling columns in the design, so the
-   scroll position is shared through this tiny module-level store rather than
-   lifting state through the layout. */
-let scrollerEl: HTMLUListElement | null = null;
-const listeners = new Set<() => void>();
+// Slow and readable, per the brief's 30-45px/s range.
+const MARQUEE_SPEED_PX_PER_SEC = 36;
 
-function PartnerNav() {
-  const [, force] = useState(0);
-  useEffect(() => {
-    const fn = () => force((n) => n + 1);
-    listeners.add(fn);
-    return () => {
-      listeners.delete(fn);
-    };
-  }, []);
+/** Fixed tile width (not stretchy) so items never resize during the animation. */
+const TILE_WIDTH = "w-[8.5rem] sm:w-[9rem]";
 
-  const page = (dir: -1 | 1) => {
-    if (!scrollerEl) return;
-    scrollerEl.scrollBy({ left: dir * scrollerEl.clientWidth * 0.9, behavior: "smooth" });
-  };
-
-  return (
-    <div className="flex items-center gap-2">
-      <button
-        type="button"
-        onClick={() => page(-1)}
-        aria-label="Previous partners"
-        className="grid h-11 w-11 place-items-center rounded-full border border-line bg-white text-navy transition-colors hover:border-navy/30"
-      >
-        <Icon name="chevronLeft" className="h-4 w-4" />
-      </button>
-      <button
-        type="button"
-        onClick={() => page(1)}
-        aria-label="Next partners"
-        className="grid h-11 w-11 place-items-center rounded-full border border-line bg-white text-navy transition-colors hover:border-navy/30"
-      >
-        <Icon name="chevronRight" className="h-4 w-4" />
-      </button>
-    </div>
-  );
-}
-
-/** Two-row horizontal scroller. Adding partners never changes the layout. */
+/**
+ * Two-row marquee: the first 5 partners run top (left-to-right), the next 5
+ * run bottom (right-to-left). Each row is its own independent track, so the
+ * rows can differ in width/duration without affecting one another.
+ */
 function PartnerScroller({
   label,
   partners: list,
@@ -184,32 +157,70 @@ function PartnerScroller({
   label: string;
   partners: readonly Partner[];
 }) {
-  const ref = useRef<HTMLUListElement>(null);
+  const top = list.slice(0, 5);
+  const bottom = list.slice(5, 10);
 
-  const register = useCallback(() => {
-    scrollerEl = ref.current;
-    listeners.forEach((fn) => fn());
-  }, []);
+  return (
+    <div
+      className="partner-marquee relative overflow-hidden"
+      role="group"
+      aria-label={`${label} logos`}
+      tabIndex={0}
+    >
+      <PartnerRow partners={top} rowKey="top" reverse />
+      <PartnerRow partners={bottom} rowKey="bottom" />
+    </div>
+  );
+}
+
+function PartnerRow({
+  partners: row,
+  rowKey,
+  reverse = false,
+}: {
+  partners: readonly Partner[];
+  rowKey: string;
+  reverse?: boolean;
+}) {
+  const trackRef = useRef<HTMLUListElement>(null);
+  const [duration, setDuration] = useState(40);
 
   useEffect(() => {
-    register();
-  }, [register]);
+    const el = trackRef.current;
+    if (!el) return;
+
+    // The track is two copies wide; half its rendered width is exactly one
+    // loop. Measuring it (rather than hard-coding a duration) keeps the
+    // speed constant across breakpoints and if the partner list changes.
+    const measure = () => {
+      const distance = el.scrollWidth / 2;
+      setDuration(distance / MARQUEE_SPEED_PX_PER_SEC);
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <ul
-      ref={ref}
-      onFocus={register}
-      onMouseEnter={register}
-      tabIndex={0}
-      role="group"
-      aria-label={`${label} logos`}
-      className="no-scrollbar grid snap-x snap-mandatory grid-flow-col grid-rows-2 gap-3 overflow-x-auto scroll-smooth pb-1 auto-cols-[minmax(8.5rem,47%)] sm:auto-cols-[minmax(9rem,31%)] lg:auto-cols-[minmax(9rem,19.2%)]"
+      ref={trackRef}
+      className={`partner-track w-max flex gap-3 pb-1 ${reverse ? "partner-track-reverse" : ""} ${rowKey === "bottom" ? "mt-3" : ""}`}
+      style={{ animationDuration: `${duration}s` }}
     >
-      {list.map((partner) => (
-        <li key={partner.name} className="snap-start">
+      {row.map((partner) => (
+        <li key={`${rowKey}-original-${partner.name}`} className={TILE_WIDTH}>
           <PartnerTile partner={partner} />
         </li>
       ))}
+      <div aria-hidden="true" className="partner-clone contents">
+        {row.map((partner) => (
+          <li key={`${rowKey}-clone-${partner.name}`} className={TILE_WIDTH}>
+            <PartnerTile partner={partner} />
+          </li>
+        ))}
+      </div>
     </ul>
   );
 }

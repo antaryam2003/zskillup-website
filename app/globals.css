@@ -258,3 +258,44 @@
     display: none;
   }
 }
+
+/* Partners marquee - same two-copies-back-to-back technique as the
+   testimonials marquee, but one keyframe serves both rows: the bottom row
+   plays it forward (right to left), the top row plays it in reverse
+   (left to right), via `animation-direction`. */
+@keyframes partner-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.partner-track {
+  animation-name: partner-marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.partner-track-reverse {
+  animation-direction: reverse;
+}
+
+.partner-marquee:hover .partner-track,
+.partner-marquee:focus-within .partner-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partner-marquee {
+    overflow-x: auto;
+  }
+  .partner-track {
+    animation: none;
+    transform: none;
+  }
+  .partner-track .partner-clone {
+    display: none;
+  }
+}

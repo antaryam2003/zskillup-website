@@ -326,34 +326,49 @@ export const prephasz = {
 
   journeyEyebrow: "A simple journey",
   journeyHeadline: "From practice to opportunity.",
-  journeySupporting:
-    "A structured preparation journey that helps students build skills, gain confidence and stay ready for what's next.",
-  journey: [
+  /** The line the feedback doc asks for verbatim - do not rewrite it. */
+  journeyStatement:
+    "Prepare. Practice. Assess. Improve. Get Placement Ready — all in one platform.",
+  /** Six feature pillars replacing the old four-step journey cards - the
+   *  complete prephasz ecosystem, not just a practice tool. Feature names
+   *  are fixed by the brief and must not be reworded. */
+  pillars: [
     {
-      step: "01",
-      title: "Check where you stand",
-      body: "Identify your current strengths and gaps with focused assessments.",
+      title: "Prepare",
+      tagline: "Company hubs, study plans and topic-wise practice, built around your goals.",
+      features: ["Company Hubs", "Study Plans", "Practice Questions", "Topic & Section Preparation"],
     },
     {
-      step: "02",
-      title: "Practise the right areas",
-      body: "Get personalised practice based on your performance and target roles.",
+      title: "Assess",
+      tagline: "Full-length mocks and company-specific tests that measure real placement readiness.",
+      features: ["Mock Assessments", "Company-Specific Tests", "Placement Readiness Tests"],
     },
     {
-      step: "03",
-      title: "Prepare for target companies",
-      body: "Access company-specific practice, real patterns and interview resources.",
+      title: "Analyse",
+      tagline: "Track accuracy, speed and rankings with a clear, section-wise performance dashboard.",
+      features: ["Performance Dashboard", "Section-Wise Analysis", "Accuracy", "Speed", "Rankings"],
     },
     {
-      step: "04",
-      title: "Track progress",
-      body: "See your improvement and turn weak areas into next actions.",
+      title: "Learn",
+      tagline: "Live masterclasses and SME sessions, plus recorded resources and clear explanations.",
+      features: ["Live Masterclasses", "SME Sessions", "Recorded Resources", "Explanations"],
     },
-  ],
-  proofs: [
-    { title: "Company-focused practice", body: "Prepare for real recruitment." },
-    { title: "Actionable feedback", body: "Turn weak areas into next steps." },
-    { title: "A clearer path forward", body: "Track progress, stay ready." },
+    {
+      title: "Get Hired",
+      tagline: "Job board, resume builder and mock interviews that turn preparation into offers.",
+      features: ["Job Board", "Resume Builder", "Mock Interviews", "Placement Opportunities"],
+    },
+    {
+      title: "Track Outcomes",
+      tagline: "Certificates, leaderboards and reports that keep students and institutions aligned.",
+      features: [
+        "Certificates",
+        "Leaderboards",
+        "Student Reports",
+        "TPO Dashboard",
+        "Institutional Analytics",
+      ],
+    },
   ],
 } as const;
 

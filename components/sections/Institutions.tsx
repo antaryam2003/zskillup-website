@@ -3,6 +3,7 @@ import { institutionStats, publishable } from "@/content/stats";
 import { Button } from "@/components/ui/Button";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { Container, Heading, Lede, Section } from "@/components/ui/Section";
+import { InstitutionsMethod } from "./InstitutionsMethod";
 
 /**
  * 04 - INSTITUTIONS
@@ -184,35 +185,9 @@ export function Institutions() {
           </ul>
         </div>
 
-        {/* --- How we customise: ONE connected process ----------------------- */}
-        <div className="mt-20 grid gap-10 lg:mt-24 lg:grid-cols-12 lg:gap-12">
-          <div className="lg:col-span-3">
-            <Heading as="h3" plain={institutions.methodHeadline} size="sm" />
-            <p className="mt-4 leading-relaxed text-body">{institutions.methodBody}</p>
-          </div>
-
-          <div className="relative lg:col-span-9">
-            {/* The dashed connector is what makes four steps read as one process
-                rather than four independent feature cards. */}
-            <span
-              aria-hidden="true"
-              className="absolute top-7 left-[12%] hidden w-[76%] border-t-2 border-dashed border-[#e3a9b8] lg:block"
-            />
-            <ol className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-              {institutions.method.map((step) => (
-                <li key={step.step} className="relative text-center">
-                  <span className="bg-gradient-icon relative z-10 mx-auto grid h-14 w-14 place-items-center rounded-full text-[0.9375rem] font-extrabold text-white">
-                    {step.step}
-                  </span>
-                  <h4 className="mt-4 text-[1.0625rem] font-bold text-navy">{step.title}</h4>
-                  <p className="mx-auto mt-2 max-w-[24ch] text-[0.875rem] leading-relaxed text-body">
-                    {step.body}
-                  </p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
+        {/* --- How we customise: ONE connected process -----------------------
+            Auto-playing viewport-triggered sequence - see InstitutionsMethod. */}
+        <InstitutionsMethod />
 
         {/* --- Final CTA: full-width gradient banner ------------------------- */}
         <div className="bg-gradient-brand relative mt-20 overflow-hidden rounded-card px-7 py-10 sm:px-12 sm:py-12 lg:mt-24">

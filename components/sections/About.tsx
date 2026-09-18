@@ -81,15 +81,6 @@ export function About() {
               className="mt-5"
             />
             <p className="mt-5 max-w-[40ch] leading-relaxed text-body">{about.leadershipBody}</p>
-
-            <div className="mt-9 flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-full bg-brand-soft text-brand">
-                <Icon name="chevronLeft" className="h-4 w-4" />
-              </span>
-              <span className="grid h-11 w-11 place-items-center rounded-full bg-brand-soft text-brand">
-                <Icon name="chevronRight" className="h-4 w-4" />
-              </span>
-            </div>
           </div>
 
           <ul className="grid gap-5 sm:grid-cols-3 lg:col-span-8">

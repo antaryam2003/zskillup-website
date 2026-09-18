@@ -48,13 +48,6 @@ export const testimonialsIntro = {
     "Hear from learners across our programs as they build skills, confidence and career readiness with ZSkillup.",
 } as const;
 
-/** The dark end-card that closes the carousel. Navy, not green. */
-export const testimonialsEndCard = {
-  heading: "More stories. More journeys.",
-  body: "From career clarity to global opportunities — our learners share how ZSkillup has made a difference.",
-  cta: { label: "View More Stories", href: "#in-action" },
-} as const;
-
 /**
  * ORDER MATTERS, for two reasons at once.
  *

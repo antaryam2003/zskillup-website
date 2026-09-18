@@ -3,8 +3,7 @@ import { videos } from "@/content/videos";
 import { Button } from "@/components/ui/Button";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { Container, Eyebrow, Lede, Section } from "@/components/ui/Section";
-import { VideoDialog } from "@/components/ui/VideoDialog";
-import { PrephaszDashboard } from "./PrephaszDashboard";
+import { PrephaszVideo } from "./PrephaszVideo";
 
 /**
  * 05 - PREPHASZ
@@ -56,24 +55,14 @@ export function Prephasz() {
               <Lede className="mt-6 max-w-[54ch]">{prephasz.supporting}</Lede>
             </div>
 
-            {/* --- Product visual ------------------------------------------- */}
+            {/* --- Product visual: a real inline video, not a dashboard mock -- */}
             <div className="lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 lg:self-center">
               <div className="relative">
                 <span
                   aria-hidden="true"
                   className="absolute -top-4 -left-4 hidden h-full w-full rounded-2xl bg-[#fbeec4] lg:block"
                 />
-                <div className="relative aspect-[16/10] w-full rounded-2xl bg-white shadow-lift">
-                  <PrephaszDashboard
-                    media={
-                      <VideoDialog
-                        video={videos.prephasz}
-                        label={prephasz.videoLabel}
-                        variant="overlay"
-                      />
-                    }
-                  />
-                </div>
+                <PrephaszVideo video={videos.prephasz} label={prephasz.videoLabel} />
               </div>
             </div>
 

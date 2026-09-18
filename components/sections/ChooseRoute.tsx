@@ -94,7 +94,7 @@ export function ChooseRoute() {
                     </p>
 
                     {card.brand === "prephasz" ? (
-                      <PrephaszLogo className="relative mt-3 h-9" />
+                      <PrephaszLogo className="relative mt-3 h-9 self-start" />
                     ) : card.brand ? (
                       <p
                         className={`relative mt-3 inline-block self-start rounded-md ${style.band} px-2.5 py-1 text-[0.8125rem] font-semibold ${style.text}`}

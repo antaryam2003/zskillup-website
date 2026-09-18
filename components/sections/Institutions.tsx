@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { Container, Heading, Lede, Section } from "@/components/ui/Section";
 import { InstitutionsMethod } from "./InstitutionsMethod";
+import { InstitutionsStats } from "./InstitutionsStats";
 
 /**
  * 04 - INSTITUTIONS
@@ -12,9 +13,8 @@ import { InstitutionsMethod } from "./InstitutionsMethod";
  *   Proposition -> What we support -> Programs -> How we customise/deliver -> CTA.
  *
  * Per the updated design:
- *   - the credibility trio prints a dash in each slot until the figures are
- *     verified (see content/stats.ts), which is the brief's "do not hard-code
- *     100+, 50K+ or 80%+ until validated" rule taken literally;
+ *   - the credibility trio (see content/stats.ts) is confirmed and count-up
+ *     animates once, in black, when it scrolls into view - see InstitutionsStats;
  *   - "Support across the student journey" sits in a lavender panel holding four
  *     white cards with circular icon wells;
  *   - the four-step method reads as ONE process: gradient numbered circles joined
@@ -74,29 +74,7 @@ export function Institutions() {
               </Button>
             </div>
 
-            {stats.length > 0 ? (
-              <dl className="mt-10 flex flex-wrap gap-x-10 gap-y-5">
-                {stats.map((stat, i) => (
-                  <div
-                    key={stat.label}
-                    className={i > 0 ? "border-l border-line pl-10" : ""}
-                  >
-                    <dt className="sr-only">{stat.label}</dt>
-                    <dd>
-                      <span className="block text-[1.5rem] font-extrabold tracking-tight text-navy">
-                        {stat.value}
-                      </span>
-                      <span
-                        aria-hidden="true"
-                        className="mt-1 block max-w-[9rem] text-[0.8125rem] leading-snug text-muted"
-                      >
-                        {stat.label}
-                      </span>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            ) : null}
+            {stats.length > 0 ? <InstitutionsStats stats={stats} /> : null}
           </div>
 
           {/* --- What we support --------------------------------------------- */}
@@ -165,7 +143,7 @@ export function Institutions() {
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-8 lg:grid-cols-3">
             {institutions.programs.map((program, i) => (
               <li key={program.name}>
-                <div className="h-full rounded-tile border border-line bg-white p-4 shadow-card">
+                <div className="h-full rounded-tile border border-line bg-white p-4 shadow-card transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-lift">
                   <div className="flex items-start gap-3">
                     <span
                       className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg ${programWells[i]}`}

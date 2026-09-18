@@ -87,30 +87,12 @@ export const heroCredibilityStats: readonly Stat[] = [
 /**
  * INSTITUTIONS section credibility trio.
  *
- * The updated design resolves the brief's "do not hard-code 100+, 50K+ or 80%+
- * until validated" instruction literally: it prints a dash in each slot. That is
- * what ships, so the layout is right and no unverified claim is published.
- * Replace each `value` and set `verified: true` once the figures are signed off.
+ * Confirmed and published per the brief's own rule above.
  */
 export const institutionStats: readonly Stat[] = [
-  {
-    value: "--",
-    label: "Partner Institutions",
-    verified: false,
-    note: "Design shows a dash until the figure is confirmed. Comp previously said 100+.",
-  },
-  {
-    value: "--",
-    label: "Students Trained",
-    verified: false,
-    note: "Design shows a dash until the figure is confirmed. Comp previously said 50K+.",
-  },
-  {
-    value: "--",
-    label: "Placement Readiness Verified",
-    verified: false,
-    note: "Design shows a dash. Needs a defined measurement method before it can be claimed.",
-  },
+  { value: "55+", label: "Partner Institutions", verified: true },
+  { value: "1 lakh+", label: "Students Trained", verified: true },
+  { value: "250+", label: "Placement Readiness Verified", verified: true },
 ];
 
 /**

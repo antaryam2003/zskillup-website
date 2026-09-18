@@ -1,9 +1,19 @@
+import Image from "next/image";
+import { asset } from "@/lib/asset";
+
 /**
  * Brand marks, drawn as SVG/text so they stay crisp, theme-able and - importantly
  * for the brief - REAL TEXT rather than flattened imagery wherever a name shows.
  *
  * If the brand team supplies official SVG artwork, replace the path data in
  * `ZMark` / `PrephaszArrow` and nothing else needs to change.
+ *
+ * The one exception is the "Powered by ZSkillup" sub-lockup below the
+ * Prephasz wordmark: it's the official artwork (public/images/prephasz-
+ * powered-by-zskillup.png), cropped from the approved reference logo,
+ * because its "Z" is a specific mark rather than a plain capital letter -
+ * hand-reproducing it in text/CSS is exactly what drifted out of alignment
+ * before. Swap that file for updated official artwork if the mark changes.
  */
 
 export function ZMark({
@@ -110,13 +120,13 @@ export function PrephaszWordmark({
         <PrephaszArrow className="-mt-[0.26em] ml-[0.01em] h-[1.05em] w-[0.82em] text-[#F0A020]" />
       </span>
       {showParent ? (
-        <span
-          className={`mt-[0.30em] self-center text-[0.36em] font-semibold tracking-[0.02em] ${
-            light ? "text-white/70" : "text-muted"
-          }`}
-        >
-          by ZSkillup
-        </span>
+        <Image
+          src={asset("/images/prephasz-powered-by-zskillup.png")}
+          alt="Powered by ZSkillup"
+          width={280}
+          height={44}
+          className={`mt-[0.30em] h-[0.36em] w-auto self-center ${light ? "opacity-70 invert brightness-0" : ""}`}
+        />
       ) : null}
     </span>
   );

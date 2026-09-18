@@ -7,23 +7,30 @@ import { Icon, type IconName } from "@/components/ui/Icon";
 /**
  * The seven-stage education-to-career path.
  *
- * Desktop/tablet (md+): a 4+3 grid - stages 1-4 on the first row, 5-7 on the
- * second, which (via plain row-major grid auto-placement, no manual column
- * overrides) lands 5/6/7 directly under 1/2/3 for free. Mobile: a single
- * vertical column, same order.
+ * Desktop/tablet (md+): a 4+3 grid on an 8-column track (each card spans 2
+ * tracks). Stages 1-4 fill the first row via plain auto-placement; 5-7 get
+ * explicit `col-start` values (2, 4, 6) so the group sits centred under the
+ * first row, with one empty track on each side, rather than left-aligned.
+ * Mobile: a single vertical column, same order.
  *
  * A single SVG/HTML overlay - one continuous path threading through every
  * stage's centre - draws the connective line and carries a travelling arrow
- * marker. Card backgrounds are opaque, so the path only reads as visible in
- * the gaps between cards; nothing needs separate "edge" anchor math.
+ * marker. Both sit at a lower z-index than the cards (which are `z-10`), so
+ * they always render behind them; card backgrounds are opaque, so the path
+ * only reads as visible in the gaps between cards and never appears to cut
+ * through card content.
  *
  * The path shape is entirely position-driven, not viewport-branched: for
  * each pair of consecutive stages, if they measure out to roughly the same
- * row a straight line is drawn; otherwise a smooth S-curve. On mobile every
- * pair is "different row" so every segment curves - and because both ends
- * share the same x there, the curve's control points collapse onto a
- * straight vertical line automatically. The 4-to-5 swoop on desktop and the
- * mobile connectors are thus the same formula, not two implementations.
+ * row, a straight line is drawn. If they're on different rows with no
+ * horizontal offset (the mobile single-column stack), it's also a straight
+ * line - vertical this time. Only a different row WITH a horizontal offset
+ * (the desktop 4-to-5 transition) gets the orthogonal treatment: exit the
+ * first card's right side, drop into the open band between the rows, travel
+ * horizontally across it, drop again, then enter the next card from its
+ * left side - four 90-degree bends, no diagonal segment anywhere, and the
+ * horizontal run sits entirely in the gap between rows so nothing occludes
+ * it. Whichever shape applies, cards remain the layer on top.
  *
  * On entering the viewport the sequence plays ONCE (Institutions-method
  * pattern: a ref-guarded IntersectionObserver, timers scheduled outside
@@ -37,6 +44,16 @@ import { Icon, type IconName } from "@/components/ui/Icon";
 const stageIcons: IconName[] = ["graduation", "book", "file", "chart", "users", "briefcase", "trending"];
 
 const COUNT = journey.stages.length;
+
+// On an 8-column desktop track with every card spanning 2 columns, stages
+// 1-4 auto-place into row one (4 x 2 = 8, filling it exactly). Stages 5-7
+// need an explicit start so the group centres under row one (tracks 2-7,
+// leaving one empty track on each side) instead of left-aligning under it.
+const SECOND_ROW_START: Record<number, string> = {
+  4: "md:col-start-2",
+  5: "md:col-start-4",
+  6: "md:col-start-6",
+};
 
 // Timing (ms). The curve (connector index 3, between stage 4 and 5) gets a
 // touch more room since it's visually the longest, most eventful segment.
@@ -82,29 +99,7 @@ function dist(a: { x: number; y: number }, b: { x: number; y: number }) {
   return Math.hypot(b.x - a.x, b.y - a.y);
 }
 
-function cubicPoint(p0: number, c1: number, c2: number, p1: number, t: number) {
-  const mt = 1 - t;
-  return mt ** 3 * p0 + 3 * mt ** 2 * t * c1 + 3 * mt * t ** 2 * c2 + t ** 3 * p1;
-}
-
-function bezierLength(
-  p0: { x: number; y: number },
-  c1: { x: number; y: number },
-  c2: { x: number; y: number },
-  p1: { x: number; y: number },
-  samples = 20,
-) {
-  let len = 0;
-  let prev = p0;
-  for (let i = 1; i <= samples; i++) {
-    const t = i / samples;
-    const cur = { x: cubicPoint(p0.x, c1.x, c2.x, p1.x, t), y: cubicPoint(p0.y, c1.y, c2.y, p1.y, t) };
-    len += dist(prev, cur);
-    prev = cur;
-  }
-  return len;
-}
-
+type Box = { x: number; y: number; width: number; height: number };
 type Segment = { d: string; length: number };
 
 type PathData = {
@@ -115,22 +110,42 @@ type PathData = {
   height: number;
 };
 
+// Clearance (px) the orthogonal 4-to-5 path travels past a card's edge
+// before turning, so the exit/entry reads as deliberate rather than a bend
+// exactly on the card boundary.
+const ORTHOGONAL_CLEARANCE = 20;
+
 /** A point counts as "the same row" as the next if their vertical gap is
-    small relative to the card height - otherwise it's a row change and gets
-    the curved treatment (which degenerates to a straight vertical line when
-    both x-coordinates already match, as they do in the single-column layout). */
-function buildSegment(p1: { x: number; y: number }, p2: { x: number; y: number }, rowThreshold: number): Segment {
-  const sameRow = Math.abs(p2.y - p1.y) < rowThreshold;
-  if (sameRow) {
+    small relative to the card height - a plain straight line. Otherwise
+    it's a row change: with no horizontal offset (the mobile stack) that's
+    also a straight line, just vertical; with a horizontal offset (the
+    desktop 4-to-5 transition) it's an orthogonal staircase - exit right,
+    drop into the gap band between rows, travel horizontally, drop again,
+    enter from the left - four 90-degree bends and no diagonal. */
+function buildSegment(p1: Box, p2: Box, rowThreshold: number): Segment {
+  const dy = p2.y - p1.y;
+  const dx = p2.x - p1.x;
+
+  if (Math.abs(dy) < rowThreshold || Math.abs(dx) < 4) {
     return { d: `L ${p2.x} ${p2.y}`, length: dist(p1, p2) };
   }
-  const midY = p1.y + (p2.y - p1.y) * 0.5;
-  const c1 = { x: p1.x, y: midY };
-  const c2 = { x: p2.x, y: midY };
-  return {
-    d: `C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${p2.x} ${p2.y}`,
-    length: bezierLength(p1, c1, c2, p2),
-  };
+
+  const exitX = p1.x + p1.width / 2 + ORTHOGONAL_CLEARANCE;
+  const entryX = p2.x - p2.width / 2 - ORTHOGONAL_CLEARANCE;
+  const gapBandY = (p1.y + p1.height / 2 + (p2.y - p2.height / 2)) / 2;
+
+  const points = [
+    { x: exitX, y: p1.y },
+    { x: exitX, y: gapBandY },
+    { x: entryX, y: gapBandY },
+    { x: entryX, y: p2.y },
+    { x: p2.x, y: p2.y },
+  ];
+
+  let length = dist(p1, points[0]);
+  for (let i = 1; i < points.length; i++) length += dist(points[i - 1], points[i]);
+
+  return { d: points.map((pt) => `L ${pt.x} ${pt.y}`).join(" "), length };
 }
 
 export function EducationJourney() {
@@ -162,6 +177,7 @@ export function EducationJourney() {
         return {
           x: r.left - containerRect.left + r.width / 2,
           y: r.top - containerRect.top + r.height / 2,
+          width: r.width,
           height: r.height,
         };
       });
@@ -232,7 +248,7 @@ export function EducationJourney() {
       {path ? (
         <svg
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0"
+          className="pointer-events-none absolute inset-0 z-0"
           width={path.width}
           height={path.height}
           viewBox={`0 0 ${path.width} ${path.height}`}
@@ -264,7 +280,7 @@ export function EducationJourney() {
       {path ? (
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute top-0 left-0 z-20 grid h-6 w-6 place-items-center rounded-full bg-gradient-icon text-white shadow-lift"
+          className="pointer-events-none absolute top-0 left-0 z-0 grid h-6 w-6 place-items-center rounded-full bg-gradient-icon text-white shadow-lift"
           style={{
             offsetPath: `path("${path.d}")`,
             offsetDistance: `${revealedFraction * 100}%`,
@@ -279,7 +295,7 @@ export function EducationJourney() {
         </span>
       ) : null}
 
-      <ol className="grid grid-cols-1 gap-y-8 md:grid-cols-4 md:gap-x-6 md:gap-y-14">
+      <ol className="grid grid-cols-1 gap-y-8 md:grid-cols-8 md:gap-x-6 md:gap-y-14">
         {journey.stages.map((stage, i) => {
           const isActive = i < active;
           return (
@@ -288,7 +304,7 @@ export function EducationJourney() {
               ref={(el) => {
                 cardRefs.current[i] = el;
               }}
-              className="relative z-10 text-center"
+              className={`relative z-10 text-center md:col-span-2 ${SECOND_ROW_START[i] ?? ""}`}
             >
               <div className="h-full rounded-card border border-line bg-white p-5">
                 <span

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { headerCta, nav } from "@/content/site";
-import { ZSkillupLogo } from "@/components/ui/Brand";
+import { ZSkillupLogoMark } from "@/components/ui/Brand";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { Container } from "@/components/ui/Section";
@@ -55,7 +55,7 @@ export function SiteHeader() {
       <Container>
         <div className="flex h-[4.5rem] items-center justify-between gap-4">
           <Link href="/" aria-label="ZSkillup home" className="shrink-0">
-            <ZSkillupLogo />
+            <ZSkillupLogoMark />
           </Link>
 
           <nav aria-label="Primary" className="hidden lg:block">

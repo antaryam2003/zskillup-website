@@ -44,6 +44,34 @@ export function ZMark({
   );
 }
 
+/**
+ * The official ZSkillup navbar mark - supplied artwork (public/images/
+ * zskillup-logo.png), used exactly as approved rather than reproduced in
+ * text/SVG. Its Z terminal (the arrowhead folded into the diagonal) and the
+ * arrow-topped ascender on the "p" in "Skillup" are specific enough that a
+ * hand-drawn approximation drifted from the real mark - the same reasoning
+ * as the Prephasz lockup below, just applied to the parent brand.
+ *
+ * Only the navbar uses this. The footer keeps the live-text `ZSkillupLogo`
+ * below, since this artwork is black-only and has no light/white variant
+ * for a dark field.
+ *
+ * Height-driven only - pass an `h-*` class; width follows automatically so
+ * the original aspect ratio (4584:1480) is never distorted.
+ */
+export function ZSkillupLogoMark({ className = "h-9" }: { className?: string }) {
+  return (
+    <Image
+      src={asset("/images/zskillup-logo.png")}
+      alt="ZSkillup"
+      width={4584}
+      height={1480}
+      priority
+      className={`w-auto object-contain ${className}`}
+    />
+  );
+}
+
 /** Full ZSkillup lockup: mark + wordmark. The wordmark is live text. */
 export function ZSkillupLogo({
   className = "",

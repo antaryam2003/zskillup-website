@@ -100,7 +100,7 @@ export const about = {
   eyebrow: "About ZSkillup",
   headline: { plain: "Education beyond classrooms,", gradient: "towards real careers." },
   body: "ZSkillup Education Pvt. Ltd. is on a mission to bridge the gap between education and real-world opportunities. We work with students, institutions and industry to create practical, career-focused learning pathways that lead to meaningful outcomes.",
-  cta: { label: "Read Our Story", href: "/#in-action" },
+  cta: { label: "Read Our Story", href: "#testimonials" },
   drivesEyebrow: "What drives us",
   pillars: [
     {
@@ -109,7 +109,7 @@ export const about = {
     },
     {
       title: "Our Vision",
-      body: "A future where every learner is equipped with the skills, confidence and opportunities to build a better tomorrow.",
+      body: "A future where every learner has the skills, confidence, and opportunities to thrive.",
     },
     {
       title: "Our Values",

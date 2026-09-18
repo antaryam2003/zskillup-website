@@ -39,7 +39,7 @@ export const media = {
   hero: {
     src: "/images/campus-student-hero.png",
     alt: "A student with a backpack walking across a university campus, smiling up at the historic stone buildings, with other students walking ahead of her and a handwritten \"More Than a Degree\" note beside the architecture",
-    width: 1670,
+    width: 1669,
     height: 942,
   },
 

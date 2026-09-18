@@ -8,20 +8,30 @@ import { Heading } from "@/components/ui/Section";
  * "Designed around your institution" - the four-step method that reads as
  * ONE connected process.
  *
- * On entering the viewport it plays through 01 -> 02 -> 03 -> 04 once, with
- * the dashed connector's purple fill travelling segment by segment between
- * each pair, holds the completed state briefly, then resets and repeats for
- * as long as the section stays visible. Leaving the viewport cancels the
- * sequence and resets it, so scrolling back always replays from 01 rather
- * than resuming stuck mid-way.
+ * On entering the viewport it plays through 01 -> 02 -> 03 -> 04 exactly
+ * ONCE, with the dashed connector's purple fill travelling segment by
+ * segment between each pair, then holds the completed state permanently -
+ * no reset, no repeat, even if the user scrolls away and back. A ref (not
+ * state) guards the start so re-entering the viewport later never
+ * re-triggers it, and the IntersectionObserver callback schedules the
+ * timers directly (outside React's effect-cleanup cycle) so the sequence
+ * keeps running to completion in the background even if the section
+ * scrolls out of view again before it finishes.
  *
- * `phase` drives the whole sequence:
- *   0        - nothing active (initial / reset state)
- *   1,3,5,7  - step 1..4 has just activated
- *   2,4,6    - the connector between two steps is travelling
- * `prefers-reduced-motion` skips the cycle entirely and holds phase 7 (the
- * completed state), matching how this block looked before this animation -
- * no motion, nothing missing.
+ * `phase` drives the sequence: 0 = nothing active yet; 1,3,5,7 = step
+ * 1..4 has just activated; 2,4,6 = the connector to the next step is
+ * travelling. It only ever counts up, once, from 0 to 7.
+ *
+ * Each connector segment is two stacked, identically-sized dashed lines -
+ * a light base and a purple overlay revealed left-to-right via
+ * `clip-path` - rather than a `scale-x` grow, because scaling redraws the
+ * dash pattern at a stretched size and leaves the base dashes visible
+ * through the gaps. Clipping never resizes either line, so the purple
+ * dashes land exactly on top of the base ones as they're revealed.
+ *
+ * `prefers-reduced-motion` skips the sequence entirely and holds phase 7
+ * (the completed state), matching how this block looked before this
+ * animation existed - no motion, nothing missing.
  */
 
 const SEQUENCE: { phase: number; delay: number }[] = [
@@ -32,9 +42,7 @@ const SEQUENCE: { phase: number; delay: number }[] = [
   { phase: 5, delay: 3450 },
   { phase: 6, delay: 4300 },
   { phase: 7, delay: 5150 },
-  { phase: 0, delay: 6800 },
 ];
-const CYCLE_MS = 7300;
 
 function activeCount(phase: number) {
   if (phase >= 7) return 4;
@@ -44,15 +52,16 @@ function activeCount(phase: number) {
   return 0;
 }
 
-/** 'idle' | 'filling' | 'filled' for connector gap `i` (0 = 01-02, 1 = 02-03, 2 = 03-04). */
-function gapFilled(phase: number, gap: number) {
-  const fillingPhase = gap * 2 + 2;
-  return phase >= fillingPhase;
+/** Has connector gap `i` (0 = 01-02, 1 = 02-03, 2 = 03-04) finished revealing? */
+function gapRevealed(phase: number, gap: number) {
+  const revealPhase = gap * 2 + 2;
+  return phase >= revealPhase;
 }
 
 export function InstitutionsMethod() {
   const ref = useRef<HTMLOListElement>(null);
-  const [inView, setInView] = useState(false);
+  const hasStarted = useRef(false);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   // Starts false to match the SSR output exactly (there's no `window` at
   // build time) - reading matchMedia via a useState lazy initializer instead
   // would disagree with the prerendered HTML, and React's hydration pass
@@ -60,7 +69,6 @@ export function InstitutionsMethod() {
   // an effect makes this a normal post-hydration update instead, which does.
   const [reducedMotion, setReducedMotion] = useState(false);
   const [phase, setPhase] = useState(0);
-  const cycling = inView && !reducedMotion;
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only value (matchMedia); see the state comment above.
@@ -70,45 +78,34 @@ export function InstitutionsMethod() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), {
-      threshold: 0.35,
-    });
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || hasStarted.current) return;
+        // A fresh check here (rather than the `reducedMotion` state) avoids
+        // a stale closure - this callback is created once, on mount.
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        hasStarted.current = true;
+        SEQUENCE.forEach(({ phase: p, delay }) => {
+          timers.current.push(setTimeout(() => setPhase(p), delay));
+        });
+      },
+      { threshold: 0.35 },
+    );
     observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  // Only the timer-driven updates (inside the setTimeout callbacks below) set
-  // `phase` from here - when the cycle isn't running, `displayPhase` below
-  // derives the right static value directly instead of writing state.
-  useEffect(() => {
-    if (!cycling) return;
-
-    let cancelled = false;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    const schedule = (fn: () => void, delay: number) => {
-      timers.push(
-        setTimeout(() => {
-          if (!cancelled) fn();
-        }, delay),
-      );
-    };
-
-    const runCycle = () => {
-      SEQUENCE.forEach(({ phase: p, delay }) => schedule(() => setPhase(p), delay));
-      schedule(runCycle, CYCLE_MS);
-    };
-    runCycle();
 
     return () => {
-      cancelled = true;
-      timers.forEach(clearTimeout);
+      observer.disconnect();
+      // `timers.current` is deliberately mutated after setup, by the
+      // callback above as each phase fires - not a stale ref, the array
+      // it points to (never reassigned) simply grows over time.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      timers.current.forEach(clearTimeout);
     };
-  }, [cycling]);
+  }, []);
 
-  // Reduced motion holds the completed state (how this block looked before
-  // this animation existed); out of view holds the initial state; otherwise
-  // the running cycle's own `phase` state drives it.
-  const displayPhase = reducedMotion ? 7 : !inView ? 0 : phase;
+  const displayPhase = reducedMotion ? 7 : phase;
   const active = activeCount(displayPhase);
 
   return (
@@ -120,19 +117,19 @@ export function InstitutionsMethod() {
 
       <div className="relative lg:col-span-9">
         {/* The dashed connector is what makes four steps read as one process
-            rather than four independent feature cards. A purple overlay per
-            segment grows left-to-right on top of the original light-pink
-            dashes as each step activates - the base line never disappears. */}
+            rather than four independent feature cards. Each segment is a
+            light base line plus a purple line revealed on top of it via
+            clip-path, so the base never shows through the revealed portion. */}
         <div aria-hidden="true" className="absolute top-7 left-[12%] hidden w-[76%] lg:flex">
           {[0, 1, 2].map((gap) => (
-            <div
-              key={gap}
-              className="relative h-0 flex-1 border-t-2 border-dashed border-[#e3a9b8]"
-            >
+            <div key={gap} className="relative h-0 flex-1">
+              <div className="absolute inset-0 border-t-2 border-dashed border-[#e3a9b8]" />
               <div
-                className={`absolute inset-0 origin-left border-t-2 border-dashed border-inst transition-transform ease-linear ${
-                  gapFilled(displayPhase, gap) ? "scale-x-100 duration-[850ms]" : "scale-x-0 duration-300"
-                }`}
+                className="absolute inset-0 border-t-2 border-dashed border-inst transition-[clip-path] ease-linear"
+                style={{
+                  clipPath: gapRevealed(displayPhase, gap) ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)",
+                  transitionDuration: "850ms",
+                }}
               />
             </div>
           ))}

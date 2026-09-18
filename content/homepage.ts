@@ -179,7 +179,7 @@ export const chooseRoute: {
       kicker: "Stronger institutions",
       eyebrow: "For Institutions",
       brand: "Tech & Management",
-      title: "Build Employability into the student journey",
+      title: "Build Employability\ninto the\nstudent journey",
       body: "Plan, deliver and measure career readiness across cohorts with an approach designed around your institution.",
       features: ["Customised programmes", "Track outcomes", "Stronger student success"],
       cta: { label: "Explore Institutional Solutions", href: "#institutions" },

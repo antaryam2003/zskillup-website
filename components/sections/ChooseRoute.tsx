@@ -103,7 +103,7 @@ export function ChooseRoute() {
                       </p>
                     ) : null}
 
-                    <h3 className="relative mt-3 text-[1.25rem] leading-snug font-extrabold text-navy">
+                    <h3 className="relative mt-3 text-[1.25rem] leading-snug font-extrabold whitespace-pre-line text-navy">
                       {card.title}
                     </h3>
 

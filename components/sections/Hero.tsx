@@ -108,7 +108,7 @@ export function Hero() {
             photo's own content is positioned from the left edge. */}
         <div className="w-full px-5 sm:px-8">
           <div className="grid items-start gap-6 pt-14 sm:pt-16 lg:grid-cols-12 lg:pt-20">
-            <div className="lg:col-span-7">
+            <div className="lg:col-span-7 lg:translate-x-5 lg:-translate-y-5">
               <p className="eyebrow text-navy/80 drop-shadow-[0_1px_3px_rgba(255,255,255,0.7)]">{hero.eyebrow}</p>
 
               {/* Both halves stay inside one <h1> so the sentence reads as a
@@ -116,7 +116,7 @@ export function Hero() {
                   across the block. */}
               <h1
                 id="hero-heading"
-                className="mt-6 max-w-[15ch] text-[2.4rem] leading-[1.06] font-extrabold tracking-[-0.03em] drop-shadow-[0_2px_10px_rgba(255,255,255,0.55)] sm:text-[3rem] lg:text-[3.5rem]"
+                className="mt-6 max-w-[15ch] text-[2.4rem] leading-[1.06] font-extrabold tracking-[-0.03em] drop-shadow-[0_2px_10px_rgba(255,255,255,0.55)] sm:text-[3rem] lg:text-[3.15rem]"
               >
                 <span className="block">{hero.headline.plain}</span>
                 <span className="text-gradient-lines no-hyphen-break mt-1 block">
@@ -170,7 +170,7 @@ export function Hero() {
           Now sits on its own row, so the primary + secondary pair only ever
           has to share a row with each other, which fits with room to spare
           at any card width this produces - see that row's own comment. */}
-      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1480px] px-5 sm:-mt-20 sm:px-8 lg:-mt-24">
+      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1480px] px-5 sm:-mt-20 sm:px-8 lg:-mt-[7.25rem]">
         <ul className="grid gap-5 lg:grid-cols-3">
           {heroCards.map((card) => (
             <li key={card.eyebrow}>
@@ -210,7 +210,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
 
   return (
     <article
-      className={`flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-6 shadow-card`}
+      className={`flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-6 shadow-card lg:scale-90`}
     >
       <div className="flex items-start gap-4">
         <span className={`grid h-16 w-16 shrink-0 place-items-center rounded-full ${style.icon}`}>

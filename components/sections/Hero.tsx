@@ -257,45 +257,38 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
         </div>
       </div>
 
-      {/* CTA layout: Watch Now - the lightest of the three actions - sits
-          alone on its own row, with the filled primary and outlined
-          secondary sharing the row below. Splitting it this way (rather than
-          fitting all three actions on one row) is what let the cards get
-          narrower without any card's longest pair of actions running out of
-          room: two buttons sharing a row need roughly half the width three
-          did, so even card 3's "Explore Program" + "Talk to an Advisor" -
-          the pairing that used to spill past its card at this width - now
-          fits with margin at every width the grid uses.
+      {/* CTA layout: all three actions - primary, secondary, then Watch Now
+          - share one row, in that order, via flex-wrap: whichever of them
+          doesn't fit drops to its own line rather than squeezing (flex-wrap
+          never shrinks items below their content size the way flex-row
+          without wrapping would) or the row overflowing the card.
 
-          Below 1350px, though, that pair is switched to stack (flex-col)
-          rather than left to wrap on its own (flex-wrap): each card's two
-          labels are a different length, so leaving it to flex-wrap would
-          make each card decide independently whether IT personally still
-          fits on one line - card 1's short "Explore" pair keeps fitting
-          20px+ longer than card 3's does, which would leave card 1 sitting
-          one line shorter than its siblings and re-open the empty-gap bug
-          this section was already rewritten once to fix (see the title
-          above). Forcing all three to stack together below the point where
-          even card 3 comfortably fits on one line keeps their heights
-          matched regardless of label length.
-
-          Watch Now needs `self-start` here: it's the first item in this
-          flex-col, and a flex column's items default to `align-self:
-          stretch` on the cross axis - so despite VideoDialog's own pill
-          being `inline-flex` (content-sized on its own terms), this parent
-          was stretching it to the column's full width regardless. `self-start`
-          overrides just that one item's cross-axis sizing back to its
-          content width, without touching the row below it. */}
-      <div className="mt-auto flex flex-col gap-3 pt-5">
-        <VideoDialog video={video} label={card.video.label} variant="pill" className="self-start" />
-        <div className="flex flex-col gap-2.5 min-[1350px]:flex-row min-[1350px]:items-center">
-          <Button href={card.primary.href} variant="primary" size="sm">
-            {card.primary.label}
-          </Button>
-          <Button href={card.secondary.href} variant="outline" size="sm">
-            {card.secondary.label}
-          </Button>
-        </div>
+          This card grid's width is capped (`max-w-[1480px]` on the row
+          below), so card width tops out at a fixed value no matter how wide
+          the viewport gets - it never grows further past roughly 1500px.
+          Measured against that ceiling, the three-button row's natural
+          (unwrapped) width fits card 1's shorter "Explore" + "Partner With
+          Us" pair, but not card 2's or card 3's longer pairs, AT ANY
+          viewport width. A single shared breakpoint forcing all three cards
+          into a row together would therefore either never fire for any of
+          them (if set past what the grid can ever reach) or force cards
+          2-3's row to overflow/squeeze once it did fire - there is no width
+          where "all three cards, one row, nothing squeezed" holds
+          simultaneously for all three, given the fixed card width and
+          unchanged button sizes. flex-wrap is what lets each card resolve
+          on its own actual content instead: card 1 sits on one line from
+          ~1500px up, while cards 2 and 3 wrap Watch Now onto its own line
+          (still third, still after the other two) at every width - matching
+          "preserve order" and "no overflow/clipped text" over forcing every
+          card into visual lockstep. */}
+      <div className="mt-auto flex flex-wrap items-center gap-2.5 pt-5">
+        <Button href={card.primary.href} variant="primary" size="sm">
+          {card.primary.label}
+        </Button>
+        <Button href={card.secondary.href} variant="outline" size="sm">
+          {card.secondary.label}
+        </Button>
+        <VideoDialog video={video} label={card.video.label} variant="pill" />
       </div>
     </article>
   );

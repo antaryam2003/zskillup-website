@@ -162,18 +162,17 @@ export function Hero() {
           max-width, capped and centred the same way the rest of the site's
           Container is, can't do that at any width.
 
-          1680px (back to the width this used before it was narrowed to
-          1480px) plus a slightly tighter grid gap give each card enough
-          content width that, combined with the CTA row's own tighter gap
-          below, card 3's longest pair - "Explore Program" + "Talk to an
-          Advisor" - can sit on the same row as Watch Now once the viewport
-          is wide enough (empirically, roughly 1680px+; card 1's shorter
-          pair fits from meaningfully narrower). Below that, cards fall back
-          to wrapping Watch Now onto its own line - see that row's own
-          comment for why per-card flex-wrap, not a shared breakpoint, is
-          what makes that fallback correct. */}
-      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1680px] px-5 sm:-mt-20 sm:px-8 lg:-mt-[7.25rem]">
-        <ul className="grid gap-4 lg:grid-cols-3">
+          1760px plus a tighter grid gap give each card enough content width
+          that, combined with the CTA row's own tighter gap below, card 3's
+          longest pair - "Explore Program" + "Talk to an Advisor" - can sit
+          on the same row as Watch Now once the viewport is wide enough
+          (empirically ~1600px+; card 1's shorter pair fits from meaningfully
+          narrower). Below that, cards fall back to wrapping Watch Now onto
+          its own line - see that row's own comment for why per-card
+          flex-wrap, not a shared breakpoint, is what makes that fallback
+          correct. */}
+      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1760px] px-5 sm:-mt-20 sm:px-8 lg:-mt-[7.25rem]">
+        <ul className="grid gap-3 lg:grid-cols-3">
           {heroCards.map((card) => (
             <li key={card.eyebrow}>
               <HeroCard card={card} />
@@ -211,8 +210,17 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
   const video = videos[card.vertical];
 
   return (
+    // Hover: a subtle lift (translate-y-1 = 4px) plus the site's existing
+    // "elevated" shadow token (shadow-lift, already used for the video
+    // dialog trigger and a couple of decorative cards elsewhere) swapped in
+    // for the default shadow-card - reuses an established shadow rather
+    // than inventing a new one. transform/box-shadow only, so nothing here
+    // affects layout: no width/height/position change, siblings never
+    // shift. lg:scale-90 is a separate, permanent transform (unrelated to
+    // hover) - Tailwind composes both into one `transform` via shared CSS
+    // variables, so the hover lift still applies correctly on top of it.
     <article
-      className={`flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-5 shadow-card lg:scale-90`}
+      className={`flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-4 shadow-card transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-lift lg:scale-90`}
     >
       <div className="flex items-start gap-4">
         <span className={`grid h-16 w-16 shrink-0 place-items-center rounded-full ${style.icon}`}>
@@ -265,20 +273,20 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
           without wrapping would) or the row overflowing the card.
 
           This row's own gap is tighter than the card's other internal
-          spacing (gap-1.5 instead of the card padding's own scale) - the
+          spacing (gap-1 instead of the card padding's own scale) - the
           minimum lever available that doesn't touch the buttons' own
           padding/size, which stays exactly as it was. Combined with the
-          wider card grid above, card 3's longest pair - "Explore Program" +
-          "Talk to an Advisor" - plus Watch Now fit on one line once the
-          viewport is wide enough (empirically ~1680px+; card 1's shorter
-          pair fits from meaningfully narrower). card width is still capped
-          (by the grid's own max-width), so this can never hold at every
-          viewport - flex-wrap is what lets each card resolve on its own
-          actual content once it doesn't: Watch Now wraps onto its own line
-          (still third, still after the other two, never squeezed or
-          clipped) rather than any card overflowing or all three being
-          forced into visual lockstep by a single shared breakpoint. */}
-      <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-5">
+          wider, tighter-gapped card grid above, card 3's longest pair -
+          "Explore Program" + "Talk to an Advisor" - plus Watch Now fit on
+          one line once the viewport is wide enough (empirically ~1600px+;
+          card 1's shorter pair fits from meaningfully narrower). card width
+          is still capped (by the grid's own max-width), so this can never
+          hold at every viewport - flex-wrap is what lets each card resolve
+          on its own actual content once it doesn't: Watch Now wraps onto
+          its own line (still third, still after the other two, never
+          squeezed or clipped) rather than any card overflowing or all three
+          being forced into visual lockstep by a single shared breakpoint. */}
+      <div className="mt-auto flex flex-wrap items-center gap-1 pt-5">
         <Button href={card.primary.href} variant="primary" size="sm">
           {card.primary.label}
         </Button>

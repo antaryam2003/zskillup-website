@@ -48,8 +48,18 @@ const programWells = [
 export function Institutions() {
   const stats = publishable(institutionStats);
 
+  // Bottom padding only is trimmed from the Section default (py-20
+  // sm:py-24 lg:py-28) - top is untouched, so this only closes up the gap
+  // to the next section (prephasz) below, not the space above this
+  // section. See Prephasz.tsx's own opening block for the other half of
+  // that gap.
   return (
-    <Section id="institutions" tone="lavender" labelledBy="institutions-heading">
+    <Section
+      id="institutions"
+      tone="lavender"
+      labelledBy="institutions-heading"
+      className="pb-12 sm:pb-16 lg:pb-20"
+    >
       <Container>
         {/* --- Proposition --------------------------------------------------- */}
         <p className="eyebrow text-inst">{institutions.eyebrow}</p>

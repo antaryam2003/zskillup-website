@@ -24,10 +24,24 @@ import { PrephaszVideo } from "./PrephaszVideo";
 const pillarIcons: IconName[] = ["book", "clipboard", "chart", "graduation", "briefcase", "trending"];
 
 export function Prephasz() {
+  // pt-0/pb-0 need a matching override at every breakpoint tier (not just
+  // the base one) to actually beat the Section default's own responsive
+  // py-20/sm:py-24/lg:py-28 - a base-only pt-0 with no sm:/lg: pairing was
+  // silently losing to sm:py-24/lg:py-28's own padding-top at those
+  // widths, which was most of this section's "excessive gap" bug.
   return (
-    <Section id="prephasz" tone="white" labelledBy="prephasz-heading" className="pt-0 pb-0 sm:pb-0 lg:pb-0">
-      {/* The opening block sits on a warm cream field, as in the design. */}
-      <div className="bg-[#fdf8ec] py-16 sm:py-20">
+    <Section
+      id="prephasz"
+      tone="white"
+      labelledBy="prephasz-heading"
+      className="pt-0 sm:pt-0 lg:pt-0 pb-0 sm:pb-0 lg:pb-0"
+    >
+      {/* The opening block sits on a warm cream field, as in the design.
+          Top padding only is trimmed (pt, split out from the original py)
+          to close up the gap from the Institutions section above; bottom
+          stays exactly as it was, since that's internal spacing to the
+          product-visual/CTA row below, not the gap between sections. */}
+      <div className="bg-[#fdf8ec] pt-10 pb-16 sm:pt-12 sm:pb-20">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
             <div className="lg:col-span-6 lg:col-start-1 lg:row-start-1">

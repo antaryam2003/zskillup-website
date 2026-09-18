@@ -24,7 +24,7 @@ export const hero = {
   /** The page's single H1. */
   headline: {
     plain: "Degrees create graduates.",
-    gradient: "We help create industry-ready professionals.",
+    gradient: "We help create industry\nready professionals.",
   },
   supporting: "Real skills. Practical exposure. Global opportunities.",
   /** Scrolls straight to Choose Your Route. "Programs" is no longer an architecture term. */

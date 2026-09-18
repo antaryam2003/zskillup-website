@@ -117,10 +117,10 @@ export function Hero() {
                   across the block. */}
               <h1
                 id="hero-heading"
-                className="mt-6 max-w-[15ch] text-[2.4rem] leading-[1.06] font-extrabold tracking-[-0.03em] drop-shadow-[0_2px_10px_rgba(255,255,255,0.55)] sm:text-[3rem] lg:text-[3.15rem]"
+                className="mt-6 max-w-[27ch] text-[2.4rem] leading-[1.06] font-extrabold tracking-[-0.03em] drop-shadow-[0_2px_10px_rgba(255,255,255,0.55)] sm:text-[3rem] lg:text-[3.15rem]"
               >
                 <span className="block">{hero.headline.plain}</span>
-                <span className="text-gradient-lines no-hyphen-break mt-1 block">
+                <span className="text-gradient-lines no-hyphen-break mt-1 block whitespace-pre-line">
                   {hero.headline.gradient}
                 </span>
               </h1>

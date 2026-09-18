@@ -1,6 +1,6 @@
 import { chooseRoute } from "@/content/homepage";
 import { Button } from "@/components/ui/Button";
-import { PrephaszWordmark } from "@/components/ui/Brand";
+import { PrephaszLogo } from "@/components/ui/Brand";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { Container, Eyebrow, Heading, Lede, Section, verticalStyles } from "@/components/ui/Section";
 
@@ -94,7 +94,7 @@ export function ChooseRoute() {
                     </p>
 
                     {card.brand === "prephasz" ? (
-                      <PrephaszWordmark className="relative mt-3 text-[1.55rem]" showParent />
+                      <PrephaszLogo className="relative mt-3 h-9" />
                     ) : card.brand ? (
                       <p
                         className={`relative mt-3 inline-block self-start rounded-md ${style.band} px-2.5 py-1 text-[0.8125rem] font-semibold ${style.text}`}

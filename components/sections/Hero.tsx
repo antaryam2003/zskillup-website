@@ -4,7 +4,7 @@ import { hero, heroCards, type Vertical } from "@/content/homepage";
 import { media } from "@/content/media";
 import { videos } from "@/content/videos";
 import { Button } from "@/components/ui/Button";
-import { PrephaszWordmark } from "@/components/ui/Brand";
+import { PrephaszLogo } from "@/components/ui/Brand";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { Container, verticalStyles } from "@/components/ui/Section";
 import { VideoDialog } from "@/components/ui/VideoDialog";
@@ -221,8 +221,10 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
           {/* The offering is named inline. "For Commerce Careers" alone
               wouldn't tell a new visitor what's on offer, so a tinted pill
               names it directly after an en dash - except prephasz, which
-              gets its own wordmark there instead of a pill, matching how the
-              brand mark appears everywhere else it's named on the page.
+              gets its own brand mark as a small block below the heading
+              instead of a pill (the official artwork includes "Powered by
+              ZSkillup" as an inseparable second line, so it no longer fits
+              inline the way a single-line wordmark did).
 
               Capped width, same reasoning as the description below: at this
               card width "For Universities & Institutions" (the one card with
@@ -233,12 +235,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
               card's title block the same height regardless of vertical. */}
           <h2 className="max-w-[15rem] text-[1.125rem] leading-snug font-bold text-navy">
             {card.eyebrow}
-            {card.vertical === "prephasz" ? (
-              <>
-                {" – "}
-                <PrephaszWordmark className="inline-block align-[-0.34em] text-[1.5rem]" accent />
-              </>
-            ) : card.brandLabel ? (
+            {card.vertical !== "prephasz" && card.brandLabel ? (
               <>
                 {" – "}
                 <span className={`inline-block rounded-full ${style.band} px-2.5 py-1 ${style.text}`}>
@@ -247,6 +244,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
               </>
             ) : null}
           </h2>
+          {card.vertical === "prephasz" ? <PrephaszLogo className="mt-1.5 h-8" /> : null}
           {/* Capped width so every description wraps to two lines, the same as
               the longest one. Without this, the shorter descriptions sat on a
               single line while the grid still stretched every card to match

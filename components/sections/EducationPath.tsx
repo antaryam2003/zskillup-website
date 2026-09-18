@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { journey } from "@/content/homepage";
+import { PrephaszLogo } from "@/components/ui/Brand";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { Container, Section } from "@/components/ui/Section";
 import { EducationJourney } from "./EducationJourney";
@@ -74,7 +75,11 @@ export function EducationPath() {
                       className="h-[1.15rem] w-[1.15rem]"
                     />
                   </span>
-                  <h3 className="text-[1.375rem] font-extrabold text-navy">{solution.title}</h3>
+                  {solution.vertical === "prephasz" ? (
+                    <PrephaszLogo className="h-9" />
+                  ) : (
+                    <h3 className="text-[1.375rem] font-extrabold text-navy">{solution.title}</h3>
+                  )}
                 </div>
 
                 <p className="mt-4 text-[0.9375rem] leading-relaxed text-body">{solution.body}</p>

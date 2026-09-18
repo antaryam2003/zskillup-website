@@ -85,12 +85,37 @@ function PrephaszArrow({ className }: { className: string }) {
 }
 
 /**
- * Prephasz wordmark.
+ * The complete official Prephasz brand mark - the "prephasz" wordmark and
+ * "Powered by ZSkillup" together, as supplied artwork rather than
+ * reconstructed in text/SVG (its styled Z terminal isn't reproducible with a
+ * system font, which is exactly what drifted out of alignment before).
+ * Unlike `PrephaszWordmark` below (kept for the one spot that still needs a
+ * live-text wordmark alone, with no "Powered by" line), this always renders
+ * both lines as a single image, since they aren't separable without cropping
+ * the official asset.
+ *
+ * Height-driven only - pass an `h-*` class; width follows automatically so
+ * the original aspect ratio (2673:730) is never distorted.
+ */
+export function PrephaszLogo({ className = "h-8" }: { className?: string }) {
+  return (
+    <Image
+      src={asset("/images/prephasz-logo.png")}
+      alt="prephasz, Powered by ZSkillup"
+      width={2673}
+      height={730}
+      className={`w-auto object-contain ${className}`}
+    />
+  );
+}
+
+/**
+ * Prephasz wordmark - "prephasz" alone, no "Powered by ZSkillup" line.
  *
  * The updated design sets the word in navy with the trailing "z" carried by the
- * yellow/orange arrow glyph, and "by ZSkillup" beneath. Pure yellow letterforms
- * measure about 1.6:1 on white, so the word itself is never set in yellow on a
- * light surface - only the mark is.
+ * yellow/orange arrow glyph. Pure yellow letterforms measure about 1.6:1 on
+ * white, so the word itself is never set in yellow on a light surface - only
+ * the mark is.
  *
  * `accent` is opt-in and only used by the Hero card, which references a design
  * that also picks out the "pre" out in the same gold as the arrow. Every other
@@ -99,35 +124,22 @@ function PrephaszArrow({ className }: { className: string }) {
 export function PrephaszWordmark({
   className = "text-2xl",
   tone = "dark",
-  showParent = false,
   accent = false,
 }: {
   className?: string;
   tone?: "dark" | "light";
-  showParent?: boolean;
   accent?: boolean;
 }) {
   const light = tone === "light";
   return (
-    <span className={`inline-flex flex-col leading-none ${className}`}>
-      <span
-        className={`inline-flex items-start font-extrabold tracking-[-0.035em] ${
-          light ? "text-white" : "text-navy"
-        }`}
-      >
-        {accent ? <span className="text-[#F0A020]">pre</span> : "pre"}
-        phas
-        <PrephaszArrow className="-mt-[0.26em] ml-[0.01em] h-[1.05em] w-[0.82em] text-[#F0A020]" />
-      </span>
-      {showParent ? (
-        <Image
-          src={asset("/images/prephasz-powered-by-zskillup.png")}
-          alt="Powered by ZSkillup"
-          width={280}
-          height={44}
-          className={`mt-[0.30em] h-[0.36em] w-auto self-center ${light ? "opacity-70 invert brightness-0" : ""}`}
-        />
-      ) : null}
+    <span
+      className={`inline-flex items-start leading-none font-extrabold tracking-[-0.035em] ${
+        light ? "text-white" : "text-navy"
+      } ${className}`}
+    >
+      {accent ? <span className="text-[#F0A020]">pre</span> : "pre"}
+      phas
+      <PrephaszArrow className="-mt-[0.26em] ml-[0.01em] h-[1.05em] w-[0.82em] text-[#F0A020]" />
     </span>
   );
 }

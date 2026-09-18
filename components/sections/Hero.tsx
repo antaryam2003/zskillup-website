@@ -154,25 +154,26 @@ export function Hero() {
           headline's body container on large screens. On mobile they stack
           BELOW the headline and primary CTA, on their own plain background.
 
-          This uses its OWN max-width (1480px vs the site's usual 1240px)
-          rather than bleeding the row out from inside a narrower,
-          already-centred <Container> with a negative margin - that bled
-          amount is sized relative to the Container's own cap, so it only
-          works once the viewport is comfortably past it, and goes wrong
-          exactly where a laptop screen commonly sits. A dedicated max-width,
-          capped and centred the same way the rest of the site's Container is,
-          can't do that at any width.
+          This uses its OWN max-width rather than bleeding the row out from
+          inside a narrower, already-centred <Container> with a negative
+          margin - that bled amount is sized relative to the Container's own
+          cap, so it only works once the viewport is comfortably past it, and
+          goes wrong exactly where a laptop screen commonly sits. A dedicated
+          max-width, capped and centred the same way the rest of the site's
+          Container is, can't do that at any width.
 
-          1480px keeps the cards noticeably narrower than the very wide
-          1680px this used previously - each card now stays close to the
-          proportions in the reference designs instead of stretching to fill
-          the full photograph width. That's safe to do now because the CTA
-          row below no longer needs to fit three actions on one line: Watch
-          Now sits on its own row, so the primary + secondary pair only ever
-          has to share a row with each other, which fits with room to spare
-          at any card width this produces - see that row's own comment. */}
-      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1480px] px-5 sm:-mt-20 sm:px-8 lg:-mt-[7.25rem]">
-        <ul className="grid gap-5 lg:grid-cols-3">
+          1680px (back to the width this used before it was narrowed to
+          1480px) plus a slightly tighter grid gap give each card enough
+          content width that, combined with the CTA row's own tighter gap
+          below, card 3's longest pair - "Explore Program" + "Talk to an
+          Advisor" - can sit on the same row as Watch Now once the viewport
+          is wide enough (empirically, roughly 1680px+; card 1's shorter
+          pair fits from meaningfully narrower). Below that, cards fall back
+          to wrapping Watch Now onto its own line - see that row's own
+          comment for why per-card flex-wrap, not a shared breakpoint, is
+          what makes that fallback correct. */}
+      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1680px] px-5 sm:-mt-20 sm:px-8 lg:-mt-[7.25rem]">
+        <ul className="grid gap-4 lg:grid-cols-3">
           {heroCards.map((card) => (
             <li key={card.eyebrow}>
               <HeroCard card={card} />
@@ -211,7 +212,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
 
   return (
     <article
-      className={`flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-6 shadow-card lg:scale-90`}
+      className={`flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-5 shadow-card lg:scale-90`}
     >
       <div className="flex items-start gap-4">
         <span className={`grid h-16 w-16 shrink-0 place-items-center rounded-full ${style.icon}`}>
@@ -263,25 +264,21 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
           never shrinks items below their content size the way flex-row
           without wrapping would) or the row overflowing the card.
 
-          This card grid's width is capped (`max-w-[1480px]` on the row
-          below), so card width tops out at a fixed value no matter how wide
-          the viewport gets - it never grows further past roughly 1500px.
-          Measured against that ceiling, the three-button row's natural
-          (unwrapped) width fits card 1's shorter "Explore" + "Partner With
-          Us" pair, but not card 2's or card 3's longer pairs, AT ANY
-          viewport width. A single shared breakpoint forcing all three cards
-          into a row together would therefore either never fire for any of
-          them (if set past what the grid can ever reach) or force cards
-          2-3's row to overflow/squeeze once it did fire - there is no width
-          where "all three cards, one row, nothing squeezed" holds
-          simultaneously for all three, given the fixed card width and
-          unchanged button sizes. flex-wrap is what lets each card resolve
-          on its own actual content instead: card 1 sits on one line from
-          ~1500px up, while cards 2 and 3 wrap Watch Now onto its own line
-          (still third, still after the other two) at every width - matching
-          "preserve order" and "no overflow/clipped text" over forcing every
-          card into visual lockstep. */}
-      <div className="mt-auto flex flex-wrap items-center gap-2.5 pt-5">
+          This row's own gap is tighter than the card's other internal
+          spacing (gap-1.5 instead of the card padding's own scale) - the
+          minimum lever available that doesn't touch the buttons' own
+          padding/size, which stays exactly as it was. Combined with the
+          wider card grid above, card 3's longest pair - "Explore Program" +
+          "Talk to an Advisor" - plus Watch Now fit on one line once the
+          viewport is wide enough (empirically ~1680px+; card 1's shorter
+          pair fits from meaningfully narrower). card width is still capped
+          (by the grid's own max-width), so this can never hold at every
+          viewport - flex-wrap is what lets each card resolve on its own
+          actual content once it doesn't: Watch Now wraps onto its own line
+          (still third, still after the other two, never squeezed or
+          clipped) rather than any card overflowing or all three being
+          forced into visual lockstep by a single shared breakpoint. */}
+      <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-5">
         <Button href={card.primary.href} variant="primary" size="sm">
           {card.primary.label}
         </Button>

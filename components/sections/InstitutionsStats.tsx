@@ -102,10 +102,19 @@ export function InstitutionsStats({ stats }: { stats: Stat[] }) {
     return () => observer.disconnect();
   }, []);
 
+  // A fixed 3-column grid (rather than the flex-wrap this replaced) is what
+  // actually guarantees one row: flex-wrap drops the third item onto its
+  // own line the moment total content width exceeds the row's available
+  // width - which it reliably did here, since this block sits in a narrow
+  // ~5-of-12 column on desktop. Grid columns can't wrap to a new row at
+  // all; each column just divides the available width evenly and wraps its
+  // OWN label text onto multiple lines instead, which is exactly the
+  // "Placement Readiness / Verified" two-line label the brief itself shows
+  // as acceptable.
   return (
-    <dl ref={ref} className="mt-10 flex flex-wrap gap-x-10 gap-y-5">
+    <dl ref={ref} className="mt-10 grid grid-cols-3 gap-x-4 gap-y-5 sm:gap-x-6">
       {stats.map((stat, i) => (
-        <div key={stat.label} className={i > 0 ? "border-l border-line pl-10" : ""}>
+        <div key={stat.label} className={i > 0 ? "border-l border-line pl-3 sm:pl-4" : ""}>
           <dt className="sr-only">{stat.label}</dt>
           <dd>
             <span className="block text-[1.5rem] font-extrabold tracking-tight text-black">
@@ -113,7 +122,7 @@ export function InstitutionsStats({ stats }: { stats: Stat[] }) {
             </span>
             <span
               aria-hidden="true"
-              className="mt-1 block max-w-[9rem] text-[0.8125rem] leading-snug text-muted"
+              className="mt-1 block text-[0.8125rem] leading-snug text-muted"
             >
               {stat.label}
             </span>

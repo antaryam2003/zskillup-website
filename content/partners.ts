@@ -62,20 +62,28 @@ export const institutionPartners: readonly Partner[] = [
  * because not every company shown is formally a hiring partner. Keep that label.
  *
  * Names below are the recruiters ZSkillup/Prephasz already reference publicly.
- * No artwork for these appears in the comps, so they render as wordmark tiles
- * until real logos are supplied. Confirm naming permission before publishing -
- * see CONTENT-TODO.md.
+ * Logo files are official artwork, trimmed to their content bounding box and
+ * downscaled (source files ranged from 185px to 4464px wide) - never
+ * recoloured or redrawn. Confirm naming permission before publishing - see
+ * CONTENT-TODO.md.
+ *
+ * Deloitte has no `logo` yet - the supplied source file has a third-party
+ * "cleanpng.com" watermark baked into opaque pixels (not a transparent
+ * preview artifact - sampled pixels confirmed a literal checkerboard +
+ * watermark-text pattern), so it isn't genuine artwork suitable for a
+ * production site. Falls back to the wordmark tile, same as before, until a
+ * clean file is supplied.
  */
 export const industryPartners: readonly Partner[] = [
-  { name: "TCS" },
-  { name: "Infosys" },
-  { name: "Wipro" },
-  { name: "Accenture" },
-  { name: "Cognizant" },
-  { name: "Capgemini" },
-  { name: "Tech Mahindra" },
-  { name: "LTIMindtree" },
-  { name: "IBM" },
+  { name: "TCS", logo: "/images/partners/tcs.png" },
+  { name: "Infosys", logo: "/images/partners/infosys.png" },
+  { name: "Wipro", logo: "/images/partners/wipro.png" },
+  { name: "Accenture", logo: "/images/partners/accenture.png" },
+  { name: "Cognizant", logo: "/images/partners/cognizant.png" },
+  { name: "Capgemini", logo: "/images/partners/capgemini.png" },
+  { name: "Tech Mahindra", logo: "/images/partners/tech-mahindra.png" },
+  { name: "LTIMindtree", logo: "/images/partners/ltimindtree.png" },
+  { name: "IBM", logo: "/images/partners/ibm.png" },
   { name: "Deloitte" },
 ];
 

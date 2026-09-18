@@ -1,2 +1,2 @@
-:HL["/zskillup-website/_next/static/chunks/3msm074_7y_au.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":4112,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":4160,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"oLJhKS77DcFGHAW6nAjX-"}
+:HL["/zskillup-website/_next/static/chunks/0sal6poi7fhcj.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":4112,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":4160,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"vBZAH0updF8dAvF7zNtUL"}

@@ -55,8 +55,7 @@ export function EducationPath() {
         </div>
 
         {/* --- Seven stages: ONE connected journey, not seven products -------
-            4+3 layout with a viewport-triggered, plays-once progress
-            animation - see EducationJourney. */}
+            Scroll-driven vertical timeline, no cards - see EducationJourney. */}
         <EducationJourney />
 
         {/* --- The three offerings this journey resolves into ---------------- */}

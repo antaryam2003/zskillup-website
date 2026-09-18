@@ -82,7 +82,7 @@ needs to change — `content/media.ts` holds every path, dimension and alt text.
 
 | Slot | Path | Current | Note |
 |---|---|---|---|
-| Hero (LCP) | `campus-student-hero.jpg` | 1670×942 | **Closed** — the real photograph, supplied directly |
+| Hero (LCP) | `campus-student-hero.png` | 1670×942 | **Closed** — the real photograph, supplied directly |
 | Leadership ×3 | `team/*.jpg` | 512×512 | Cropped from the About comp |
 | B.Com + ACCA | `commerce-student.jpg` | 322×610 | Small; an original would help most here |
 | Learner photos ×3 | `learners/*.jpg` | 256×256 | Only Ritika, Aman and Sneha exist |

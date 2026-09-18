@@ -48,25 +48,26 @@ export function Hero() {
       <div className="relative pt-[4.5rem]">
         {/* The supplied production photograph, used directly - see
             content/media.ts. object-position keeps the "More Than a Degree"
-            note, the buildings and the student in frame as the band's own
-            aspect ratio changes by viewport: short and wide on desktop (more
-            top/bottom gets cropped, so a higher focal point keeps her face
-            and the note in view rather than centering on her lower body),
-            taller and narrower on mobile (crops from the sides instead,
-            centered closer to her so she isn't pushed toward one edge).
+            note and the student in frame as the band's own aspect ratio
+            changes by viewport. Below 1024px the crop is narrow enough
+            (both on phone-width mobile and on tablet) that 80%/24% is the
+            one X/Y pair that keeps both her and the note in frame at once -
+            higher X pushes the note out of frame toward the left edge,
+            lower X pushes her toward/past the right edge.
 
             The `lg` X value (8%, not a centered-looking number) only matters
-            between 1024px and ~1332px: below 1024 the mobile/tablet values
-            apply, and above ~1332 the band becomes wide enough relative to
-            this photo's own aspect ratio that `cover` shows its full width
-            with zero horizontal crop - at that point X has no effect at all,
-            it's simply the whole image, so there's nothing to tune further
-            up there. In that 1024-1332px band, though, the crop is still
-            live, and a higher X (centering on the student, as the mobile
-            values do) pulls the note far enough left to collide with the
-            headline - see the wrapper div below for the other half of that
-            fix. Lower X shows more open sky instead, pushing the note and
-            buildings further right, clear of the text column.
+            between 1024px and ~1332px: below 1024 the shared mobile/tablet
+            value applies, and above ~1332 the band becomes wide enough
+            relative to this photo's own aspect ratio that `cover` shows its
+            full width with zero horizontal crop - at that point X has no
+            effect at all, it's simply the whole image, so there's nothing to
+            tune further up there. In that 1024-1332px band, though, the crop
+            is still live, and a higher X (centering on the student, as the
+            values below 1024px do) pulls the note far enough left to
+            collide with the headline - see the wrapper div below for the
+            other half of that fix. Lower X shows more open sky instead,
+            pushing the note and buildings further right, clear of the text
+            column.
 
             LCP image: `priority`, never lazy-loaded, dimensions declared. */}
         <Image
@@ -76,7 +77,7 @@ export function Hero() {
           height={media.hero.height}
           priority
           sizes="100vw"
-          className="absolute inset-0 -z-20 h-full w-full object-cover object-[62%_30%] sm:object-[80%_24%] lg:object-[8%_20%]"
+          className="absolute inset-0 -z-20 h-full w-full object-cover object-[80%_24%] lg:object-[8%_20%]"
         />
 
         {/* A soft, bright wash - not a panel - so the headline stays legible

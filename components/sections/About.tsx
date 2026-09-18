@@ -71,8 +71,13 @@ export function About() {
         </div>
 
         {/* --- Leadership ---------------------------------------------------- */}
+        {/* Leadership cards get an extra column at lg (9 of 12 instead of 8,
+            intro text down to 3) - the same 1240px Container cap everything
+            else here uses, just split less generously toward the intro copy
+            and more toward the cards, which is what actually makes each card
+            wider without touching the page's overall width anywhere. */}
         <div className="mt-20 grid gap-12 lg:mt-28 lg:grid-cols-12 lg:gap-14">
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-3">
             <Eyebrow tone="brand">{about.leadershipEyebrow}</Eyebrow>
             <Heading
               plain={about.leadershipHeadline.plain}
@@ -83,13 +88,13 @@ export function About() {
             <p className="mt-5 max-w-[40ch] leading-relaxed text-body">{about.leadershipBody}</p>
           </div>
 
-          <ul className="grid gap-5 sm:grid-cols-3 lg:col-span-8">
+          <ul className="grid gap-5 sm:grid-cols-3 lg:col-span-9">
             {about.leadership.map((person) => {
               const photo = media.team[person.slug as keyof typeof media.team];
               return (
                 <li
                   key={person.slug}
-                  className="flex flex-col rounded-card border border-line bg-white p-5 shadow-card"
+                  className="flex flex-col rounded-card border border-line bg-white p-5 shadow-card transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-lift"
                 >
                   {/* Founder photographs stay natural and prominent. */}
                   <Image

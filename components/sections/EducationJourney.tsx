@@ -16,27 +16,27 @@ import { Icon, type IconName } from "@/components/ui/Icon";
  * straight segments between vertically-stacked centres with no horizontal
  * offset, which is what a single column naturally produces.
  *
- * INTERACTION: this is a scroll-locked sequence, not a free-scrolling
- * reveal. When normal downward page scroll brings the section's top edge
- * to the top of the viewport, page scrolling is intercepted (wheel/touch
- * events are preventDefault'd, so the page never actually moves - no
- * body-overflow or position:fixed tricks, so there's nothing to cause a
- * layout jump or scrollbar flicker) and that input instead drives
- * `timelineProgress` from 0 to 1. Points activate in order as progress
- * passes each one's position on the path (by arc length, so the fill
- * travels smoothly through the turn rather than jumping). Once progress
- * reaches 1 and the user scrolls down again, the lock releases and that
- * scroll passes through untouched, continuing to the next section -
- * symmetrically, entering from below and scrolling up drives progress
- * from 1 back to 0, releasing upward once it hits 0. The state itself
- * (`timelineProgress`) persists between lock engagements, so re-entering
- * from either direction always resumes exactly where the last pass left
- * off, which is what makes both directions naturally symmetric without
- * any special-cased reset.
+ * As the section scrolls, the portion of that path above a fixed reading
+ * point (40% down the viewport) fills with the brand gradient - by arc
+ * length, so the fill travels smoothly through the turns rather than
+ * jumping - and every stage whose position on the path sits before that
+ * point switches to its active (gradient-filled) state. Scrolling back up
+ * reverses both exactly; there's no "played once" latch, the visual state
+ * is a pure function of scroll position, recomputed on every scroll/resize
+ * frame (rAF-throttled). Ordinary page scrolling is never intercepted or
+ * paused - the section reads its own position on every scroll tick and
+ * updates accordingly, nothing more.
  *
- * Same icons, same seven stages, same order, same content, same visual
- * design as before - only the interaction driving `timelineProgress`
- * changed, from continuous scroll position to this locked/captured input.
+ * Same icons, same seven stages, same order, same content as before - only
+ * the arrangement, connector geometry and (necessarily, to fit a narrow
+ * grid column) the per-point layout changed from "marker left, text right"
+ * to a centred stack of number/icon/title/body. No card backgrounds,
+ * borders or shadows, matching the current design language.
+ * `prefers-reduced-motion` doesn't need special-casing since the motion is
+ * entirely scroll-controlled, not decorative - the global reduced-motion
+ * rule in globals.css already collapses the smoothing transition to
+ * ~0ms, which is exactly the right behaviour (state still follows scroll,
+ * it just stops easing between frames).
  */
 
 const stageIcons: IconName[] = ["graduation", "book", "file", "chart", "users", "briefcase", "trending"];
@@ -52,30 +52,18 @@ const SECOND_ROW_START: Record<number, string> = {
   6: "md:col-start-6",
 };
 
+// Where the "reading point" sits in the viewport (fraction of window height)
+// that scroll progress is measured against. A point in the upper-middle of
+// the screen reads naturally as "the stage you're currently at."
+const READING_POINT = 0.4;
+
 // Clearance (px) the orthogonal 04-to-05 path travels past a point's own
 // footprint before turning, so the exit/entry reads as deliberate rather
 // than a bend exactly on the content's edge.
 const ORTHOGONAL_CLEARANCE = 20;
 
-// Wheel/touch pixels needed to sweep timelineProgress from 0 to 1. Touch
-// drags cover far fewer pixels per gesture than a wheel/trackpad session,
-// so it gets its own (shorter) distance rather than feeling like it takes
-// forever to complete on a phone.
-const WHEEL_SCROLL_DISTANCE_PX = 2200;
-const TOUCH_SCROLL_DISTANCE_PX = 1400;
-
-// Clamp any single wheel/touch event's contribution so one very large
-// delta (a hard trackpad flick, a fast mouse-wheel notch) can't skip
-// straight from 0 to 1 in one step - progress still has to sweep through
-// every intermediate frame, just potentially in fewer, larger steps.
-const MAX_DELTA_PX = 120;
-
 function dist(a: { x: number; y: number }, b: { x: number; y: number }) {
   return Math.hypot(b.x - a.x, b.y - a.y);
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value));
 }
 
 type Box = { x: number; y: number; width: number; height: number };
@@ -85,6 +73,9 @@ type PathData = {
   d: string;
   totalLength: number;
   cumulative: number[]; // cumulative length after connector k, index 0..COUNT-2
+  centerX: number;
+  firstY: number;
+  lastY: number;
 };
 
 /** A point counts as "the same row" as the next if their vertical gap is
@@ -121,30 +112,14 @@ function buildSegment(p1: Box, p2: Box, rowThreshold: number): Segment {
   return { d: points.map((pt) => `L ${pt.x} ${pt.y}`).join(" "), length };
 }
 
-function normalizeWheelDeltaY(e: WheelEvent) {
-  // deltaMode 0 = pixels (trackpads, most modern mice) - used as-is.
-  // 1 = lines (some traditional wheel mice) - approximate a line as 16px.
-  // 2 = pages - approximate a page as the viewport height.
-  if (e.deltaMode === 1) return e.deltaY * 16;
-  if (e.deltaMode === 2) return e.deltaY * window.innerHeight;
-  return e.deltaY;
-}
-
 export function EducationJourney() {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const markerRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const rafRef = useRef<number | null>(null);
 
   const [path, setPath] = useState<PathData | null>(null);
-  const [timelineProgress, setTimelineProgress] = useState(0);
-  const [isScrollLocked, setIsScrollLocked] = useState(false);
-
-  // Refs mirror the two pieces of state that event handlers need to read
-  // synchronously (handlers are attached once, on mount - they can't close
-  // over fresh state each render without resubscribing, which risks
-  // duplicate listeners and stale-closure bugs).
-  const progressRef = useRef(0);
-  const lockedRef = useRef(false);
+  const [pointerY, setPointerY] = useState(-Infinity);
 
   // Measure the path from actual DOM positions - the icon centre anchors
   // each point (so the line threads exactly through it), the surrounding
@@ -181,7 +156,14 @@ export function EducationJourney() {
         cumulative.push(total);
       }
 
-      setPath({ d, totalLength: total, cumulative });
+      setPath({
+        d,
+        totalLength: total,
+        cumulative,
+        centerX: centers[0].x,
+        firstY: centers[0].y,
+        lastY: centers[centers.length - 1].y,
+      });
     };
 
     measure();
@@ -190,136 +172,45 @@ export function EducationJourney() {
     return () => observer.disconnect();
   }, []);
 
-  // Trigger detection: a passive scroll listener that only watches for the
-  // section's top/bottom edge CROSSING the viewport's top/bottom between
-  // two consecutive scroll samples (rather than checking "are we currently
-  // near zero"), so a single large scroll jump (fast trackpad flick, a
-  // momentum-scroll on mobile) still reliably engages the lock instead of
-  // skipping past a narrow trigger window. Entering from above (scrolling
-  // down, section top crosses the viewport top) engages with whatever
-  // progress was last left at; entering from below (scrolling up, section
-  // bottom crosses the viewport bottom) does the same - progress isn't
-  // reset on engagement, so a fresh page load naturally starts at 0 (point
-  // 01 active) and a re-entry from below after a completed pass naturally
-  // starts at 1 (point 07 active), exactly matching each direction's
-  // expected starting state without any special-cased assignment.
+  // Track scroll position as a single px value: how far the "reading point"
+  // has travelled past the top of the timeline. Recomputed on scroll and
+  // resize, batched to one update per animation frame. This never
+  // intercepts or prevents the browser's own scrolling - it only reads
+  // the current position.
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    let prevTop: number | null = null;
-    let prevBottom: number | null = null;
-    let lastScrollY = window.scrollY;
-
-    const evaluate = () => {
+    const update = () => {
+      rafRef.current = null;
       const rect = container.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const currentY = window.scrollY;
-      const goingDown = currentY >= lastScrollY;
-      lastScrollY = currentY;
-
-      if (!lockedRef.current) {
-        if (
-          goingDown &&
-          prevTop != null &&
-          prevTop > 0 &&
-          rect.top <= 0 &&
-          progressRef.current < 1
-        ) {
-          lockedRef.current = true;
-          setIsScrollLocked(true);
-        } else if (
-          !goingDown &&
-          prevBottom != null &&
-          prevBottom < vh &&
-          rect.bottom >= vh &&
-          progressRef.current > 0
-        ) {
-          lockedRef.current = true;
-          setIsScrollLocked(true);
-        }
-      }
-
-      prevTop = rect.top;
-      prevBottom = rect.bottom;
+      setPointerY(window.innerHeight * READING_POINT - rect.top);
+    };
+    const onScrollOrResize = () => {
+      if (rafRef.current != null) return;
+      rafRef.current = requestAnimationFrame(update);
     };
 
-    evaluate();
-    window.addEventListener("scroll", evaluate, { passive: true });
-    return () => window.removeEventListener("scroll", evaluate);
-  }, []);
-
-  // The actual scroll-capture: while locked, wheel/touch input drives
-  // timelineProgress instead of the page. `processDelta` returns whether
-  // the input was consumed (progress updated, page scroll must be
-  // prevented) or released (progress was already at the edge the user is
-  // pushing past, so the lock drops and this same input must be allowed
-  // to reach the page normally - releasing on the very event that pushed
-  // past the edge, rather than one tick later, is what keeps this from
-  // ever feeling like it "eats" one extra scroll before letting go).
-  useEffect(() => {
-    function processDelta(deltaPx: number, distance: number): boolean {
-      if (!lockedRef.current) return false;
-
-      const atEnd = progressRef.current >= 1;
-      const atStart = progressRef.current <= 0;
-      if ((atEnd && deltaPx > 0) || (atStart && deltaPx < 0)) {
-        lockedRef.current = false;
-        setIsScrollLocked(false);
-        return false;
-      }
-
-      const clamped = clamp(deltaPx, -MAX_DELTA_PX, MAX_DELTA_PX);
-      const next = clamp(progressRef.current + clamped / distance, 0, 1);
-      progressRef.current = next;
-      setTimelineProgress(next);
-      return true;
-    }
-
-    const onWheel = (e: WheelEvent) => {
-      if (!lockedRef.current) return;
-      const consumed = processDelta(normalizeWheelDeltaY(e), WHEEL_SCROLL_DISTANCE_PX);
-      if (consumed) e.preventDefault();
-    };
-
-    let touchY: number | null = null;
-    const onTouchStart = (e: TouchEvent) => {
-      if (!lockedRef.current) return;
-      touchY = e.touches[0]?.clientY ?? null;
-    };
-    const onTouchMove = (e: TouchEvent) => {
-      if (!lockedRef.current || touchY == null) return;
-      const currentY = e.touches[0]?.clientY;
-      if (currentY == null) return;
-      // Finger moving up the screen (currentY < touchY) reads as
-      // "scrolling down" intent, matching wheel's sign convention.
-      const deltaPx = touchY - currentY;
-      touchY = currentY;
-      const consumed = processDelta(deltaPx, TOUCH_SCROLL_DISTANCE_PX);
-      if (consumed) e.preventDefault();
-    };
-    const onTouchEnd = () => {
-      touchY = null;
-    };
-
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    window.addEventListener("touchend", onTouchEnd, { passive: true });
-    window.addEventListener("touchcancel", onTouchEnd, { passive: true });
+    update();
+    window.addEventListener("scroll", onScrollOrResize, { passive: true });
+    window.addEventListener("resize", onScrollOrResize, { passive: true });
     return () => {
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onTouchEnd);
-      window.removeEventListener("touchcancel", onTouchEnd);
+      window.removeEventListener("scroll", onScrollOrResize);
+      window.removeEventListener("resize", onScrollOrResize);
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
-  const revealedLength = path ? timelineProgress * path.totalLength : 0;
+  // Scroll progress is measured vertically (how far through the section's
+  // own height the reading point has travelled) then applied as a fraction
+  // of the path's actual arc length, so the fill travels smoothly through
+  // the turns instead of jumping, and stays tied 1:1 to scroll position.
+  const verticalSpan = path ? Math.max(1, path.lastY - path.firstY) : 1;
+  const scrollFraction = path ? Math.min(1, Math.max(0, (pointerY - path.firstY) / verticalSpan)) : 0;
+  const revealedLength = path ? scrollFraction * path.totalLength : 0;
 
   return (
-    <div ref={containerRef} className="relative mt-14" data-scroll-locked={isScrollLocked}>
+    <div ref={containerRef} className="relative mt-14">
       {path ? (
         <svg
           aria-hidden="true"
@@ -351,11 +242,11 @@ export function EducationJourney() {
 
       <ol className="grid grid-cols-1 gap-y-10 md:grid-cols-8 md:gap-x-4 md:gap-y-16 lg:gap-x-6">
         {journey.stages.map((stage, i) => {
-          // Point 01 is the sequence's starting point - active from the
-          // moment the section is reached, at 0% progress, not only once
-          // scrolled past. Every later point activates once progress has
-          // swept far enough along the path's arc length to reach it.
-          const isActive = path ? (i === 0 ? true : revealedLength >= path.cumulative[i - 1]) : i === 0;
+          const isActive = path
+            ? i === 0
+              ? pointerY >= path.firstY
+              : revealedLength >= path.cumulative[i - 1]
+            : false;
           return (
             <li
               key={stage.step}

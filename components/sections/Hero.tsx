@@ -162,21 +162,19 @@ export function Hero() {
           max-width, capped and centred the same way the rest of the site's
           Container is, can't do that at any width.
 
-          1900px, a tighter grid gap and tighter side padding give each card
-          more content width than before, so that combined with the CTA
-          row's own tighter gap below, card 3's longest pair - "Explore
-          Program" + "Talk to an Advisor" - sits on the same row as Watch Now
-          from a noticeably narrower viewport than previously (empirically
-          ~1530px+, down from ~1600px; card 1's shorter pair fits from
-          meaningfully narrower still). Below that width there simply isn't
-          enough physical room for three full-size, unshrunk buttons - at a
-          1280px viewport the grid's entire available width, split 3 ways
-          with zero gap at all, is still ~150px short of what card 3's row
-          needs - so cards fall back to wrapping Watch Now onto its own line;
-          see that row's own comment for why per-card flex-wrap, not a
-          shared breakpoint, is what makes that fallback correct. */}
-      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1900px] px-5 sm:-mt-20 sm:px-6 lg:-mt-[7.25rem]">
-        <ul className="grid gap-2 lg:grid-cols-3">
+          2200px, a tighter grid gap (gap-1) and uniform (not just mobile)
+          px-5 side padding give each card noticeably more width than
+          before, with the gap between them noticeably smaller - both a
+          direct consequence of the same lever: in a fixed-width three-
+          column grid, less space spent on gap/padding is more space handed
+          straight to the cards. This also happens to keep card 3's longest
+          button pair - "Explore Program" + "Talk to an Advisor" - fitting
+          on one row with Watch Now from a slightly narrower viewport than
+          before, though that fit is incidental here, not the point of this
+          pass - see the CTA row's own comment below for the button-layout
+          history; nothing there changed in this pass. */}
+      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[2200px] px-5 sm:-mt-20 lg:-mt-[7.25rem]">
+        <ul className="grid gap-1 lg:grid-cols-3">
           {heroCards.map((card) => (
             <li key={card.eyebrow}>
               <HeroCard card={card} />
@@ -220,11 +218,17 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
     // for the default shadow-card - reuses an established shadow rather
     // than inventing a new one. transform/box-shadow only, so nothing here
     // affects layout: no width/height/position change, siblings never
-    // shift. lg:scale-90 is a separate, permanent transform (unrelated to
-    // hover) - Tailwind composes both into one `transform` via shared CSS
-    // variables, so the hover lift still applies correctly on top of it.
+    // shift.
+    //
+    // The permanent `lg:scale-90` that used to sit here is gone: it shrank
+    // every card 10% smaller than its actual grid box on all four sides,
+    // which was the dominant source of the visual gap between cards (far
+    // more than the grid's own `gap` value) - so widening the grid track
+    // and shrinking `gap` had almost no visible effect while it was still
+    // scaling the result back down. Removing it is what actually makes the
+    // wider/closer-together change in the row below visible on screen.
     <article
-      className={`flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-4 shadow-card transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-lift lg:scale-90`}
+      className={`flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-4 shadow-card transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-lift`}
     >
       <div className="flex items-start gap-4">
         <span className={`grid h-16 w-16 shrink-0 place-items-center rounded-full ${style.icon}`}>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { journey } from "@/content/homepage";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { Container, Section } from "@/components/ui/Section";
+import { EducationJourney } from "./EducationJourney";
 
 /**
  * 07 - THE EDUCATION-TO-CAREER PATH
@@ -20,16 +21,6 @@ import { Container, Section } from "@/components/ui/Section";
  * Removed: "Explore Our Programs", "Education Today. Brighter Tomorrows." and
  * "Learn | Practice | Grow | Succeed". The freed space stays as whitespace.
  */
-
-const stageIcons: IconName[] = [
-  "graduation",
-  "book",
-  "file",
-  "chart",
-  "users",
-  "briefcase",
-  "trending",
-];
 
 const solutionIcons: Record<string, IconName> = {
   institutions: "chart",
@@ -62,34 +53,10 @@ export function EducationPath() {
           </p>
         </div>
 
-        {/* --- Seven stages: ONE connected journey, not seven products ------- */}
-        <ol className="no-scrollbar mt-14 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible md:grid-cols-4 xl:grid-cols-7">
-          {journey.stages.map((stage, i) => (
-            <li key={stage.step} className="relative w-[14.5rem] shrink-0 snap-start sm:w-auto">
-              <div className="h-full rounded-card border border-line bg-white p-5 text-center">
-                <span className="text-gradient block text-[1.75rem] font-extrabold">
-                  {stage.step}
-                </span>
-                <span className="bg-gradient-icon mx-auto mt-3 grid h-12 w-12 place-items-center rounded-full text-white">
-                  <Icon name={stageIcons[i]} className="h-[1.2rem] w-[1.2rem]" />
-                </span>
-                <h3 className="mt-4 text-[1rem] font-bold text-navy">{stage.title}</h3>
-                <p className="mt-2 text-[0.8125rem] leading-relaxed text-body">{stage.body}</p>
-              </div>
-
-              {/* Subtle but clearly visible - the journey should read naturally
-                  from Education through to Career. */}
-              {i < journey.stages.length - 1 ? (
-                <span
-                  aria-hidden="true"
-                  className="absolute top-1/2 -right-2.5 hidden -translate-y-1/2 text-muted xl:block"
-                >
-                  <Icon name="arrowRight" className="h-4 w-4" />
-                </span>
-              ) : null}
-            </li>
-          ))}
-        </ol>
+        {/* --- Seven stages: ONE connected journey, not seven products -------
+            4+3 layout with a viewport-triggered, plays-once progress
+            animation - see EducationJourney. */}
+        <EducationJourney />
 
         {/* --- The three offerings this journey resolves into ---------------- */}
         <ul className="mt-12 grid gap-5 lg:grid-cols-3">

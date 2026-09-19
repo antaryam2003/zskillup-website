@@ -324,50 +324,43 @@ export const prephasz = {
   videoLabel: "Watch prephasz in action",
   videoDuration: "2 min",
 
-  journeyEyebrow: "Simple Journey on prephasz",
-  journeyHeadline: "From practice to opportunity.",
+  journeyEyebrow: "A Simple Journey",
+  journeyHeadline: "From practice to placement readiness.",
   /** The line the feedback doc asks for verbatim - do not rewrite it. */
   journeyStatement:
     "Prepare. Practice. Assess. Improve. Get Placement Ready — all in one platform.",
-  /** Six feature pillars replacing the old four-step journey cards - the
-   *  complete prephasz ecosystem, not just a practice tool. Feature names
-   *  are fixed by the brief and must not be reworded. */
+  /** Six feature pillars, matching the reference comp (a-simple-journey.png)
+   *  verbatim - descriptions and feature names must not be reworded. */
   pillars: [
     {
       title: "Prepare",
-      tagline: "Company hubs, study plans and topic-wise practice, built around your goals.",
-      features: ["Company Hubs", "Study Plans", "Practice Questions", "Topic & Section Preparation"],
+      tagline: "Build a strong foundation with structured resources.",
+      features: ["Company Hubs", "Study Plans", "Practice Questions", "Topic Preparation"],
     },
     {
       title: "Assess",
-      tagline: "Full-length mocks and company-specific tests that measure real placement readiness.",
-      features: ["Mock Assessments", "Company-Specific Tests", "Placement Readiness Tests"],
+      tagline: "Test your preparation with realistic assessments.",
+      features: ["Mock Assessments", "Company Tests", "Placement Readiness Tests"],
     },
     {
       title: "Analyse",
-      tagline: "Track accuracy, speed and rankings with a clear, section-wise performance dashboard.",
-      features: ["Performance Dashboard", "Section-Wise Analysis", "Accuracy", "Speed", "Rankings"],
+      tagline: "Understand your performance and identify areas to improve.",
+      features: ["Performance Dashboard", "Section Analysis", "Accuracy", "Speed", "Rankings"],
     },
     {
       title: "Learn",
-      tagline: "Live masterclasses and SME sessions, plus recorded resources and clear explanations.",
+      tagline: "Gain insights from industry experts and curated content.",
       features: ["Live Masterclasses", "SME Sessions", "Recorded Resources", "Explanations"],
     },
     {
       title: "Get Hired",
-      tagline: "Job board, resume builder and mock interviews that turn preparation into offers.",
+      tagline: "Access opportunities and build a strong professional profile.",
       features: ["Job Board", "Resume Builder", "Mock Interviews", "Placement Opportunities"],
     },
     {
       title: "Track Outcomes",
-      tagline: "Certificates, leaderboards and reports that keep students and institutions aligned.",
-      features: [
-        "Certificates",
-        "Leaderboards",
-        "Student Reports",
-        "TPO Dashboard",
-        "Institutional Analytics",
-      ],
+      tagline: "See your progress and achievements over time.",
+      features: ["Certificates", "Leaderboards", "Student Reports", "Institutional Analytics"],
     },
   ],
 } as const;

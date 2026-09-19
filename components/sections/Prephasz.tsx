@@ -2,7 +2,7 @@ import { prephasz } from "@/content/homepage";
 import { videos } from "@/content/videos";
 import { Button } from "@/components/ui/Button";
 import { Icon, type IconName } from "@/components/ui/Icon";
-import { Container, Eyebrow, Lede, Section } from "@/components/ui/Section";
+import { Container, Eyebrow, Heading, Lede, Section } from "@/components/ui/Section";
 import { PrephaszVideo } from "./PrephaszVideo";
 
 /**
@@ -22,6 +22,24 @@ import { PrephaszVideo } from "./PrephaszVideo";
 
 /** One icon per pillar, in the pillars' own order (Prepare -> Track Outcomes). */
 const pillarIcons: IconName[] = ["book", "clipboard", "chart", "graduation", "briefcase", "trending"];
+
+/** Per-pillar icon-well tint, matching the reference comp (a-simple-journey.png)
+ *  as closely as practical - each stage gets its own soft pastel circle with a
+ *  matching icon colour, sampled directly from the reference image. "Prepare"
+ *  reuses the site's own prep tokens (this section's own brand colour); "Get
+ *  Hired" and "Track Outcomes" reuse the institutions/commerce vertical
+ *  tokens, whose existing hues already match the reference closely. Assess/
+ *  Analyse/Learn have no matching token in the site's palette, so those three
+ *  use one-off arbitrary values scoped to this component only - no new
+ *  global CSS custom properties are added. */
+const pillarTints: { bg: string; icon: string }[] = [
+  { bg: "bg-prep-soft", icon: "text-prep-ink" },
+  { bg: "bg-[#e3edfe]", icon: "text-[#1a68f0]" },
+  { bg: "bg-[#fde2e3]", icon: "text-[#961c40]" },
+  { bg: "bg-[#d8f6e3]", icon: "text-[#0a7a44]" },
+  { bg: "bg-inst-soft", icon: "text-inst" },
+  { bg: "bg-com-soft", icon: "text-com" },
+];
 
 export function Prephasz() {
   // pt-0/pb-0 need a matching override at every breakpoint tier (not just
@@ -107,68 +125,86 @@ export function Prephasz() {
           with six premium feature-pillar cards in one 3x2 grid - the
           complete prephasz ecosystem read at a glance, not a timeline, and
           with no second block duplicating the same ground underneath. */}
-      <div className="bg-prep-soft pt-12 pb-14 sm:pt-14 sm:pb-16 lg:pb-20">
+      <div className="bg-prep-soft pt-10 pb-12 sm:pt-12 sm:pb-14 lg:pb-16">
         <Container>
+          {/* Redesigned to match the reference comp (a-simple-journey.png) as
+              closely as practical: a neutral (not prep-gold) eyebrow, a much
+              larger dominant heading via the site's own Heading component
+              (matching the scale used by every other section), and a lighter
+              Lede for the supporting line - replacing the previous bespoke,
+              bolder treatment. */}
           <div id="prephasz-journey" className="scroll-mt-24">
-            <Eyebrow tone="prephasz">{prephasz.journeyEyebrow}</Eyebrow>
-            <h3 className="mt-3 text-[1.75rem] font-extrabold sm:text-[2.25rem]">
-              {prephasz.journeyHeadline}
-            </h3>
-            <p className="mt-3 max-w-[52ch] text-[1.0625rem] font-semibold text-navy/85 sm:text-[1.1875rem]">
-              {prephasz.journeyStatement}
-            </p>
+            <Eyebrow tone="muted">{prephasz.journeyEyebrow}</Eyebrow>
+            <Heading as="h3" plain={prephasz.journeyHeadline} size="md" className="mt-4" />
+            <Lede className="mt-3 max-w-[52ch]">{prephasz.journeyStatement}</Lede>
 
-            <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:mt-9 lg:grid-cols-3">
-              {prephasz.pillars.map((pillar, i) => (
-                <li key={pillar.title}>
-                  {/* Hover: the same translate-y-1 + shadow-lift lift used
-                      elsewhere on the site, plus a border tint toward
-                      prep-line (an existing token, already used for this
-                      section's dashed connector before it was replaced) as
-                      a restrained "glow" cue - no new colour, no scale, no
-                      layout change, siblings never shift. */}
-                  <div className="group flex h-full flex-col rounded-card border border-line bg-white p-7 shadow-card transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-prep-line hover:shadow-lift">
-                    <Eyebrow tone="prephasz" rule="none">
-                      Step {String(i + 1).padStart(2, "0")}
-                    </Eyebrow>
-
-                    <span className="mt-4 grid h-14 w-14 shrink-0 place-items-center rounded-full bg-prep-soft text-prep-ink ring-8 ring-prep-soft/40 transition-[box-shadow] duration-300 group-hover:ring-prep-soft/70">
-                      <Icon name={pillarIcons[i]} className="h-[1.4rem] w-[1.4rem]" />
-                    </span>
-
-                    <h4 className="mt-4 text-[1.125rem] font-extrabold text-navy">{pillar.title}</h4>
-                    <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-body">
-                      {pillar.tagline}
-                    </p>
-
-                    {/* A short branded accent line, not a full-width neutral
-                        rule - the same "short colour bar as a group divider"
-                        language the rest of the site already uses. */}
-                    <span aria-hidden="true" className="mt-5 mb-4 block h-0.5 w-8 rounded-full bg-prep" />
-
-                    <ul className="space-y-2">
-                      {pillar.features.map((feature) => (
-                        <li
-                          key={feature}
-                          className="flex items-center gap-2.5 text-[0.8125rem] leading-snug text-body"
+            <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {prephasz.pillars.map((pillar, i) => {
+                const tint = pillarTints[i];
+                return (
+                  <li key={pillar.title} className="h-full">
+                    {/* Hover: the same translate-y-1 + shadow-lift lift used
+                        elsewhere on the site - elevation and shadow only, no
+                        scale, no dimension change, siblings never shift.
+                        Tailwind's hover:-translate-y-* compiles to the
+                        native CSS `translate` property, not `transform`
+                        (which stays `none`) - the transition list has to
+                        name `translate` explicitly or the lift applies
+                        instantly with no animation. */}
+                    <div className="group flex h-full flex-col rounded-card border border-line bg-white p-7 shadow-card transition-[translate,box-shadow] duration-[250ms] ease-out hover:-translate-y-1 hover:shadow-lift">
+                      <div className="flex items-start justify-between gap-3">
+                        <span
+                          className={`grid h-16 w-16 shrink-0 place-items-center rounded-full ${tint.bg}`}
                         >
-                          {/* One consistent check-glyph well for every
-                              feature point, on every card - not a different
-                              icon per feature, which would fight the "one
-                              icon system" requirement. */}
-                          <span
-                            aria-hidden="true"
-                            className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-prep-soft text-prep-ink"
-                          >
-                            <Icon name="check" className="h-2.5 w-2.5" />
-                          </span>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </li>
-              ))}
+                          <Icon name={pillarIcons[i]} className={`h-7 w-7 ${tint.icon}`} />
+                        </span>
+                        <span className="text-[1.0625rem] font-semibold text-muted">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+
+                      <h4 className="mt-5 text-[1.25rem] font-extrabold text-navy">{pillar.title}</h4>
+                      <p className="mt-2 text-[0.9375rem] leading-relaxed text-body">
+                        {pillar.tagline}
+                      </p>
+
+                      {/* flex-1 lets this row absorb the card's leftover height
+                          so the pills + arrow stay pinned to the bottom edge
+                          regardless of how many pill rows a given card wraps
+                          to - the same pattern already used by the "three
+                          offerings" cards further down this file.
+
+                          Pill text/padding/gap sized specifically so "Mock
+                          Interviews" + "Placement Opportunities" (card 5's
+                          longest pair, and the tightest fit of any card at
+                          this grid's ~376px desktop card width) still wrap
+                          2-per-row like every other card, matching the
+                          reference - at the previous larger size that pair
+                          alone forced a 3rd pill row, which then stretched
+                          every other card in that row with unwanted empty
+                          space above their own (shorter) pill rows. */}
+                      <div className="mt-5 flex flex-1 flex-wrap items-end gap-1.5">
+                        <ul className="flex flex-1 flex-wrap gap-1.5">
+                          {pillar.features.map((feature) => (
+                            <li
+                              key={feature}
+                              className="rounded-full bg-line-soft px-2 py-1.5 text-[0.75rem] font-medium text-body"
+                            >
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                        <span
+                          aria-hidden="true"
+                          className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-line-soft text-navy transition-transform duration-300 group-hover:translate-x-0.5"
+                        >
+                          <Icon name="arrowRight" className="h-4 w-4" />
+                        </span>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </Container>

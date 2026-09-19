@@ -79,17 +79,25 @@ export function Testimonials() {
           key={`${copy}-${t.slug}`}
           className="w-[85vw] shrink-0 sm:w-[21rem] lg:w-[22.5rem]"
         >
+          {/* Category heading removed (was a small "PREPHASZ" / "INSTITUTIONAL
+              PROGRAM" / "COMMERCE CAREER PATHWAY" label above the quote
+              mark) - the quote mark's own margin, which used to space it
+              away from that heading, is dropped too rather than left over
+              as unearned top whitespace; the card's own p-7 padding already
+              gives it a consistent inset. The blockquote's gap to the quote
+              mark is likewise cut down, so the whole card reads tighter -
+              its height (all three stay equal via the track's flex stretch,
+              unchanged) shrinks to match, not because anything was hard-
+              coded shorter. */}
           <figure className={`flex h-full flex-col rounded-card ${tint.card} p-7`}>
-            <p className="eyebrow text-center text-[0.625rem] text-navy/60">{t.category}</p>
-
             <span
               aria-hidden="true"
-              className={`mt-4 font-serif text-[3.5rem] leading-[0.6] ${tint.quote}`}
+              className={`font-serif text-[3.5rem] leading-[0.6] ${tint.quote}`}
             >
               &ldquo;
             </span>
 
-            <blockquote className="mt-5 flex-1 text-[0.9375rem] leading-relaxed text-navy">
+            <blockquote className="mt-1 flex-1 text-[0.9375rem] leading-relaxed text-navy">
               &ldquo;{t.quote}&rdquo;
             </blockquote>
 

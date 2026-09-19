@@ -9,8 +9,9 @@ import { Icon, type IconName } from "@/components/ui/Icon";
  * timeline. At md+ widths the seven points sit in a 4+3 grid (01-04 across
  * the top row, 05-07 centred beneath it, 05 landing left-of-centre under
  * 02) connected by one continuous line: straight across each row, and an
- * orthogonal (90-degree only, no diagonal) staircase from 04 down and left
- * into 05. Below md there's no room for four across, so the same seven
+ * orthogonal (axis-aligned only, no diagonal) staircase from 04 down and
+ * left into 05, its bends rounded rather than sharp (see roundedPolyline).
+ * Below md there's no room for four across, so the same seven
  * points stack in a single column - the connector logic doesn't special
  * case this, it just measures where the icons actually landed and draws
  * straight segments between vertically-stacked centres with no horizontal
@@ -62,12 +63,71 @@ const READING_POINT = 0.4;
 // than a bend exactly on the content's edge.
 const ORTHOGONAL_CLEARANCE = 20;
 
+// How much of each straight run is cut back and replaced with a curve at
+// every bend in the 04-to-05 staircase, so it reads as one flowing turn
+// rather than a rectangular path with hard corners.
+const CORNER_RADIUS = 16;
+
 function dist(a: { x: number; y: number }, b: { x: number; y: number }) {
   return Math.hypot(b.x - a.x, b.y - a.y);
 }
 
-type Box = { x: number; y: number; width: number; height: number };
+type Box = { x: number; y: number; width: number; height: number; top: number; bottom: number };
 type Segment = { d: string; length: number };
+
+/** Turns a polyline (the cursor already sits at `start`) into path commands
+    with every INTERIOR vertex rounded - a quadratic curve whose control
+    point is the original sharp corner, tangent to both the incoming and
+    outgoing straight runs, which is the standard way to round an axis-
+    aligned corner without any diagonal shortcut. The final point is left
+    as a plain line: that one has to land exactly on the next stage's
+    marker centre, not be rounded away from it. Each corner's radius is
+    clamped to at most half of either adjoining run, so short runs (e.g. on
+    a cramped viewport) shrink the curve instead of overlapping it. */
+function roundedPolyline(
+  start: { x: number; y: number },
+  points: { x: number; y: number }[],
+  radius: number,
+): Segment {
+  let d = "";
+  let length = 0;
+  let prev = start;
+
+  for (let i = 0; i < points.length; i++) {
+    const curr = points[i];
+    const next = points[i + 1];
+
+    if (!next) {
+      d += ` L ${curr.x} ${curr.y}`;
+      length += dist(prev, curr);
+      break;
+    }
+
+    const distIn = dist(prev, curr);
+    const distOut = dist(curr, next);
+    const r = Math.min(radius, distIn / 2, distOut / 2);
+
+    if (r <= 0) {
+      d += ` L ${curr.x} ${curr.y}`;
+      length += distIn;
+    } else {
+      const preX = curr.x - ((curr.x - prev.x) / distIn) * r;
+      const preY = curr.y - ((curr.y - prev.y) / distIn) * r;
+      const postX = curr.x + ((next.x - curr.x) / distOut) * r;
+      const postY = curr.y + ((next.y - curr.y) / distOut) * r;
+      d += ` L ${preX} ${preY} Q ${curr.x} ${curr.y} ${postX} ${postY}`;
+      // Every corner here is a 90-degree turn (all runs are axis-aligned),
+      // so its curve is a touch shorter than the straight run it replaces -
+      // approximated as a quarter circle rather than measured exactly, which
+      // is plenty accurate for a continuously-recomputed scroll progress
+      // value that's already just tracking pixel position, not physics.
+      length += (distIn - r) + r * (Math.PI / 2);
+    }
+    prev = curr;
+  }
+
+  return { d, length };
+}
 
 type PathData = {
   d: string;
@@ -83,9 +143,8 @@ type PathData = {
     it's a row change: with no horizontal offset (a single-column stack)
     that's also a straight line, just vertical; with a horizontal offset
     (the md+ 04-to-05 transition) it's an orthogonal staircase - exit
-    right, drop into the gap band between rows, travel horizontally,
-    drop again, enter from the left - four 90-degree bends and no
-    diagonal. */
+    right, drop into the gap band between rows, travel horizontally, drop
+    again, enter from the left - with every bend rounded, not sharp. */
 function buildSegment(p1: Box, p2: Box, rowThreshold: number): Segment {
   const dy = p2.y - p1.y;
   const dx = p2.x - p1.x;
@@ -96,7 +155,15 @@ function buildSegment(p1: Box, p2: Box, rowThreshold: number): Segment {
 
   const exitX = p1.x + p1.width / 2 + ORTHOGONAL_CLEARANCE;
   const entryX = p2.x - p2.width / 2 - ORTHOGONAL_CLEARANCE;
-  const gapBandY = (p1.y + p1.height / 2 + (p2.y - p2.height / 2)) / 2;
+  // The middle of the actual whitespace between the two rows' content
+  // blocks - p1's true bottom edge to p2's true top edge - not the marker
+  // centres' own midpoint. The marker sits near the TOP of each block (icon,
+  // then title, then body underneath), so averaging the two markers' y
+  // positions ± half of each block's full height systematically undershoots
+  // p1's real bottom and overshoots p2's real top, pulling the whole band
+  // up toward row 1's text instead of centring it - which is exactly the
+  // "too close to the first row, too far from the second" bug this fixes.
+  const gapBandY = (p1.bottom + p2.top) / 2;
 
   const points = [
     { x: exitX, y: p1.y },
@@ -106,10 +173,7 @@ function buildSegment(p1: Box, p2: Box, rowThreshold: number): Segment {
     { x: p2.x, y: p2.y },
   ];
 
-  let length = dist(p1, points[0]);
-  for (let i = 1; i < points.length; i++) length += dist(points[i - 1], points[i]);
-
-  return { d: points.map((pt) => `L ${pt.x} ${pt.y}`).join(" "), length };
+  return roundedPolyline(p1, points, CORNER_RADIUS);
 }
 
 export function EducationJourney() {
@@ -142,6 +206,8 @@ export function EducationJourney() {
           y: mr.top - containerRect.top + mr.height / 2,
           width: ir.width,
           height: ir.height,
+          top: ir.top - containerRect.top,
+          bottom: ir.bottom - containerRect.top,
         };
       });
 

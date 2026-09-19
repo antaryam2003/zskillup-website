@@ -54,7 +54,25 @@ export function SiteHeader() {
     >
       <Container>
         <div className="flex h-[4.5rem] items-center justify-between gap-4">
-          <Link href="/" aria-label="ZSkillup home" className="shrink-0">
+          {/* Aligns the logo's left edge with the Hero's own left grid line.
+              Both this header's <Container> and the Hero's text wrapper share
+              the identical px-5/sm:px-8 padding - they only diverge once the
+              viewport passes Container's own max-w-[1240px] cap, where
+              Container starts centering (adding growing left margin) while
+              the Hero (deliberately uncapped, see Hero.tsx) does not. That
+              growing margin is exactly `max(0px, (100vw - 1240px) / 2)` -
+              pulling the logo left by that same computed amount cancels it
+              out and lands the logo back on the Hero's edge at every width,
+              rather than a guessed fixed offset. Below 1240px the margin is
+              already 0, so this is a no-op there. A transform (not a
+              margin) so it only moves the logo visually - it does not
+              re-flow or shift the nav links/CTA/search/menu button, which
+              keep their exact current position and spacing. */}
+          <Link
+            href="/"
+            aria-label="ZSkillup home"
+            className="shrink-0 [transform:translateX(min(0px,(1240px_-_100vw)/2))]"
+          >
             <ZSkillupLogoMark />
           </Link>
 

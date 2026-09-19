@@ -162,19 +162,24 @@ export function Hero() {
           max-width, capped and centred the same way the rest of the site's
           Container is, can't do that at any width.
 
-          2200px, a tighter grid gap (gap-1) and uniform (not just mobile)
-          px-5 side padding give each card noticeably more width than
-          before, with the gap between them noticeably smaller - both a
-          direct consequence of the same lever: in a fixed-width three-
-          column grid, less space spent on gap/padding is more space handed
-          straight to the cards. This also happens to keep card 3's longest
-          button pair - "Explore Program" + "Talk to an Advisor" - fitting
-          on one row with Watch Now from a slightly narrower viewport than
-          before, though that fit is incidental here, not the point of this
-          pass - see the CTA row's own comment below for the button-layout
-          history; nothing there changed in this pass. */}
-      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[2200px] px-5 sm:-mt-20 lg:-mt-[7.25rem]">
-        <ul className="grid gap-1 lg:grid-cols-3">
+          1800px (was 2200px) plus a wider grid gap (gap-8, was gap-1) hand
+          back real width to the gap the previous pass took from it - each
+          card is noticeably narrower and the three now read as separate
+          cards with visible air between them, rather than one wide block
+          with a hairline seam.
+
+          The 3-up grid only switches on at xl (1280px), not lg (1024px):
+          right at 1024 - the narrowest a 3-column row can be - three equal
+          columns leave too little room per card for card 3's longest pair,
+          "Explore Program" + "Talk to an Advisor", plus Watch Now to fit
+          on one line (the new hard requirement, see the CTA row below) at
+          any reasonable button size. Below xl the cards stay a single
+          full-width stacked column instead - already the existing mobile/
+          tablet behaviour, just extended a bit further up the width range -
+          which gives that same content the full card width to work with
+          instead of a third of it. */}
+      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1800px] px-4 sm:-mt-20 sm:px-5 lg:-mt-[7.25rem]">
+        <ul className="grid gap-5 xl:grid-cols-3 xl:gap-8">
           {heroCards.map((card) => (
             <li key={card.eyebrow}>
               <HeroCard card={card} />
@@ -212,13 +217,20 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
   const video = videos[card.vertical];
 
   return (
-    // Hover: a subtle lift (translate-y-1 = 4px) plus the site's existing
+    // Hover: a subtle lift (translate-y-1 = 4px) plus a slight scale
+    // (1.02 - "coming forward", not a size change) plus the site's existing
     // "elevated" shadow token (shadow-lift, already used for the video
     // dialog trigger and a couple of decorative cards elsewhere) swapped in
     // for the default shadow-card - reuses an established shadow rather
-    // than inventing a new one. transform/box-shadow only, so nothing here
-    // affects layout: no width/height/position change, siblings never
-    // shift.
+    // than inventing a new one. Tailwind's hover:scale/translate utilities
+    // compile to the native CSS `scale`/`translate` properties here (not
+    // `transform`, which stays `none` throughout) - the transition list
+    // below has to name `scale` and `translate` explicitly, or the browser
+    // applies both instantly with no animation at all. None of this affects
+    // layout: no width/height/position change, siblings never shift.
+    // `relative` + `hover:z-10` lifts the hovered card's stacking order
+    // above its neighbours, so the ~1-2% growth never renders behind (and
+    // so never looks clipped by) the next card in DOM order.
     //
     // The permanent `lg:scale-90` that used to sit here is gone: it shrank
     // every card 10% smaller than its actual grid box on all four sides,
@@ -228,7 +240,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
     // scaling the result back down. Removing it is what actually makes the
     // wider/closer-together change in the row below visible on screen.
     <article
-      className={`flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-4 shadow-card transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-lift`}
+      className={`relative flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-3 shadow-card transition-[scale,translate,box-shadow] duration-[250ms] ease-out hover:z-10 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lift sm:p-4`}
     >
       <div className="flex items-start gap-4">
         <span className={`grid h-16 w-16 shrink-0 place-items-center rounded-full ${style.icon}`}>
@@ -275,35 +287,54 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
       </div>
 
       {/* CTA layout: all three actions - primary, secondary, then Watch Now
-          - share one row, in that order, via flex-wrap: whichever of them
-          doesn't fit drops to its own line rather than squeezing (flex-wrap
-          never shrinks items below their content size the way flex-row
-          without wrapping would) or the row overflowing the card.
+          - must now ALWAYS share one row; Watch Now may never drop to a
+          second line at any viewport, so this is flex-nowrap, not
+          flex-wrap.
 
-          This row's own gap is tighter than the card's other internal
-          spacing (gap-0.5 instead of the card padding's own scale) - one of
-          the two levers available that doesn't touch the buttons' own
-          padding/size/text, which stays exactly as it was (the other is the
-          wider, tighter-gapped card grid above). Together they let card 3's
-          longest pair - "Explore Program" + "Talk to an Advisor" - plus
-          Watch Now fit on one line from a meaningfully narrower viewport
-          than before (empirically ~1530px+, was ~1600px; card 1's shorter
-          pair fits from meaningfully narrower still). Card width is still
-          capped (by the grid's own max-width, and by the viewport itself
-          below that), so this can never hold at every viewport - flex-wrap
-          is what lets each card resolve on its own actual content once it
-          doesn't: Watch Now wraps onto its own line (still third, still
-          after the other two, never squeezed or clipped) rather than any
-          card overflowing or all three being forced into visual lockstep by
-          a single shared breakpoint. */}
-      <div className="mt-auto flex flex-wrap items-center gap-0.5 pt-5">
-        <Button href={card.primary.href} variant="primary" size="sm">
+          Card width isn't the only lever available to make that hold at
+          every width (the brief is explicit it shouldn't be, and cards are
+          narrower now besides - see the grid above) - it's balanced against
+          three responsive tiers of button sizing, sized to each layout
+          mode's actual available width:
+            - base (<sm, phones - single stacked column, but a narrow one):
+              compact.
+            - sm-lg (640-1279px - still a single stacked column, but a wide
+              one - the full card width, not a third of it): full original
+              size, unchanged from before this pass.
+            - xl+ (1280px+ - three real columns again): compact again, since
+              a third of even this row's own width is tighter than a phone
+              screen minus its padding.
+          Both compact tiers use the same sizing - measured (via headless
+          Chrome) against the tightest case across BOTH bands, card 3's
+          "Explore Program" + "Talk to an Advisor" + Watch Now, which is the
+          narrower of the two (~375px viewport) rather than the xl one.
+          `!` (important) is required here: these override Button's own
+          shared `sm` size and VideoDialog's own shared `pill` padding,
+          neither of which this pass may edit directly (both are used
+          elsewhere on the site, unchanged). */}
+      <div className="mt-auto flex flex-nowrap items-center gap-1 pt-5 sm:gap-2 xl:gap-1">
+        <Button
+          href={card.primary.href}
+          variant="primary"
+          size="sm"
+          className="!gap-1 !px-1.5 !py-1.5 !text-[0.625rem] sm:!gap-2 sm:!px-3.5 sm:!py-2.5 sm:!text-[0.8125rem] xl:!gap-1 xl:!px-1.5 xl:!py-1.5 xl:!text-[0.625rem]"
+        >
           {card.primary.label}
         </Button>
-        <Button href={card.secondary.href} variant="outline" size="sm">
+        <Button
+          href={card.secondary.href}
+          variant="outline"
+          size="sm"
+          className="!gap-1 !px-1.5 !py-1.5 !text-[0.625rem] sm:!gap-2 sm:!px-3.5 sm:!py-2.5 sm:!text-[0.8125rem] xl:!gap-1 xl:!px-1.5 xl:!py-1.5 xl:!text-[0.625rem]"
+        >
           {card.secondary.label}
         </Button>
-        <VideoDialog video={video} label={card.video.label} variant="pill" />
+        <VideoDialog
+          video={video}
+          label={card.video.label}
+          variant="pill"
+          className="!gap-1 !py-1 !pl-0.5 !pr-1.5 !text-[0.625rem] sm:!gap-2 sm:!py-1.5 sm:!pl-1.5 sm:!pr-4 sm:!text-[0.875rem] xl:!gap-1 xl:!py-1 xl:!pl-0.5 xl:!pr-1.5 xl:!text-[0.625rem]"
+        />
       </div>
     </article>
   );

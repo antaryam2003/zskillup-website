@@ -40,8 +40,18 @@ const ctaVariant = {
 } as const;
 
 export function ChooseRoute() {
+  // Top padding only is trimmed from the Section default (py-20 sm:py-24
+  // lg:py-28) - bottom is untouched, so this only closes up the gap from
+  // About/Our Leadership above, not the space below this section. Both
+  // sections share the same white background, so there's no colour seam to
+  // lean on here - the reduced gap alone is what has to read as "connected."
   return (
-    <Section id="choose-your-route" tone="white" labelledBy="choose-route-heading">
+    <Section
+      id="choose-your-route"
+      tone="white"
+      labelledBy="choose-route-heading"
+      className="pt-10 sm:pt-12 lg:pt-14"
+    >
       <Container>
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-12">
           {/* Left column stays deliberately sparse - whitespace is the point.

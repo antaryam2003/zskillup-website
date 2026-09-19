@@ -44,8 +44,14 @@ export function ChooseRoute() {
     <Section id="choose-your-route" tone="white" labelledBy="choose-route-heading">
       <Container>
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-12">
-          {/* Left column stays deliberately sparse - whitespace is the point. */}
-          <div className="lg:col-span-3">
+          {/* Left column stays deliberately sparse - whitespace is the point.
+              col-span-2 (was 3): the cards need more of the 12-unit budget
+              than a gap reduction alone can supply - see the cards row's own
+              comment - and this column's own content (an 11ch-capped
+              heading, a 30ch-capped lede) has enough headroom in its max-
+              width caps to still read fine at the narrower width; verified
+              via screenshot. */}
+          <div className="lg:col-span-2">
             <Eyebrow tone="gold" rule="above">
               {chooseRoute.eyebrow}
             </Eyebrow>
@@ -60,7 +66,15 @@ export function ChooseRoute() {
             <Lede className="mt-6 max-w-[30ch]">{chooseRoute.supporting}</Lede>
           </div>
 
-          <ul className="grid gap-5 lg:col-span-9 lg:grid-cols-3">
+          {/* gap-3 (was gap-5) plus the left column's own col-span-2 (was 3,
+              see above) together hand each card real, verified-safe extra
+              width from the same 12-unit budget: at gap-5/col-span-3, "For
+              Placement Preparation" needed 233px of nowrap width against
+              only ~200px available in the card - a hard, unfixable
+              overflow at every desktop width, container cap included, no
+              matter how the gap was tuned. This combination gives it
+              healthy clearance instead of a 1px margin. */}
+          <ul className="grid gap-3 lg:col-span-10 lg:grid-cols-3">
             {chooseRoute.cards.map((card) => {
               const style = verticalStyles[card.vertical];
               return (
@@ -81,7 +95,22 @@ export function ChooseRoute() {
                         <Icon name={kickerIcons[card.vertical]} className="h-[1.15rem] w-[1.15rem]" />
                       </span>
                       <div>
-                        <p className="eyebrow text-[0.625rem] text-navy/60">{card.kicker}</p>
+                        {/* "Stronger institutions" only gets real room to
+                            spare once the card hits its plateau width
+                            (~1240px+ viewport, where the Container's own cap
+                            takes over) - forcing nowrap any earlier (e.g. at
+                            the lg: breakpoint, 1024px, where this row is
+                            narrowest) clips the uppercase, letter-spaced text
+                            past the card's edge instead of wrapping it. xl:
+                            is the safe threshold; below it, it wraps onto two
+                            lines exactly as it did before. */}
+                        <p
+                          className={`eyebrow text-[0.625rem] text-navy/60 ${
+                            card.vertical === "institutions" ? "xl:whitespace-nowrap" : ""
+                          }`}
+                        >
+                          {card.kicker}
+                        </p>
                         <span
                           aria-hidden="true"
                           className="mt-1.5 block h-px w-8 bg-navy/20"
@@ -89,7 +118,18 @@ export function ChooseRoute() {
                       </div>
                     </div>
 
-                    <p className={`eyebrow relative mt-7 text-[0.625rem] ${style.text}`}>
+                    {/* Same reasoning as the kicker above: "For Placement
+                        Preparation" only has enough nowrap room once the
+                        card reaches its plateau width (~1200px+ viewport);
+                        xl: (1280px) is the nearest safe default breakpoint,
+                        confirmed via scrollWidth-vs-offsetWidth overflow
+                        checks at every width from 1024 to 1920. Below it,
+                        this wraps onto two lines exactly as it did before. */}
+                    <p
+                      className={`eyebrow relative mt-7 text-[0.625rem] ${style.text} ${
+                        card.vertical === "prephasz" ? "xl:whitespace-nowrap" : ""
+                      }`}
+                    >
                       {card.eyebrow}
                     </p>
 

@@ -189,7 +189,7 @@ export const chooseRoute: {
       kicker: "Confident learners",
       eyebrow: "For Placement Preparation",
       brand: "prephasz",
-      title: "Stop guessing what to prepare next.",
+      title: "Stop guessing\nwhat to\nprepare next.",
       body: "Practise for the stages recruiters use, find the areas holding you back and prepare with a clearer plan.",
       features: ["Mock tests & practice", "Personalised insights", "Get job ready"],
       cta: { label: "Explore prephasz", href: "#prephasz" },

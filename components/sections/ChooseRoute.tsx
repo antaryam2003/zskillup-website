@@ -144,7 +144,13 @@ export function ChooseRoute() {
                     </p>
 
                     {card.brand === "prephasz" ? (
-                      <PrephaszLogo className="relative mt-3 h-9 self-start" />
+                      // h-8 (was h-9, an ~11% reduction) plus mt-2 (was
+                      // mt-3) together close the exact 8px this logo sat
+                      // taller than the other two cards' brand pill (36px
+                      // vs 28px) - confirmed via measured layout that this
+                      // lands the title/description at the identical pixel
+                      // offset as cards 1 and 3, not just "closer."
+                      <PrephaszLogo className="relative mt-2 h-8 self-start" />
                     ) : card.brand ? (
                       <p
                         className={`relative mt-3 inline-block self-start rounded-md ${style.band} px-2.5 py-1 text-[0.8125rem] font-semibold ${style.text}`}

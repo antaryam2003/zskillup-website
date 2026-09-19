@@ -200,7 +200,7 @@ export const chooseRoute: {
       eyebrow: "For Commerce Careers",
       brand: "B.Com + ACCA",
       title: "Start with a degree.\nBuild toward\na profession.",
-      body: "Explore a B.Com + ACCA pathway designed to connect university study, professional preparation and employability.",
+      body: "Explore a B.Com + ACCA pathway designed to connect university study, preparation and employability.",
       features: ["B.Com + ACCA pathway", "Global recognition", "Career opportunities"],
       cta: { label: "Explore B.Com + ACCA", href: "#bcom-acca" },
     },

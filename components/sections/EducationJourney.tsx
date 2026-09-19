@@ -336,7 +336,12 @@ export function EducationJourney() {
                   isActive ? "bg-gradient-icon text-white" : "bg-cloud text-muted"
                 }`}
               >
-                <Icon name={stageIcons[i]} className="h-[1.15rem] w-[1.15rem]" />
+                {/* 1.15rem -> 1.35rem (+17.4%, within the requested 15-20%
+                    range). The h-12 w-12 (48px) well is untouched - place-
+                    items-center keeps the larger icon centred automatically,
+                    and 48px still leaves 13px of clearance on every side
+                    (was 15px), comfortably clear of the circle's edge. */}
+                <Icon name={stageIcons[i]} className="h-[1.35rem] w-[1.35rem]" />
               </span>
 
               <h3

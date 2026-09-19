@@ -37,8 +37,14 @@ const cardTints: Record<string, { card: string; quote: string }> = {
   prephasz: { card: "bg-[#fbf6ee]", quote: "text-[#c9a87b]" },
 };
 
-// Slow and readable, per the brief's 25-40px/s range.
-const MARQUEE_SPEED_PX_PER_SEC = 32;
+// Slow and readable, per the brief's 25-40px/s range. 34.5 (was 32, +7.8%)
+// is a very slight speed-up - still comfortably inside that range. Duration
+// is distance/speed (see below), so this scales the loop's existing
+// duration down proportionally; it doesn't touch the loop mechanism (two
+// back-to-back copies of the track, see `.testimonial-track` in
+// globals.css) that makes the repeat seamless, the card gap, or the
+// hover/tap pause behaviour, so none of those change.
+const MARQUEE_SPEED_PX_PER_SEC = 34.5;
 
 export function Testimonials() {
   const trackRef = useRef<HTMLUListElement>(null);

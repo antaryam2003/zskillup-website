@@ -71,7 +71,7 @@ export function Faqs() {
         </div>
 
         <div className="mt-14 grid gap-10 lg:grid-cols-12 lg:gap-12">
-          <div className="lg:col-span-4 lg:pt-6">
+          <div className="min-w-0 lg:col-span-4 lg:pt-6">
             <p className="eyebrow hidden text-muted lg:block">Still have questions?</p>
             <h3 className="mt-3 hidden text-[1.6rem] font-extrabold text-navy lg:block">
               {faqIntro.leftHeading}

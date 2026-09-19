@@ -121,25 +121,47 @@ export function Prephasz() {
             <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:mt-9 lg:grid-cols-3">
               {prephasz.pillars.map((pillar, i) => (
                 <li key={pillar.title}>
-                  <div className="flex h-full flex-col rounded-card border border-line bg-white p-6 shadow-card transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-lift">
-                    <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-prep-soft text-prep-ink">
-                      <Icon name={pillarIcons[i]} className="h-[1.3rem] w-[1.3rem]" />
+                  {/* Hover: the same translate-y-1 + shadow-lift lift used
+                      elsewhere on the site, plus a border tint toward
+                      prep-line (an existing token, already used for this
+                      section's dashed connector before it was replaced) as
+                      a restrained "glow" cue - no new colour, no scale, no
+                      layout change, siblings never shift. */}
+                  <div className="group flex h-full flex-col rounded-card border border-line bg-white p-7 shadow-card transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-prep-line hover:shadow-lift">
+                    <Eyebrow tone="prephasz" rule="none">
+                      Step {String(i + 1).padStart(2, "0")}
+                    </Eyebrow>
+
+                    <span className="mt-4 grid h-14 w-14 shrink-0 place-items-center rounded-full bg-prep-soft text-prep-ink ring-8 ring-prep-soft/40 transition-[box-shadow] duration-300 group-hover:ring-prep-soft/70">
+                      <Icon name={pillarIcons[i]} className="h-[1.4rem] w-[1.4rem]" />
                     </span>
-                    <h4 className="mt-4 text-[1.0625rem] font-extrabold text-navy">{pillar.title}</h4>
+
+                    <h4 className="mt-4 text-[1.125rem] font-extrabold text-navy">{pillar.title}</h4>
                     <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-body">
                       {pillar.tagline}
                     </p>
 
-                    <ul className="mt-4 space-y-1.5 border-t border-line-soft pt-4">
+                    {/* A short branded accent line, not a full-width neutral
+                        rule - the same "short colour bar as a group divider"
+                        language the rest of the site already uses. */}
+                    <span aria-hidden="true" className="mt-5 mb-4 block h-0.5 w-8 rounded-full bg-prep" />
+
+                    <ul className="space-y-2">
                       {pillar.features.map((feature) => (
                         <li
                           key={feature}
-                          className="flex items-start gap-2 text-[0.8125rem] leading-snug text-body"
+                          className="flex items-center gap-2.5 text-[0.8125rem] leading-snug text-body"
                         >
+                          {/* One consistent check-glyph well for every
+                              feature point, on every card - not a different
+                              icon per feature, which would fight the "one
+                              icon system" requirement. */}
                           <span
                             aria-hidden="true"
-                            className="mt-[0.4rem] h-1 w-1 shrink-0 rounded-full bg-prep"
-                          />
+                            className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-prep-soft text-prep-ink"
+                          >
+                            <Icon name="check" className="h-2.5 w-2.5" />
+                          </span>
                           {feature}
                         </li>
                       ))}

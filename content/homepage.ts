@@ -324,7 +324,7 @@ export const prephasz = {
   videoLabel: "Watch prephasz in action",
   videoDuration: "2 min",
 
-  journeyEyebrow: "A simple journey",
+  journeyEyebrow: "Simple Journey on prephasz",
   journeyHeadline: "From practice to opportunity.",
   /** The line the feedback doc asks for verbatim - do not rewrite it. */
   journeyStatement:

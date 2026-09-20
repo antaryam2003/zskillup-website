@@ -39,13 +39,26 @@ export function Hero() {
          behind the navigation, as in the design. */
       className="relative isolate -mt-[4.5rem] overflow-hidden"
     >
-      {/* The "photo band" - its height comes ONLY from the nav + headline
-          content it wraps, never from the cards or footer row below. That
-          matters on mobile: the cards stack to three full-width blocks there,
-          and if the photo filled that entire stacked height too it would need
-          to scale - and therefore crop - far more aggressively just to cover
-          it. Bounding the band keeps the crop close to what desktop shows. */}
-      <div className="relative pt-[4.5rem]">
+      {/* The "photo band" - a shared positioning/clipping context for the
+          background photo AND the cards row below it, so the photo's own
+          box (auto-height, driven by its normal-flow content) naturally
+          extends past the text content to the cards' actual rendered
+          bottom edge, not just the nav+headline zone above them.
+
+          This is deliberately ONE wrapper around BOTH pieces, not two
+          separate ones: the cards row still overlaps upward into the text
+          zone via its own negative margin-top exactly as before (untouched
+          - see that wrapper's own comment), but a negative margin only
+          affects the cards' own rendered position, not how much flow
+          height they still contribute to what comes after them - so this
+          wrapper's own auto height (nav+headline content, MINUS the cards'
+          own overlap, PLUS the cards' own full height) already lands
+          exactly on the cards' bottom edge with no measuring or magic
+          numbers needed, and stays correct automatically if card content
+          or breakpoint ever changes their rendered height. The footer row
+          below stays a sibling OUTSIDE this wrapper, on the page's own
+          white background, unaffected. */}
+      <div className="relative overflow-hidden">
         {/* The supplied production photograph, used directly - see
             content/media.ts. object-position keeps the "More Than a Degree"
             note and the student in frame as the band's own aspect ratio
@@ -68,6 +81,11 @@ export function Hero() {
             other half of that fix. Lower X shows more open sky instead,
             pushing the note and buildings further right, clear of the text
             column.
+
+            object-cover (unchanged) is what lets this box grow taller
+            without distorting or stretching the photo - a taller box just
+            reveals more of the same image, cropped the same way `cover`
+            already crops it horizontally.
 
             LCP image: `priority`, never lazy-loaded, dimensions declared. */}
         <Image
@@ -96,96 +114,91 @@ export function Hero() {
           className="absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgba(255,255,255,0.78)_0%,rgba(255,255,255,0.72)_28%,rgba(255,255,255,0.55)_52%,rgba(255,255,255,0.24)_76%,rgba(255,255,255,0)_94%)] lg:bg-[linear-gradient(100deg,rgba(255,255,255,0.74)_0%,rgba(255,255,255,0.66)_20%,rgba(255,255,255,0.42)_40%,rgba(255,255,255,0.08)_58%,rgba(255,255,255,0)_68%)]"
         />
 
-        {/* Deliberately NOT <Container>: that component re-centers within
-            max-w-[1240px] once the viewport passes 1240px, so its left edge
-            marches rightward as the screen widens - while the "More Than a
-            Degree" note baked into the photo (full-bleed, un-centered) only
-            drifts rightward at ~0.36px per viewport px. A centered column
-            drifting at a faster rate eventually collides with a slower-moving
-            fixed point it started clear of, which is what actually caused the
-            headline to creep into the note at ordinary and wide desktop
-            widths alike. A flat left padding - no centering, no cap - keeps
-            the headline's start position stable instead, matching how the
-            photo's own content is positioned from the left edge. */}
-        <div className="w-full px-5 sm:px-8">
-          <div className="grid items-start gap-6 pt-14 sm:pt-16 lg:grid-cols-12 lg:pt-20">
-            <div className="lg:col-span-7 lg:translate-x-5 lg:-translate-y-5">
-              <p className="eyebrow text-navy/80 drop-shadow-[0_1px_3px_rgba(255,255,255,0.7)]">{hero.eyebrow}</p>
+        <div className="relative pt-[4.5rem]">
+          {/* Deliberately NOT <Container>: that component re-centers within
+              max-w-[1240px] once the viewport passes 1240px, so its left edge
+              marches rightward as the screen widens - while the "More Than a
+              Degree" note baked into the photo (full-bleed, un-centered) only
+              drifts rightward at ~0.36px per viewport px. A centered column
+              drifting at a faster rate eventually collides with a slower-moving
+              fixed point it started clear of, which is what actually caused the
+              headline to creep into the note at ordinary and wide desktop
+              widths alike. A flat left padding - no centering, no cap - keeps
+              the headline's start position stable instead, matching how the
+              photo's own content is positioned from the left edge. */}
+          <div className="w-full px-5 sm:px-8">
+            <div className="grid items-start gap-6 pt-14 sm:pt-16 lg:grid-cols-12 lg:pt-20">
+              <div className="lg:col-span-7 lg:translate-x-5 lg:-translate-y-5">
+                <p className="eyebrow text-navy/80 drop-shadow-[0_1px_3px_rgba(255,255,255,0.7)]">{hero.eyebrow}</p>
 
-              {/* Both halves stay inside one <h1> so the sentence reads as a
-                  unit. The gradient half sweeps on every line, not once
-                  across the block. */}
-              <h1
-                id="hero-heading"
-                className="mt-6 max-w-[27ch] text-[2.4rem] leading-[1.06] font-extrabold tracking-[-0.03em] drop-shadow-[0_2px_10px_rgba(255,255,255,0.55)] sm:text-[3rem] lg:text-[3.15rem]"
-              >
-                <span className="block">{hero.headline.plain}</span>
-                <span className="text-gradient-lines no-hyphen-break mt-1 block whitespace-pre-line">
-                  {hero.headline.gradient}
-                </span>
-              </h1>
+                {/* Both halves stay inside one <h1> so the sentence reads as a
+                    unit. The gradient half sweeps on every line, not once
+                    across the block. */}
+                <h1
+                  id="hero-heading"
+                  className="mt-6 max-w-[27ch] text-[2.4rem] leading-[1.06] font-extrabold tracking-[-0.03em] drop-shadow-[0_2px_10px_rgba(255,255,255,0.55)] sm:text-[3rem] lg:text-[3.15rem]"
+                >
+                  <span className="block">{hero.headline.plain}</span>
+                  <span className="text-gradient-lines no-hyphen-break mt-1 block whitespace-pre-line">
+                    {hero.headline.gradient}
+                  </span>
+                </h1>
 
-              <p className="mt-6 max-w-[46ch] text-[1.0625rem] font-medium text-navy/85 drop-shadow-[0_1px_4px_rgba(255,255,255,0.75)] sm:text-lg">
-                {hero.supporting}
-              </p>
+                <p className="mt-6 max-w-[46ch] text-[1.0625rem] font-medium text-navy/85 drop-shadow-[0_1px_4px_rgba(255,255,255,0.75)] sm:text-lg">
+                  {hero.supporting}
+                </p>
 
-              <div className="mt-9">
-                <Button href={hero.cta.href} variant="primary" size="lg">
-                  {hero.cta.label}
-                </Button>
+                <div className="mt-9">
+                  <Button href={hero.cta.href} variant="primary" size="lg">
+                    {hero.cta.label}
+                  </Button>
+                </div>
               </div>
+
+              {/* The "More Than a Degree" note is no longer drawn live here -
+                  the supplied photograph bakes it in directly (see
+                  content/media.ts), so a second, separately-positioned copy
+                  would just double up on top of it. */}
             </div>
 
-            {/* The "More Than a Degree" note is no longer drawn live here -
-                the supplied photograph bakes it in directly (see
-                content/media.ts), so a second, separately-positioned copy
-                would just double up on top of it. */}
+            {/* Reserves room below the CTA for the cards to overlap into - this
+                gives the band enough height without folding the cards' own
+                (much taller, on mobile) height into it. */}
+            <div aria-hidden="true" className="h-20 sm:h-24 lg:h-28" />
           </div>
-
-          {/* Reserves room below the CTA for the cards to overlap into - this
-              gives the band enough height without folding the cards' own
-              (much taller, on mobile) height into it. */}
-          <div aria-hidden="true" className="h-20 sm:h-24 lg:h-28" />
         </div>
-      </div>
 
-      {/* Three pathway cards, pulled up to overlap the photo band's lower
-          edge - never absorbed into its height. They run wider than the
-          headline's body container on large screens. On mobile they stack
-          BELOW the headline and primary CTA, on their own plain background.
+        {/* Three pathway cards, pulled up to overlap the photo band's lower
+            edge - never absorbed into its height. On mobile they stack
+            BELOW the headline and primary CTA, on their own plain
+            background.
 
-          This uses its OWN max-width rather than bleeding the row out from
-          inside a narrower, already-centred <Container> with a negative
-          margin - that bled amount is sized relative to the Container's own
-          cap, so it only works once the viewport is comfortably past it, and
-          goes wrong exactly where a laptop screen commonly sits. A dedicated
-          max-width, capped and centred the same way the rest of the site's
-          Container is, can't do that at any width.
+            This wrapper is now flat px-5 sm:px-8 with no max-width and no
+            mx-auto - the EXACT same alignment system the hero text wrapper
+            above uses (see its own comment), not a separate one - so card
+            1's left edge and card 3's right edge always land exactly on
+            the same grid line the headline starts from and the text
+            column's own right-hand boundary respects, at every viewport,
+            with no drift and no guessed offset. A dedicated capped/centred
+            max-width (the previous approach) was rejected here for the
+            same reason it's rejected on the headline above: centring
+            within a cap makes the left edge march rightward past that
+            cap's width, which is exactly the misalignment this pass fixes.
 
-          1800px (was 2200px) plus a wider grid gap (gap-8, was gap-1) hand
-          back real width to the gap the previous pass took from it - each
-          card is noticeably narrower and the three now read as separate
-          cards with visible air between them, rather than one wide block
-          with a hairline seam.
-
-          The 3-up grid only switches on at xl (1280px), not lg (1024px):
-          right at 1024 - the narrowest a 3-column row can be - three equal
-          columns leave too little room per card for card 3's longest pair,
-          "Explore Program" + "Talk to an Advisor", plus Watch Now to fit
-          on one line (the new hard requirement, see the CTA row below) at
-          any reasonable button size. Below xl the cards stay a single
-          full-width stacked column instead - already the existing mobile/
-          tablet behaviour, just extended a bit further up the width range -
-          which gives that same content the full card width to work with
-          instead of a third of it. */}
-      <div className="relative z-10 mx-auto -mt-16 w-full max-w-[1800px] px-4 sm:-mt-20 sm:px-5 lg:-mt-[7.25rem]">
-        <ul className="grid gap-5 xl:grid-cols-3 xl:gap-8">
-          {heroCards.map((card) => (
-            <li key={card.eyebrow}>
-              <HeroCard card={card} />
-            </li>
-          ))}
-        </ul>
+            gap-10 (was gap-8) is the lever for "narrower, more separated
+            cards" now that the row has no independent max-width of its own
+            to shrink: a bigger gap directly hands less of the row's total
+            width to each card, at every viewport, without touching card
+            content, padding or the button-fit tuning below. */}
+        <div className="relative z-10 -mt-16 w-full px-5 sm:-mt-20 sm:px-8 lg:-mt-[7.25rem]">
+          <ul className="grid gap-5 xl:grid-cols-3 xl:gap-10">
+            {heroCards.map((card) => (
+              <li key={card.eyebrow}>
+                <HeroCard card={card} />
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       <Container>

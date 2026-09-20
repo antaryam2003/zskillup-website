@@ -194,12 +194,19 @@ export function Prephasz() {
                             </li>
                           ))}
                         </ul>
-                        <span
-                          aria-hidden="true"
-                          className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-line-soft text-navy transition-transform duration-300 group-hover:translate-x-0.5"
-                        >
-                          <Icon name="arrowRight" className="h-4 w-4" />
-                        </span>
+                        {/* Card 06 (Track Outcomes) carries no arrow, per the
+                            brief - the pills list is already flex-1, so it
+                            simply uses the row's full width in its absence
+                            rather than leaving an empty gap where the arrow
+                            used to sit. */}
+                        {i !== 5 ? (
+                          <span
+                            aria-hidden="true"
+                            className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-line-soft text-navy transition-transform duration-300 group-hover:translate-x-0.5"
+                          >
+                            <Icon name="arrowRight" className="h-4 w-4" />
+                          </span>
+                        ) : null}
                       </div>
                     </div>
                   </li>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { journey } from "@/content/homepage";
 import { Icon, type IconName } from "@/components/ui/Icon";
 
@@ -17,27 +17,53 @@ import { Icon, type IconName } from "@/components/ui/Icon";
  * straight segments between vertically-stacked centres with no horizontal
  * offset, which is what a single column naturally produces.
  *
- * As the section scrolls, the portion of that path above a fixed reading
- * point (40% down the viewport) fills with the brand gradient - by arc
- * length, so the fill travels smoothly through the turns rather than
- * jumping - and every stage whose position on the path sits before that
- * point switches to its active (gradient-filled) state. Scrolling back up
- * reverses both exactly; there's no "played once" latch, the visual state
- * is a pure function of scroll position, recomputed on every scroll/resize
- * frame (rAF-throttled). Ordinary page scrolling is never intercepted or
- * paused - the section reads its own position on every scroll tick and
- * updates accordingly, nothing more.
+ * Progress through the seven stages is a single 0-1 fraction, `scrollFraction`,
+ * applied to the path's arc length so the fill travels smoothly through the
+ * turns rather than jumping. It comes from one of two sources:
  *
- * Same icons, same seven stages, same order, same content as before - only
- * the arrangement, connector geometry and (necessarily, to fit a narrow
- * grid column) the per-point layout changed from "marker left, text right"
- * to a centred stack of number/icon/title/body. No card backgrounds,
- * borders or shadows, matching the current design language.
+ *  - Normally (`!locked`): a pure function of ordinary page scroll position
+ *    - how far a fixed "reading point" (40% down the viewport) has travelled
+ *    past the timeline's first marker. Scrolling back up reverses it exactly;
+ *    there's no "played once" latch. Page scroll is never intercepted here.
+ *
+ *  - While `locked`: the timeline has temporarily taken over scroll input
+ *    (see "Scroll lock" below) and `scrollFraction` instead tracks
+ *    accumulated wheel/touch/keyboard input directly, independent of the
+ *    (frozen) page scroll position.
+ *
+ * Same icons, same seven stages, same order, same content, same layout,
+ * connector geometry and styling as before - only the icon size (see the
+ * marker span below) and the scroll-lock interaction are new.
  * `prefers-reduced-motion` doesn't need special-casing since the motion is
- * entirely scroll-controlled, not decorative - the global reduced-motion
- * rule in globals.css already collapses the smoothing transition to
- * ~0ms, which is exactly the right behaviour (state still follows scroll,
- * it just stops easing between frames).
+ * entirely scroll/input-controlled, not decorative - the global reduced-
+ * motion rule in globals.css already collapses the smoothing transition to
+ * ~0ms, which is exactly the right behaviour (state still follows input, it
+ * just stops easing between frames).
+ *
+ * --- Scroll lock ---------------------------------------------------------
+ *
+ * When the timeline's full rendered height fits within the viewport (with a
+ * little headroom) AND the user scrolls down to its top edge, ordinary page
+ * scroll is suspended and further wheel/trackpad/touch/keyboard input drives
+ * `lockProgress` (0-1) directly instead. Reaching 1 finishes the connector's
+ * own transition, then releases the lock and hands scroll back at the exact
+ * position it was suspended at, so the user's still-in-flight downward input
+ * carries on naturally into whatever follows. Scrolling back up while locked
+ * reverses `lockProgress`; reaching 0 releases the lock symmetrically,
+ * letting the page continue scrolling up into whatever precedes it. Only a
+ * SINGLE set of listeners is attached once, at mount - they no-op instantly
+ * whenever `!locked`, so ordinary scrolling is completely unaffected until
+ * the timeline actually engages, and nothing double-fires or accumulates.
+ *
+ * The "fits in the viewport" gate is deliberate: this interaction only
+ * makes sense when all seven points are simultaneously visible while
+ * they're activating one by one. On any viewport where the rendered
+ * timeline is taller than that (most phones in portrait, stacked to a
+ * single column), the lock never engages at all and the section behaves
+ * exactly as it always did - a plain, always-reversible, scroll-position-
+ * driven reveal that can never trap anyone, satisfying "do not leave
+ * mobile users trapped" by construction rather than by an extra escape
+ * hatch bolted onto a broken interaction.
  */
 
 const stageIcons: IconName[] = ["graduation", "book", "file", "chart", "users", "briefcase", "trending"];
@@ -54,8 +80,9 @@ const SECOND_ROW_START: Record<number, string> = {
 };
 
 // Where the "reading point" sits in the viewport (fraction of window height)
-// that scroll progress is measured against. A point in the upper-middle of
-// the screen reads naturally as "the stage you're currently at."
+// that natural (unlocked) scroll progress is measured against. A point in
+// the upper-middle of the screen reads naturally as "the stage you're
+// currently at."
 const READING_POINT = 0.4;
 
 // Clearance (px) the orthogonal 04-to-05 path travels past a point's own
@@ -67,6 +94,43 @@ const ORTHOGONAL_CLEARANCE = 20;
 // every bend in the 04-to-05 staircase, so it reads as one flowing turn
 // rather than a rectangular path with hard corners.
 const CORNER_RADIUS = 16;
+
+// Accumulated px of wheel/touch/keyboard input it takes to go from 0% to
+// 100% once locked - large enough to read as deliberate (not a hair-
+// trigger), small enough it never feels like dragging through mud.
+const LOCK_TRAVEL_PX = 1400;
+
+// A single wheel/touch/key tick's contribution while locked is capped at
+// this many px-equivalent, so one big trackpad flick or "page" wheel notch
+// still has to cross the intermediate points rather than jumping straight
+// from 01 to 07.
+const LOCK_MAX_STEP_PX = 120;
+
+// Fixed step used for the keyboard fallback (Arrow/Page/Space) - a
+// deliberately smaller, steady nudge per key press.
+const LOCK_KEY_STEP_PX = 90;
+
+// The timeline only takes over scroll when its own rendered height leaves
+// this much viewport height to spare - a small margin so the lock never
+// engages in a razor-thin, cramped fit.
+const FIT_VIEWPORT_RATIO = 0.92;
+
+// Matches SiteHeader's own h-[4.5rem] (72px) - the sticky nav sits above
+// everything (z-50) for the entire page, including while this section is
+// pinned, so both the "does it fit" check and the pin point itself have to
+// treat the space below the nav as the actual usable viewport. Pinning to
+// raw rect.top<=0 (ignoring the nav) would tuck row one of the timeline
+// under the sticky header instead of leaving it in view.
+const STICKY_HEADER_PX = 72;
+
+// How long (ms) to let the final stroke-dashoffset transition (150ms, see
+// the SVG below) actually finish playing before handing scroll back, so
+// reaching point 07 visibly completes rather than cutting off mid-animation.
+const RELEASE_DELAY_MS = 220;
+
+function clamp01(v: number) {
+  return Math.max(0, Math.min(1, v));
+}
 
 function dist(a: { x: number; y: number }, b: { x: number; y: number }) {
   return Math.hypot(b.x - a.x, b.y - a.y);
@@ -176,6 +240,16 @@ function buildSegment(p1: Box, p2: Box, rowThreshold: number): Segment {
   return roundedPolyline(p1, points, CORNER_RADIUS);
 }
 
+type SavedBodyStyle = {
+  htmlOverflow: string;
+  position: string;
+  top: string;
+  left: string;
+  right: string;
+  width: string;
+  paddingRight: string;
+};
+
 export function EducationJourney() {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
@@ -184,6 +258,16 @@ export function EducationJourney() {
 
   const [path, setPath] = useState<PathData | null>(null);
   const [pointerY, setPointerY] = useState(-Infinity);
+
+  // --- Scroll-lock state --------------------------------------------------
+  const [locked, setLocked] = useState(false);
+  const [lockProgress, setLockProgress] = useState(0);
+  const lockedRef = useRef(false);
+  const lockProgressRef = useRef(0);
+  const lockProgressRafRef = useRef<number | null>(null);
+  const savedScrollYRef = useRef(0);
+  const savedBodyStyleRef = useRef<SavedBodyStyle | null>(null);
+  const touchYRef = useRef<number | null>(null);
 
   // Measure the path from actual DOM positions - the icon centre anchors
   // each point (so the line threads exactly through it), the surrounding
@@ -238,19 +322,122 @@ export function EducationJourney() {
     return () => observer.disconnect();
   }, []);
 
-  // Track scroll position as a single px value: how far the "reading point"
-  // has travelled past the top of the timeline. Recomputed on scroll and
-  // resize, batched to one update per animation frame. This never
-  // intercepts or prevents the browser's own scrolling - it only reads
-  // the current position.
+  // Suspends ordinary page scroll and hands control to the timeline. Saves
+  // exactly the inline style values this touches (html overflow; body
+  // position/top/left/right/width/padding-right) so they can be restored
+  // verbatim rather than guessed - "" restores to whatever the stylesheet
+  // already says, correct whether or not anything was inline before.
+  // position:fixed (not just overflow:hidden) is what makes this reliable
+  // on iOS Safari, which is well known to ignore overflow:hidden on body
+  // for touch scrolling; padding-right compensates for the scrollbar that
+  // disappears with html{overflow:hidden}, so page content never shifts
+  // horizontally. window.scrollY is untouched by any of this - it's simply
+  // preserved in savedScrollYRef and restored on release.
+  const engageLock = useCallback(() => {
+    if (lockedRef.current) return;
+    lockedRef.current = true;
+    setLocked(true);
+
+    const scrollY = window.scrollY;
+    savedScrollYRef.current = scrollY;
+
+    const html = document.documentElement;
+    const body = document.body;
+    const scrollbarWidth = window.innerWidth - html.clientWidth;
+
+    savedBodyStyleRef.current = {
+      htmlOverflow: html.style.overflow,
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      paddingRight: body.style.paddingRight,
+    };
+
+    if (scrollbarWidth > 0) {
+      body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+    html.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+  }, []);
+
+  const releaseLock = useCallback(() => {
+    if (!lockedRef.current) return;
+    lockedRef.current = false;
+    setLocked(false);
+
+    const saved = savedBodyStyleRef.current;
+    if (saved) {
+      const html = document.documentElement;
+      const body = document.body;
+      html.style.overflow = saved.htmlOverflow;
+      body.style.position = saved.position;
+      body.style.top = saved.top;
+      body.style.left = saved.left;
+      body.style.right = saved.right;
+      body.style.width = saved.width;
+      body.style.paddingRight = saved.paddingRight;
+    }
+    savedBodyStyleRef.current = null;
+
+    // position:fixed took the body out of flow, so the browser's own
+    // scroll position is untouched underneath it the whole time - this
+    // simply un-suspends it at exactly the value it was suspended at.
+    // behavior: "instant" is required, not cosmetic - globals.css sets
+    // html { scroll-behavior: smooth } site-wide, which would otherwise
+    // make this two-argument-equivalent call animate back over ~1s,
+    // visibly scrolling through a screen's worth of content and directly
+    // violating "the current scroll position must remain unchanged" /
+    // "do not cause sudden repositioning."
+    window.scrollTo({ top: savedScrollYRef.current, left: 0, behavior: "instant" });
+  }, []);
+
+  // Natural (unlocked) scroll tracking, plus the lock's own trigger check.
+  // Recomputed on scroll/resize, batched to one update per animation frame.
+  // This never intercepts or prevents the browser's own scrolling by
+  // itself - it only reads the current position, and calls engageLock()
+  // only once the trigger condition is actually met.
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+
+    let lastScrollY = window.scrollY;
 
     const update = () => {
       rafRef.current = null;
       const rect = container.getBoundingClientRect();
       setPointerY(window.innerHeight * READING_POINT - rect.top);
+
+      if (!lockedRef.current) {
+        const currentScrollY = window.scrollY;
+        const direction = currentScrollY === lastScrollY ? null : currentScrollY > lastScrollY ? "down" : "up";
+        lastScrollY = currentScrollY;
+
+        const usableViewport = window.innerHeight - STICKY_HEADER_PX;
+        const fits = rect.height <= usableViewport * FIT_VIEWPORT_RATIO;
+        if (fits) {
+          // Scrolling down INTO the timeline's top edge, not yet complete -
+          // grab scroll and start advancing from wherever lockProgress
+          // already is (0 on a first visit). The pin point is the sticky
+          // nav's own bottom edge, not the raw viewport top, so row one
+          // lands just below the nav instead of underneath it.
+          if (direction === "down" && lockProgressRef.current < 1 && rect.top <= STICKY_HEADER_PX) {
+            engageLock();
+            // Scrolling up from BELOW back into the timeline's bottom edge,
+            // not yet back to empty - grab scroll and start retreating.
+            // Gated on lockProgress > 0 so this can never re-fire the
+            // instant a forward completion releases scroll and the page
+            // continues down past this same boundary.
+          } else if (direction === "up" && lockProgressRef.current > 0 && rect.bottom <= window.innerHeight) {
+            engageLock();
+          }
+        }
+      }
     };
     const onScrollOrResize = () => {
       if (rafRef.current != null) return;
@@ -265,14 +452,109 @@ export function EducationJourney() {
       window.removeEventListener("resize", onScrollOrResize);
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
     };
-  }, []);
+  }, [engageLock]);
+
+  // Wheel/touch/keyboard input while locked. ONE set of listeners, attached
+  // once at mount - every handler's first line is a no-op guard when
+  // !lockedRef.current, so this has zero effect on ordinary scrolling and
+  // never accumulates duplicate listeners across renders.
+  useEffect(() => {
+    const applyDelta = (deltaPx: number) => {
+      const next = clamp01(lockProgressRef.current + deltaPx / LOCK_TRAVEL_PX);
+      lockProgressRef.current = next;
+      if (lockProgressRafRef.current == null) {
+        lockProgressRafRef.current = requestAnimationFrame(() => {
+          lockProgressRafRef.current = null;
+          setLockProgress(lockProgressRef.current);
+        });
+      }
+
+      // Reaching either end releases the lock - but only when input is
+      // still pushing further past that end (deltaPx's own sign), not
+      // merely sitting at 0 or 1, so a small overshoot-then-correct
+      // gesture right at a boundary doesn't release prematurely.
+      if (next >= 1 && deltaPx > 0) {
+        window.setTimeout(releaseLock, RELEASE_DELAY_MS);
+      } else if (next <= 0 && deltaPx < 0) {
+        window.setTimeout(releaseLock, RELEASE_DELAY_MS);
+      }
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!lockedRef.current) return;
+      e.preventDefault();
+      let dy = e.deltaY;
+      // WheelEvent.deltaMode: 0 = pixels (trackpads, most mice), 1 = lines
+      // (some mice), 2 = pages (rare) - normalised to a consistent px scale
+      // before clamping, so a "line" or "page" notch doesn't register as a
+      // single-pixel no-op.
+      if (e.deltaMode === 1) dy *= 18;
+      else if (e.deltaMode === 2) dy *= window.innerHeight;
+      applyDelta(Math.max(-LOCK_MAX_STEP_PX, Math.min(LOCK_MAX_STEP_PX, dy)));
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      touchYRef.current = e.touches[0]?.clientY ?? null;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (!lockedRef.current || touchYRef.current == null) return;
+      const y = e.touches[0]?.clientY;
+      if (y == null) return;
+      e.preventDefault();
+      const dy = touchYRef.current - y; // swipe up (content follows finger) advances, matching native scroll direction
+      touchYRef.current = y;
+      applyDelta(Math.max(-LOCK_MAX_STEP_PX, Math.min(LOCK_MAX_STEP_PX, dy)));
+    };
+    const onTouchEnd = () => {
+      touchYRef.current = null;
+    };
+
+    // Keyboard fallback: while locked, body scroll is genuinely suspended,
+    // so a keyboard-only user (no wheel/touch) needs an equivalent way to
+    // advance/retreat and, eventually, escape - without this, reaching
+    // point 07 (or scrolling back to 01) could otherwise never happen for
+    // that input mode, which is exactly the "permanently stuck" outcome
+    // this section must never produce.
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (!lockedRef.current) return;
+      if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
+        e.preventDefault();
+        applyDelta(LOCK_KEY_STEP_PX);
+      } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+        e.preventDefault();
+        applyDelta(-LOCK_KEY_STEP_PX);
+      }
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("keydown", onKeyDown);
+      if (lockProgressRafRef.current != null) cancelAnimationFrame(lockProgressRafRef.current);
+      // Never leave the page locked behind if this component unmounts
+      // mid-interaction (client-side navigation away, etc.) - releaseLock()
+      // itself no-ops if it isn't currently locked.
+      releaseLock();
+    };
+  }, [releaseLock]);
 
   // Scroll progress is measured vertically (how far through the section's
   // own height the reading point has travelled) then applied as a fraction
   // of the path's actual arc length, so the fill travels smoothly through
-  // the turns instead of jumping, and stays tied 1:1 to scroll position.
+  // the turns instead of jumping. While locked, the same fraction comes
+  // from accumulated input instead (see lockProgress above) - everything
+  // downstream (fill length, each point's active state) is identical
+  // either way, it only differs in what's driving the single number.
   const verticalSpan = path ? Math.max(1, path.lastY - path.firstY) : 1;
-  const scrollFraction = path ? Math.min(1, Math.max(0, (pointerY - path.firstY) / verticalSpan)) : 0;
+  const naturalFraction = path ? clamp01((pointerY - path.firstY) / verticalSpan) : 0;
+  const scrollFraction = locked ? lockProgress : naturalFraction;
   const revealedLength = path ? scrollFraction * path.totalLength : 0;
 
   return (
@@ -310,7 +592,7 @@ export function EducationJourney() {
         {journey.stages.map((stage, i) => {
           const isActive = path
             ? i === 0
-              ? pointerY >= path.firstY
+              ? scrollFraction > 0
               : revealedLength >= path.cumulative[i - 1]
             : false;
           return (

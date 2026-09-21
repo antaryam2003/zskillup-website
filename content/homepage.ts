@@ -152,13 +152,6 @@ export type RouteCard = {
   body: string;
   features: readonly string[];
   cta: PathwayCta;
-  /**
-   * Opt-in for a card whose body copy wraps to noticeably more lines than its
-   * siblings: tightens body leading, divider margins and feature spacing so
-   * the extra lines don't make the whole row taller. Off by default - the
-   * other cards render exactly as before.
-   */
-  dense?: boolean;
 };
 
 export const chooseRoute: {
@@ -199,12 +192,11 @@ export const chooseRoute: {
       eyebrow: "For Global Finance Careers",
       brand: "B.Com + Global Finance & AI",
       title: "Future-Ready.\nAI-Enabled.\nGlobally Employable.",
-      body: "Explore the Global Finance & AI Professional Program alongside your B.Com. Build practical finance and AI skills for a changing global workplace.",
+      body: "Global Finance & AI Professional Program. Build practical finance and AI skills for the global workplace.",
       features: ["B.Com + professional program", "Finance and AI skills", "Global career opportunities"],
       // The Button renders its own trailing arrow, so "Explore the Program →" is
       // the visible result of this label - a literal "→" here would double it.
       cta: { label: "Explore the Program", href: "#bcom-acca" },
-      dense: true,
     },
   ],
   /** Ties all three routes back to one ZSkillup proposition. */

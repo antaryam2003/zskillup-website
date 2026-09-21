@@ -177,30 +177,20 @@ export function ChooseRoute() {
                       </p>
                     ) : null}
 
-                    {/* card.dense: a longer body (e.g. 5 lines against 3)
-                        would otherwise push this card's divider and features
-                        lower than its siblings and stretch the whole row, so
-                        the body leading, divider margins and feature spacing
-                        tighten together - same left edge, same type sizes.
-                        lg: and up only, because that is the three-across
-                        layout where the row height is equalised; stacked cards
-                        stand alone and keep the standard spacing. */}
                     <p
                       className={`relative text-[0.9375rem] leading-relaxed text-body ${
-                        card.dense ? "lg:leading-normal" : ""
-                      } ${card.subtitle ? "mt-2" : "mt-3"}`}
+                        card.subtitle ? "mt-2" : "mt-3"
+                      }`}
                     >
                       {card.body}
                     </p>
 
                     <span
                       aria-hidden="true"
-                      className={`relative my-6 block h-px w-full bg-navy/10 ${
-                        card.dense ? "lg:my-4" : ""
-                      }`}
+                      className="relative my-6 block h-px w-full bg-navy/10"
                     />
 
-                    <ul className={`relative space-y-3 ${card.dense ? "lg:space-y-2" : ""}`}>
+                    <ul className="relative space-y-3">
                       {card.features.map((feature, i) => (
                         <li key={feature} className="flex items-center gap-3">
                           <span

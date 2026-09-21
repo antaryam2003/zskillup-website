@@ -8,8 +8,12 @@
 export const site = {
   name: "ZSkillup",
   legalName: "ZSkillup Education Pvt. Ltd.",
-  /** Update to the production origin before deploying - drives canonicals + sitemap. */
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.zskillup.com",
+  /**
+   * Drives canonicals + sitemap. `||` (not `??`) so an env var that is set but
+   * blank - e.g. cleared in the Vercel dashboard - still falls back to a valid
+   * origin instead of crashing `new URL()` at build time.
+   */
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.zskillup.com",
   tagline: "Higher education. Brighter careers.",
   description:
     "ZSkillup works with universities, colleges and students to turn degrees into industry-ready careers - through institutional employability programs, the prephasz placement-preparation platform and the Global Finance Program commerce pathway.",

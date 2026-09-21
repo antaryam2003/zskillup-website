@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Container } from "@/components/ui/Section";
@@ -35,14 +36,16 @@ function FeaturedCard({ post }: { post: BlogPost }) {
       href={`/insights/${post.slug}`}
       className="group relative col-span-2 flex min-h-[340px] flex-col justify-end overflow-hidden rounded-2xl bg-navy"
     >
-      <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/60 to-navy/20" />
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 30% 50%, #5b2bcb 0%, transparent 55%), radial-gradient(circle at 80% 20%, #2b3fa8 0%, transparent 45%)",
-        }}
-      />
+      {post.coverImage && (
+        <Image
+          src={post.coverImage}
+          alt=""
+          fill
+          className="object-cover opacity-40 transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 768px) 100vw, 66vw"
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/70 to-navy/30" />
       <div className="relative z-10 p-7 sm:p-8">
         <span className="mb-3 inline-block rounded-full bg-brand px-3 py-1 text-[0.6875rem] font-bold uppercase tracking-widest text-white">
           Featured
@@ -73,7 +76,17 @@ function SmallCard({ post }: { post: BlogPost }) {
       className="group flex flex-col gap-3 rounded-2xl border border-line bg-white p-5 transition-shadow hover:shadow-card"
     >
       <div className="flex items-start gap-3">
-        <div className="h-16 w-20 shrink-0 rounded-xl bg-gradient-to-br from-[#eef0fc] to-[#dde2f8]" />
+        <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-xl bg-[#eef0fc]">
+          {post.coverImage && (
+            <Image
+              src={post.coverImage}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="80px"
+            />
+          )}
+        </div>
         <div className="flex flex-col gap-1.5">
           <CategoryPill category={post.category} label={post.categoryLabel} />
           <h3 className="text-[0.9375rem] font-bold leading-[1.3] text-navy transition-colors group-hover:text-brand">
@@ -95,7 +108,17 @@ function LatestCard({ post }: { post: BlogPost }) {
       href={`/insights/${post.slug}`}
       className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white transition-shadow hover:shadow-card"
     >
-      <div className="h-44 w-full bg-gradient-to-br from-[#eef0fc] via-[#dde2f8] to-[#cdd6f2]" />
+      <div className="relative h-44 w-full overflow-hidden bg-[#eef0fc]">
+        {post.coverImage && (
+          <Image
+            src={post.coverImage}
+            alt=""
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
+        )}
+      </div>
       <div className="flex flex-col gap-2 p-5">
         <CategoryPill category={post.category} label={post.categoryLabel} />
         <h3 className="text-[1rem] font-bold leading-[1.3] text-navy transition-colors group-hover:text-brand">

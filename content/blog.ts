@@ -41,6 +41,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-03-14",
     readTime: 7,
     author: { name: "Neha Kapoor" },
+    coverImage: "/images/campus-student-hero.png",
     featured: true,
   },
   {
@@ -53,6 +54,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-03-10",
     readTime: 5,
     author: { name: "Arjun Mehta" },
+    coverImage: "/images/events/expert-talk-series.jpg",
   },
   {
     slug: "how-colleges-can-improve-employability-outcomes",
@@ -64,6 +66,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-03-06",
     readTime: 6,
     author: { name: "Priya Nair" },
+    coverImage: "/images/events/institutional-collaboration.jpg",
   },
   {
     slug: "from-campus-to-career-real-student-journeys",
@@ -75,6 +78,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-03-06",
     readTime: 8,
     author: { name: "Editorial Team" },
+    coverImage: "/images/events/student-community-cohort.jpg",
   },
   {
     slug: "how-to-build-placement-readiness-for-students",
@@ -86,6 +90,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-03-05",
     readTime: 6,
     author: { name: "Lokesh R." },
+    coverImage: "/images/events/hands-on-learning-lab.jpg",
   },
   {
     slug: "the-rise-of-ai-in-career-need-in-2027",
@@ -97,6 +102,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-03-07",
     readTime: 7,
     author: { name: "Sneha Jadhav" },
+    coverImage: "/images/events/acca-career-workshop-session.jpg",
   },
   {
     slug: "building-a-stronger-placement-culture",
@@ -108,6 +114,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-03-05",
     readTime: 8,
     author: { name: "Editorial Team" },
+    coverImage: "/images/events/group-activity-workshop.jpg",
   },
 ];
 

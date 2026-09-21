@@ -3,14 +3,24 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { heroCredibilityStats } from "@/content/stats";
 import { Icon } from "@/components/ui/Icon";
+import { Handwritten } from "@/components/ui/Stats";
 
 /**
  * CREDIBILITY STRIP - sits directly between Hero and About.
  *
- * A compact row of six figures. Kept as its own lightweight section (not the
- * shared <Section> shell) because that component's standard py-20/24/28
- * vertical padding is built for a full section with a heading; this strip is
- * deliberately much shorter and carries no heading of its own.
+ * A compact row of six figures, now introduced by its own eyebrow/heading/
+ * supporting copy - "Real People. Real Progress." - per the reference this
+ * was built from. Kept as its own lightweight section (not the shared
+ * <Section> shell) because that component's standard py-20/24/28 vertical
+ * padding reads as too generous for how compact the reference's own
+ * spacing is; this strip uses its own tighter rhythm instead.
+ *
+ * "Leading" in the heading reuses the site's existing handwritten accent
+ * (Caveat, via the shared `Handwritten` component/`.handwritten` CSS class,
+ * swoosh underline included) rather than a plain italic sans fallback - the
+ * only script/serif-flavoured treatment already in the type system, and
+ * this is the accent's 3rd use on the homepage (the brief's own cap is
+ * "2-3" - see globals.css and Stats.tsx).
  *
  * The outer field is `bg-cloud` - a very light, near-white neutral (not the
  * page's plain white) so the white stat cards still read as distinct cards
@@ -51,7 +61,12 @@ import { Icon } from "@/components/ui/Icon";
  * low-opacity and pinned to the bottom of the card via `mt-auto` (normal
  * flow, not absolutely positioned) - so it can never overlap the number or a
  * wrapped label regardless of how long that card's text runs, and always
- * reads as a quiet watermark rather than a competing visual.
+ * reads as a quiet watermark rather than a competing visual. A shared
+ * `GroundShape` SVG (one soft wave, tinted per card) sits behind it as an
+ * absolutely-positioned backdrop clipped to the card's own rounded corners
+ * (`overflow-hidden` on the card) - matching the reference's "illustration
+ * sitting on a low hill" silhouette without needing a bespoke shape per
+ * card. Both layers are `aria-hidden`/`pointer-events-none`.
  *
  * COUNT-UP ANIMATION: each figure parses into a numeric target plus the
  * exact prefix/suffix text around it (" LPA", "+", "%" and so on) and how
@@ -139,6 +154,30 @@ function AnimatedStatValue({ value, startWhenReady }: { value: string; startWhen
   return <>{display}</>;
 }
 
+/** One soft wave, stretched to fill each card's own width regardless of its
+    viewBox aspect ratio (`preserveAspectRatio="none"`) - the "low hill" the
+    reference sits its illustrations on. `-z-10` (paired with `relative` on
+    the card) keeps it behind the number/label/icon: an absolutely
+    positioned element still paints above plain in-flow siblings even at
+    z-index:auto, so without this it would sit on top of them instead of
+    behind. */
+function GroundShape({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      viewBox="0 0 200 60"
+      preserveAspectRatio="none"
+      className={`pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-14 w-full min-[1450px]:h-16 ${className}`}
+    >
+      <path
+        d="M0 40 C 36 24, 68 48, 108 32 C 148 16, 172 36, 200 26 L200 60 L0 60 Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 export function HomepageStats() {
   const sectionRef = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
@@ -160,13 +199,35 @@ export function HomepageStats() {
   }, []);
 
   return (
-    <section ref={sectionRef} aria-label="ZSkillup at a glance" className="bg-cloud py-10 sm:py-12">
+    <section ref={sectionRef} aria-label="ZSkillup at a glance" className="bg-cloud py-14 sm:py-16 lg:py-20">
       <div className="mx-auto w-full max-w-[1450px] px-5 sm:px-8">
-        <ul className="grid grid-cols-2 gap-3 min-[640px]:grid-cols-3 min-[640px]:gap-4 min-[1450px]:grid-cols-6 min-[1450px]:gap-5">
+        <div className="mx-auto max-w-[42rem] text-center">
+          <p className="flex items-center justify-center gap-3 text-[0.75rem] font-bold tracking-[0.2em] text-brand uppercase">
+            <span aria-hidden="true" className="h-px w-7 shrink-0 bg-brand/40" />
+            Real People. Real Progress.
+            <span aria-hidden="true" className="h-px w-7 shrink-0 bg-brand/40" />
+          </p>
+          <h2 className="mt-4 text-[2rem] leading-[1.1] font-extrabold text-navy sm:text-[2.5rem] lg:text-[3rem]">
+            From Learning to{" "}
+            <Handwritten
+              underline
+              className="text-[2.75rem] text-brand sm:text-[3.25rem] lg:text-[3.75rem]"
+            >
+              Leading
+            </Handwritten>
+          </h2>
+          <p className="mt-4 text-[1rem] leading-relaxed text-muted sm:text-[1.0625rem]">
+            Stronger partnerships. Bigger opportunities. Brighter futures.
+            <br />
+            Our numbers reflect real learners, real companies and real career growth.
+          </p>
+        </div>
+
+        <ul className="mt-10 grid grid-cols-2 gap-3 min-[640px]:grid-cols-3 min-[640px]:gap-4 min-[1450px]:mt-12 min-[1450px]:grid-cols-6 min-[1450px]:gap-5">
           {heroCredibilityStats.map((stat) => (
             <li key={stat.label}>
               <div
-                className={`flex h-full flex-col rounded-card px-4 py-5 shadow-card transition-shadow duration-200 hover:shadow-lift sm:px-5 sm:py-6 ${
+                className={`relative flex h-full flex-col overflow-hidden rounded-card px-4 py-5 shadow-card transition-shadow duration-200 hover:shadow-lift sm:px-5 sm:py-6 ${
                   stat.highlight ? "bg-gradient-stat-highlight" : "bg-white"
                 }`}
               >
@@ -184,11 +245,12 @@ export function HomepageStats() {
                 >
                   {stat.label}
                 </p>
+                <GroundShape className={stat.highlight ? "text-white/10" : "text-brand/[0.07]"} />
                 <div className="mt-auto flex justify-end pt-3">
                   <Icon
                     name={stat.icon}
                     className={`h-10 w-10 min-[1450px]:h-12 min-[1450px]:w-12 ${
-                      stat.highlight ? "text-white/25" : "text-brand/15"
+                      stat.highlight ? "text-white/30" : "text-brand/20"
                     }`}
                   />
                 </div>

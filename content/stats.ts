@@ -79,16 +79,16 @@ export const partnerStats: readonly Stat[] = [
  * carry no publishing meaning and are ignored by `publishable()`.
  */
 export const heroCredibilityStats: readonly (Stat & {
-  icon: "landmark" | "briefcase" | "trending" | "target" | "crown" | "coins";
+  icon: "landmark" | "building" | "trending" | "target" | "crown" | "coins";
   /** The one card HomepageStats renders on the brand-purple fill. */
   highlight?: boolean;
 })[] = [
   { value: "55+", label: "Universities & Colleges onboarded", verified: true, icon: "landmark" },
-  { value: "150+", label: "Hiring Partners", verified: true, icon: "briefcase" },
+  { value: "150+", label: "Hiring Partners", verified: true, icon: "building" },
   { value: "350+", label: "Placements", verified: true, icon: "trending", highlight: true },
-  { value: "78%", label: "Placement Success Rate", verified: true, icon: "target" },
   { value: "19 LPA", label: "Highest Package", verified: true, icon: "crown" },
   { value: "5.6 LPA", label: "Average Package", verified: true, icon: "coins" },
+  { value: "78%", label: "Placement Success Rate", verified: true, icon: "target" },
 ];
 
 /**

@@ -183,69 +183,38 @@ function InsightsHero() {
         }}
       />
 
-      {/* Person silhouette — right side */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[44%] select-none lg:block">
+      {/* Campus student photo — right side, cropped to show the student figure */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[58%] select-none lg:block">
         {/* Subtle purple glow behind the figure */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 z-10"
           style={{
             background:
-              "radial-gradient(ellipse at 50% 85%, rgba(91,43,203,0.35) 0%, transparent 55%)",
+              "radial-gradient(ellipse at 60% 90%, rgba(91,43,203,0.30) 0%, transparent 50%)",
           }}
         />
-        <svg
-          viewBox="0 0 340 320"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="absolute bottom-0 right-8 h-[90%] w-auto"
-          aria-hidden="true"
-        >
-          {/* Neck */}
-          <ellipse cx="170" cy="110" rx="22" ry="28" fill="#1a1a2e" />
-          {/* Head — slightly tilted back (looking up) */}
-          <ellipse cx="168" cy="76" rx="38" ry="44" fill="#c8956c" />
-          {/* Hair — dark, swept back */}
-          <path
-            d="M132 62 C128 40 138 20 168 18 C198 16 212 38 210 62 C200 45 185 35 168 36 C151 37 140 48 132 62Z"
-            fill="#1a1008"
-          />
-          {/* Face highlight */}
-          <ellipse cx="162" cy="72" rx="14" ry="18" fill="#d9a87c" opacity="0.5" />
-          {/* Jawline tilt — chin lifted */}
-          <path d="M140 95 Q168 118 196 95" stroke="#b8845a" strokeWidth="1.5" fill="none" />
-          {/* Eye (side view, looking up) */}
-          <ellipse cx="178" cy="70" rx="5" ry="3.5" fill="#2a1a0a" />
-          <ellipse cx="179" cy="69" rx="1.5" ry="1.5" fill="white" opacity="0.6" />
-          {/* Eyebrow — raised (looking up expression) */}
-          <path d="M172 63 Q178 60 185 62" stroke="#2a1a0a" strokeWidth="2" strokeLinecap="round" fill="none" />
-          {/* Nose */}
-          <path d="M174 76 Q177 82 174 85" stroke="#b8845a" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-          {/* Shoulder & jacket */}
-          <path
-            d="M100 320 L108 185 Q120 150 148 138 L168 134 L190 138 Q220 150 232 185 L240 320Z"
-            fill="#0f1a2e"
-          />
-          {/* Collar */}
-          <path
-            d="M148 138 L168 158 L190 138"
-            stroke="#1a2a40"
-            strokeWidth="2"
-            fill="none"
-          />
-          {/* Jacket lapels */}
-          <path d="M148 138 L135 175 L160 165 L168 158" fill="#0a1525" />
-          <path d="M190 138 L205 175 L178 165 L168 158" fill="#0a1525" />
-          {/* Shirt */}
-          <path d="M160 165 L168 158 L178 165 L175 200 L163 200Z" fill="#1e2d45" />
-          {/* Left fade overlay — blends into bg */}
-          <defs>
-            <linearGradient id="fadeLeft" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#06081a" stopOpacity="1" />
-              <stop offset="30%" stopColor="#06081a" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <rect x="0" y="0" width="340" height="320" fill="url(#fadeLeft)" />
-        </svg>
+        <Image
+          src="/images/campus-student-hero.png"
+          alt=""
+          fill
+          priority
+          sizes="52vw"
+          className="object-cover object-[100%_15%]"
+          style={{ filter: "brightness(0.6) saturate(0.55) hue-rotate(195deg)" }}
+        />
+        {/* Left fade — blends photo into the dark star-field */}
+        <div
+          className="absolute inset-0 z-10"
+          style={{
+            background:
+              "linear-gradient(to right, #06081a 0%, rgba(6,8,26,0.8) 15%, rgba(6,8,26,0.15) 42%, transparent 100%)",
+          }}
+        />
+        {/* Bottom fade */}
+        <div
+          className="absolute inset-x-0 bottom-0 z-10 h-16"
+          style={{ background: "linear-gradient(to top, #06081a 0%, transparent 100%)" }}
+        />
       </div>
 
       <Container className="relative z-10 py-14 sm:py-16">

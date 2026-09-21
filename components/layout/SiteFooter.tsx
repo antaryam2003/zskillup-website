@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { contact, footerColumns, site, social } from "@/content/site";
-import { ZSkillupLogo } from "@/components/ui/Brand";
+import { ZSkillupLogoLight } from "@/components/ui/Brand";
 import { Icon } from "@/components/ui/Icon";
 import { Container } from "@/components/ui/Section";
 
@@ -20,8 +20,8 @@ export function SiteFooter() {
       <Container className="py-16 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-[1.15fr_2fr]">
           <div>
-            <Link href="/" aria-label="ZSkillup home">
-              <ZSkillupLogo tone="light" />
+            <Link href="/" aria-label="ZSkillup home" className="flow-root w-fit">
+              <ZSkillupLogoLight className="[--logo-h:3.25rem] sm:[--logo-h:3.75rem]" />
             </Link>
             <p className="mt-5 max-w-sm text-[0.9375rem] leading-relaxed text-white/65">
               {site.description}

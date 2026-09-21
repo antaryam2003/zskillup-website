@@ -52,9 +52,8 @@ export function ZMark({
  * hand-drawn approximation drifted from the real mark - the same reasoning
  * as the Prephasz lockup below, just applied to the parent brand.
  *
- * Only the navbar uses this. The footer keeps the live-text `ZSkillupLogo`
- * below, since this artwork is black-only and has no light/white variant
- * for a dark field.
+ * Only the navbar uses this. This artwork is black-only; the footer's dark
+ * field uses the white variant, `ZSkillupLogoLight` below.
  *
  * Height-driven only - pass an `h-*` class; width follows automatically so
  * the original aspect ratio (4584:1480) is never distorted.
@@ -68,6 +67,33 @@ export function ZSkillupLogoMark({ className = "h-9" }: { className?: string }) 
       height={1480}
       priority
       className={`w-auto object-contain ${className}`}
+    />
+  );
+}
+
+/**
+ * The official ZSkillup logo in white, for dark fields (the footer) - the
+ * supplied artwork (public/images/zskillup-logo-white.png), byte-for-byte, with
+ * the same geometry as the black navbar file.
+ *
+ * The 4584x1480 canvas carries transparent padding around the mark (649px each
+ * side, 185px top and bottom). Left alone, that would push the visible logo in
+ * from the column's left edge and add dead space above and below it. The
+ * negative margins below cancel exactly that padding, in proportion to the
+ * rendered size, so the visible logo - not its canvas - sits on the grid line.
+ *
+ * Size it with the `--logo-h` custom property (the canvas height), e.g.
+ * `[--logo-h:3.5rem]`; width and margins are derived from it, so the aspect
+ * ratio can never drift.
+ */
+export function ZSkillupLogoLight({ className = "[--logo-h:3.5rem]" }: { className?: string }) {
+  return (
+    <Image
+      src={asset("/images/zskillup-logo-white.png")}
+      alt="ZSkillup"
+      width={4584}
+      height={1480}
+      className={`block h-[var(--logo-h)] w-[calc(var(--logo-h)*3.0973)] max-w-none -mx-[calc(var(--logo-h)*0.4385)] -my-[calc(var(--logo-h)*0.125)] ${className}`}
     />
   );
 }

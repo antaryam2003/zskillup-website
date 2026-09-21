@@ -46,7 +46,15 @@ export const nav = [
   { label: "prephasz", href: "/#prephasz", page: "/prephasz" },
   { label: "Global Finance Program", href: "/#bcom-acca", page: "/bcom-acca" },
   { label: "Why ZSkillup", href: "/#education-to-career", page: "/why-zskillup" },
-  { label: "Insights", href: "/insights", page: "/insights" },
+  {
+    label: "Insights",
+    href: "/insights",
+    page: "/insights",
+    children: [
+      { label: "Events", href: "/events" },
+      { label: "Blog", href: "/insights" },
+    ],
+  },
   { label: "About", href: "/#about", page: "/about" },
 ] as const;
 

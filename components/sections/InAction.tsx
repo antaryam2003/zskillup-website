@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { asset } from "@/lib/asset";
 import {
+  badgeColors,
+  badgeLabels,
   featuredEvents,
   galleryFilters,
   galleryPhotos,
@@ -245,22 +247,6 @@ export function InAction() {
         {visible.length > 0 ? (
           <ul className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
             {visible.slice(0, 4).map((photo) => {
-              const badgeColors: Record<string, string> = {
-                "campus-programs": "bg-[#ede9fe] text-[#6d28d9]",
-                "community":       "bg-[#fff3e0] text-[#ea6c00]",
-                "industry":        "bg-[#dcfce7] text-[#16a34a]",
-                "workshops":       "bg-[#dbeafe] text-[#2563eb]",
-                "events":          "bg-[#fce7f3] text-[#be185d]",
-                "expert-talks":    "bg-[#e0f2fe] text-[#0369a1]",
-              };
-              const badgeLabels: Record<string, string> = {
-                "campus-programs": "Campus Program",
-                "community":       "Student Community",
-                "industry":        "Industry Interaction",
-                "workshops":       "Workshop",
-                "events":          "Event",
-                "expert-talks":    "Expert Talk",
-              };
               const badgeColor = badgeColors[photo.category] ?? "bg-brand-soft text-brand";
               const badgeLabel = badgeLabels[photo.category] ?? photo.category;
               return (

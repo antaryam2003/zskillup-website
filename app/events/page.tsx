@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { asset } from "@/lib/asset";
 import {
+  badgeColors,
+  badgeLabels,
   featuredEvents,
-  galleryFilters,
   galleryPhotos,
   inAction,
-  type GalleryCategory,
 } from "@/content/events";
 import { Icon } from "@/components/ui/Icon";
 import { Container, Eyebrow, Heading, Section } from "@/components/ui/Section";
@@ -16,24 +16,6 @@ export const metadata: Metadata = {
   description:
     "A glimpse of ZSkillup in action — across campuses, classrooms, industry interactions and community events.",
   alternates: { canonical: "/events" },
-};
-
-const badgeColors: Record<string, string> = {
-  "campus-programs": "bg-[#ede9fe] text-[#6d28d9]",
-  "community":       "bg-[#dcfce7] text-[#16a34a]",
-  "industry":        "bg-[#fff3e0] text-[#ea6c00]",
-  "workshops":       "bg-[#ede9fe] text-[#6d28d9]",
-  "events":          "bg-[#fce7f3] text-[#be185d]",
-  "expert-talks":    "bg-[#fff3e0] text-[#ea6c00]",
-};
-
-const badgeLabels: Record<string, string> = {
-  "campus-programs": "Campus Program",
-  "community":       "Community",
-  "industry":        "Industry",
-  "workshops":       "Workshop",
-  "events":          "Event",
-  "expert-talks":    "Expert Talk",
 };
 
 const featured = featuredEvents[0];
@@ -181,7 +163,7 @@ export default function EventsPage() {
                           {badgeLabel}
                         </span>
                         <a
-                          href="#"
+                          href={`/events/${photo.slug}`}
                           className="flex items-center gap-1 text-[0.8125rem] font-semibold text-brand hover:underline"
                         >
                           View Album

@@ -47,11 +47,13 @@ export function Prephasz() {
       className="pt-0 sm:pt-0 lg:pt-0 pb-0 sm:pb-0 lg:pb-0"
     >
       {/* The opening block sits on a warm cream field, as in the design.
-          Top padding only is trimmed (pt, split out from the original py)
-          to close up the gap from the Institutions section above; bottom
-          stays exactly as it was, since that's internal spacing to the
-          product-visual/CTA row below, not the gap between sections. */}
-      <div className="bg-[#fdf8ec] pt-10 pb-16 sm:pt-12 sm:pb-20">
+          Top padding is trimmed (pt, split out from the original py) to close
+          up the gap from the Institutions section above. Its bottom padding,
+          together with the journey block's top padding below, IS the gap
+          between "prephasz by ZSkillup" and "A Simple Journey" (both sit on
+          the same cream, so it reads as one whitespace band): 40+24 on mobile,
+          48+32 from sm up. */}
+      <div className="bg-[#fdf8ec] pt-10 pb-10 sm:pt-12 sm:pb-12">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
             <div className="lg:col-span-6 lg:col-start-1 lg:row-start-1">
@@ -100,11 +102,11 @@ export function Prephasz() {
           same #fdf8ec), with this div carrying the section's own top/bottom
           spacing so the cream fills its full height with no white strip.
 
-          The top spacing has to be padding (pt-10 sm:pt-12) on THIS div, not a
+          The top spacing has to be padding (pt-6 sm:pt-8) on THIS div, not a
           margin on the div below: a margin-top on a container's first child
           with nothing else above it inside that container collapses straight
           through and becomes space ABOVE this div instead of inside it. */}
-      <div className="bg-prep-soft pt-10 pb-12 sm:pt-12 sm:pb-14 lg:pb-16">
+      <div className="bg-prep-soft pt-6 pb-12 sm:pt-8 sm:pb-14 lg:pb-16">
         <Container>
           <div id="prephasz-journey" className="scroll-mt-24">
             <JourneyEyebrow>{prephasz.journeyEyebrow}</JourneyEyebrow>

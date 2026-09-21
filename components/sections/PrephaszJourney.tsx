@@ -110,7 +110,10 @@ export function PrephaszJourney() {
           sizer and the faces below without measuring anything in JS.
           --g / --ov are the open-card grow ratio and the overlap at the
           current breakpoint; the flex row is
-            free = 100cqw + 5 * ov,   open = free * g / (g + 5). ---- */}
+            free = 100cqw + 5 * ov,   open = free * g / (g + 5).
+          lg:min-h is the height the COLLAPSED strips (icon, number, title)
+          need to sit comfortably: with the open cards this compact, the
+          tallest face alone would otherwise dip below it. ---- */}
       <div
         style={
           {
@@ -121,7 +124,7 @@ export function PrephaszJourney() {
             "--open": "calc((100cqw + 5 * var(--ov)) * var(--g) / (var(--g) + 5))",
           } as CSSProperties
         }
-        className="relative [--g:var(--g-md)] [--ov:var(--ov-md)] [container-type:inline-size] md:mx-[calc(var(--arrow)+var(--arrow-gap))] lg:[--g:var(--g-lg)] lg:[--ov:var(--ov-lg)]"
+        className="relative [--g:var(--g-md)] [--ov:var(--ov-md)] [container-type:inline-size] md:mx-[calc(var(--arrow)+var(--arrow-gap))] lg:min-h-[13.5rem] lg:[--g:var(--g-lg)] lg:[--ov:var(--ov-lg)]"
       >
         {/* Sizer: all six expanded faces stacked in ONE grid cell at the open
             width. Invisible and inert; its only job is to make the viewport
@@ -193,9 +196,9 @@ export function PrephaszJourney() {
                   } ${coveredRight ? "pr-4 lg:pr-7" : ""} ${isActive ? "opacity-0" : "opacity-100 delay-100"}`}
                 >
                   <span
-                    className={`grid h-[3.25rem] w-[3.25rem] place-items-center rounded-full lg:h-[4.5rem] lg:w-[4.5rem] ${tint.well}`}
+                    className={`grid h-[2.85rem] w-[2.85rem] place-items-center rounded-full lg:h-[3.95rem] lg:w-[3.95rem] ${tint.well}`}
                   >
-                    <Icon name={icons[i]} className={`h-6 w-6 lg:h-8 lg:w-8 ${tint.icon}`} />
+                    <Icon name={icons[i]} className={`h-[1.3rem] w-[1.3rem] lg:h-7 lg:w-7 ${tint.icon}`} />
                   </span>
                   <span className="mt-4 text-base font-medium text-[#485a8a] lg:mt-5 lg:text-xl">
                     {pad(i)}
@@ -273,48 +276,52 @@ function ExpandedFace({
   return (
     <div
       {...rest}
-      className={`w-full px-5 pt-[1.125rem] pb-4 sm:px-8 md:w-[var(--open)] md:px-5 lg:px-8 ${className}`}
+      className={`flex w-full items-start gap-3 px-5 pt-[1.125rem] pb-4 sm:gap-4 sm:px-8 md:w-[var(--open)] md:px-5 lg:px-8 ${className}`}
     >
       <span className="absolute top-5 right-5 text-lg font-medium text-[#5b6a92] sm:top-6 sm:right-8 sm:text-xl md:right-5 lg:right-8 min-[75rem]:text-[1.375rem]">
         {pad(i)}
       </span>
 
-      {/* The card's whole internal layout is this one padded box: the icon,
-          heading, description and pills are all its direct children, so they
-          share the box's left padding edge by construction (no per-element
-          offsets). Vertical rhythm is set once, as the gap above each block. */}
+      {/* The card's whole internal layout is this two-column row: the icon
+          column (it never shrinks) and one text column beside it. The heading,
+          description and pills are all children of that single column, so they
+          share its left edge by construction - no per-element offsets. */}
       <span
-        className={`grid h-[3.25rem] w-[3.25rem] place-items-center rounded-full sm:h-[4.25rem] sm:w-[4.25rem] md:h-[3.7rem] md:w-[3.7rem] lg:h-[4.25rem] lg:w-[4.25rem] ${tint.well}`}
+        className={`grid h-[2.85rem] w-[2.85rem] shrink-0 place-items-center rounded-full sm:h-[3.7rem] sm:w-[3.7rem] md:h-[3.2rem] md:w-[3.2rem] lg:h-[3.7rem] lg:w-[3.7rem] ${tint.well}`}
       >
         <Icon
           name={icons[i]}
-          className={`h-[1.625rem] w-[1.625rem] sm:h-9 sm:w-9 md:h-[1.85rem] md:w-[1.85rem] lg:h-9 lg:w-9 ${tint.icon}`}
+          className={`h-[1.4rem] w-[1.4rem] sm:h-[1.95rem] sm:w-[1.95rem] md:h-[1.6rem] md:w-[1.6rem] lg:h-[1.95rem] lg:w-[1.95rem] ${tint.icon}`}
         />
       </span>
 
-      <h4 className="mt-2 text-[1.5rem] leading-none font-extrabold tracking-[-0.03em] text-navy sm:text-[1.95rem] md:text-[1.75rem] lg:text-[1.95rem] min-[75rem]:text-[2.1rem]">
-        {pillar.title}
-      </h4>
+      <div className="min-w-0 flex-1">
+        {/* The right inset keeps the title clear of the step number, which sits
+            in the top-right corner of this same row: a long title wraps instead
+            of running underneath it. */}
+        <h4 className="pr-7 text-[1.5rem] leading-none font-extrabold tracking-[-0.03em] text-navy sm:text-[1.95rem] md:text-[1.75rem] lg:text-[1.95rem] min-[75rem]:pr-9 min-[75rem]:text-[2.1rem]">
+          {pillar.title}
+        </h4>
 
-      {/* Width cap is in em, so the description keeps the same measure as its
-          type scales. */}
-      <p className="mt-1.5 max-w-[18.5em] text-pretty text-[0.834rem] leading-snug font-medium text-[#5b6a92] sm:text-[0.979rem] md:text-[0.834rem] lg:text-[0.979rem] min-[75rem]:text-[1.09rem]">
-        {pillar.tagline}
-      </p>
+        {/* Width cap is in em, so the description keeps the same measure as
+            its type scales. */}
+        <p className="mt-1.5 max-w-[18.5em] text-pretty text-[0.834rem] leading-snug font-medium text-[#5b6a92] sm:text-[0.979rem] md:text-[0.834rem] lg:text-[0.979rem] min-[75rem]:text-[1.09rem]">
+          {pillar.tagline}
+        </p>
 
-      {/* Pills wear the card's icon-well tint. Their shape, padding and type
-          are unchanged; height now comes from that padding + type alone (the old
-          per-breakpoint min-heights only existed to hold the card height fixed). */}
-      <ul className="mt-3 flex flex-wrap gap-x-[0.556rem] gap-y-2">
-        {pillar.features.map((feature) => (
-          <li
-            key={feature}
-            className={`flex items-center rounded-full px-[0.89rem] py-2 text-[0.694rem] leading-tight font-medium text-[#485a8a] sm:px-4 sm:text-[0.779rem] md:px-[0.89rem] md:text-[0.694rem] lg:px-4 lg:text-[0.779rem] min-[75rem]:px-[1.1125rem] min-[75rem]:py-2.5 min-[75rem]:text-[0.89rem] ${tint.well}`}
-          >
-            {feature}
-          </li>
-        ))}
-      </ul>
+        {/* Pills wear the card's icon-well tint. Their shape, padding and type
+            are unchanged; height comes from that padding + type alone. */}
+        <ul className="mt-3 flex flex-wrap gap-x-[0.556rem] gap-y-2">
+          {pillar.features.map((feature) => (
+            <li
+              key={feature}
+              className={`flex items-center rounded-full px-[0.89rem] py-2 text-[0.694rem] leading-tight font-medium text-[#485a8a] sm:px-4 sm:text-[0.779rem] md:px-[0.89rem] md:text-[0.694rem] lg:px-4 lg:text-[0.779rem] min-[75rem]:px-[1.1125rem] min-[75rem]:py-2.5 min-[75rem]:text-[0.89rem] ${tint.well}`}
+            >
+              {feature}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

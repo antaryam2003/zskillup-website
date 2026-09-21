@@ -19,6 +19,26 @@ import type { NextConfig } from "next";
  * NEXT_PUBLIC_BASE_PATH at "" if you later attach a custom domain.
  */
 
+// Vercel builds read the committed .env.production, which holds the GitHub Pages
+// values (a /zskillup-website basePath and the github.io origin). Neither is right
+// on Vercel, which serves from a domain root, so override them here - regardless of
+// whatever the dashboard does or doesn't define. VERCEL is set by Vercel itself.
+// Assigning to process.env in this file also reaches the client bundle, because
+// NEXT_PUBLIC_* values are inlined after the config is loaded.
+if (process.env.VERCEL) {
+  process.env.NEXT_PUBLIC_BASE_PATH = "";
+  // No API route in this export build, so the enquiry form must use its mailto path.
+  process.env.NEXT_PUBLIC_STATIC_EXPORT = "true";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!siteUrl || siteUrl.includes("github.io")) {
+    const host =
+      process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
+    process.env.NEXT_PUBLIC_SITE_URL = host
+      ? `https://${host}`
+      : "https://www.zskillup.com";
+  }
+}
+
 // Empty in development so `npm run dev` serves from http://localhost:3000/.
 // .env.production supplies "/zskillup-website" for the Pages build.
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";

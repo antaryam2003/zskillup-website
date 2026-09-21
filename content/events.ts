@@ -21,8 +21,8 @@ export const inAction = {
   eyebrow: "Events & moments",
   headline: "ZSkillup in Action.",
   supporting:
-    "A glimpse of ZSkillup in action — across campuses, classrooms, industry interactions and community events.",
-  viewMore: { label: "View More Photos", href: "#partner-with-us" },
+    "A glimpse of ZSkillup in action — across campuses, classrooms, industry interactions and community events. Real people. Real learning. A brighter tomorrow.",
+  viewMore: { label: "View All Moments", href: "/events" },
   featuredBadge: "Featured Event",
 } as const;
 
@@ -38,6 +38,7 @@ export const galleryFilters = [
   { id: "industry", label: "Industry Interactions" },
   { id: "events", label: "Events" },
   { id: "community", label: "Student Community" },
+  { id: "expert-talks", label: "Expert Talks" },
 ] as const;
 
 export type GalleryCategory = (typeof galleryFilters)[number]["id"];
@@ -49,6 +50,10 @@ export type Photo = {
   /** One short context line. Keep it short. */
   caption: string;
   category: Exclude<GalleryCategory, "all">;
+  /** Display date string, e.g. "Mar 15, 2024" */
+  date?: string;
+  /** City / venue shown alongside the date */
+  location?: string;
 };
 
 /**
@@ -58,10 +63,12 @@ export type Photo = {
 export const featuredEvents: readonly Photo[] = [
   {
     src: "/images/events/industry-expert-session.jpg",
-    alt: "An industry expert addressing a full room of students at a ZSkillup campus session",
-    title: "Industry Expert Session",
-    caption: "Insights, guidance and real-world learning",
+    alt: "Speaker presenting to a packed audience at ZSkillup Tech Career Summit 2024",
+    title: "ZSkillup Tech Career Summit 2024",
+    caption: "Inspiring conversations, real opportunities and a stronger tomorrow — together.",
     category: "industry",
+    date: "Nov 16, 2024",
+    location: "Bengaluru, India",
   },
   {
     src: "/images/events/student-community-cohort.jpg",
@@ -69,6 +76,8 @@ export const featuredEvents: readonly Photo[] = [
     title: "Student Community",
     caption: "A growing community of learners",
     category: "community",
+    date: "Feb 10, 2024",
+    location: "Pune",
   },
   {
     src: "/images/events/acca-career-workshop-session.jpg",
@@ -76,6 +85,8 @@ export const featuredEvents: readonly Photo[] = [
     title: "ACCA Career Workshop",
     caption: "Exploring global commerce opportunities",
     category: "workshops",
+    date: "Jan 20, 2024",
+    location: "Delhi",
   },
   {
     src: "/images/events/certificate-distribution.jpg",
@@ -83,6 +94,8 @@ export const featuredEvents: readonly Photo[] = [
     title: "Certificate Distribution",
     caption: "Celebrating achievements",
     category: "events",
+    date: "Mar 28, 2024",
+    location: "Bangalore",
   },
 ];
 
@@ -90,31 +103,35 @@ export const featuredEvents: readonly Photo[] = [
 export const galleryPhotos: readonly Photo[] = [
   {
     src: "/images/events/acca-career-workshop-session.jpg",
-    alt: "A speaker presenting career opportunities with global certifications to a seated audience",
-    title: "ACCA Career Workshop",
-    caption: "Exploring global opportunities",
-    category: "workshops",
+    alt: "A speaker presenting at a campus program session",
+    title: "Future Ready Workshop",
+    caption: "Building skills for what's next",
+    category: "campus-programs",
+    date: "Jan 20, 2024",
   },
   {
     src: "/images/events/student-community-cohort.jpg",
     alt: "A large cohort of students posed together at a ZSkillup campus program",
-    title: "Student Community",
+    title: "Student Community Meet",
     caption: "A growing community of learners",
     category: "community",
+    date: "Feb 10, 2024",
   },
   {
     src: "/images/events/hands-on-learning-lab.jpg",
     alt: "A group of students gathered around a laptop during a practical session",
     title: "Hands-on Learning",
     caption: "Practical skills for real-world careers",
-    category: "campus-programs",
+    category: "industry",
+    date: "Mar 5, 2024",
   },
   {
     src: "/images/events/expert-talk-series.jpg",
     alt: "A speaker presenting 'Adapting to the Future of Work' to an audience",
-    title: "Expert Talk Series",
+    title: "Adapting to the Future of Work",
     caption: "Conversations with industry leaders",
-    category: "industry",
+    category: "expert-talks",
+    date: "Mar 28, 2024",
   },
   {
     src: "/images/events/certificate-distribution.jpg",
@@ -122,6 +139,7 @@ export const galleryPhotos: readonly Photo[] = [
     title: "Certificate Distribution",
     caption: "Celebrating achievements",
     category: "events",
+    date: "Mar 28, 2024",
   },
   {
     src: "/images/events/group-activity-workshop.jpg",
@@ -129,6 +147,7 @@ export const galleryPhotos: readonly Photo[] = [
     title: "Group Activities",
     caption: "Learning together, growing together",
     category: "workshops",
+    date: "Jan 15, 2024",
   },
   {
     src: "/images/events/institutional-collaboration.jpg",
@@ -136,6 +155,7 @@ export const galleryPhotos: readonly Photo[] = [
     title: "Institutional Collaboration",
     caption: "Partnering for greater impact",
     category: "campus-programs",
+    date: "Dec 10, 2023",
   },
   {
     src: "/images/events/interactive-workshop.jpg",
@@ -143,5 +163,6 @@ export const galleryPhotos: readonly Photo[] = [
     title: "Interactive Workshop",
     caption: "Turning ideas into action",
     category: "events",
+    date: "Nov 18, 2023",
   },
 ];

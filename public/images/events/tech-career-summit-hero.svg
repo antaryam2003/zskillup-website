@@ -1,0 +1,202 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" width="900" height="420">
+  <defs>
+    <!-- Dark stage background gradient -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#060d1a"/>
+      <stop offset="60%" style="stop-color:#0d1b35"/>
+      <stop offset="100%" style="stop-color:#1a1040"/>
+    </linearGradient>
+    <!-- Blue stage spotlight -->
+    <radialGradient id="spotlight" cx="58%" cy="30%" r="45%">
+      <stop offset="0%" style="stop-color:#1e5fa8;stop-opacity:0.9"/>
+      <stop offset="40%" style="stop-color:#1a3a6e;stop-opacity:0.5"/>
+      <stop offset="100%" style="stop-color:#060d1a;stop-opacity:0"/>
+    </radialGradient>
+    <!-- Purple accent light -->
+    <radialGradient id="purplelight" cx="80%" cy="20%" r="35%">
+      <stop offset="0%" style="stop-color:#4a1fa8;stop-opacity:0.6"/>
+      <stop offset="100%" style="stop-color:#060d1a;stop-opacity:0"/>
+    </radialGradient>
+    <!-- Screen glow -->
+    <radialGradient id="screenglow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#2a6fd4;stop-opacity:0.4"/>
+      <stop offset="100%" style="stop-color:#1a3a6e;stop-opacity:0"/>
+    </radialGradient>
+    <!-- Floor reflection -->
+    <linearGradient id="floor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a2e50;stop-opacity:0.6"/>
+      <stop offset="100%" style="stop-color:#060d1a;stop-opacity:1"/>
+    </linearGradient>
+    <!-- Speaker shadow/silhouette -->
+    <linearGradient id="speakerbody" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#08090f"/>
+    </linearGradient>
+    <!-- Audience row fade -->
+    <linearGradient id="audiencefade" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1b35;stop-opacity:0.9"/>
+      <stop offset="100%" style="stop-color:#060d1a;stop-opacity:1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="420" fill="url(#bg)"/>
+
+  <!-- Stage spotlight wash -->
+  <rect width="900" height="420" fill="url(#spotlight)"/>
+  <rect width="900" height="420" fill="url(#purplelight)"/>
+
+  <!-- Projection screen on stage -->
+  <rect x="300" y="20" width="340" height="220" rx="4" fill="#0a1628"/>
+  <rect x="304" y="24" width="332" height="212" rx="2" fill="#1a3a7a" opacity="0.85"/>
+  <!-- Screen content: ZSkillup presentation -->
+  <rect x="304" y="24" width="332" height="212" rx="2" fill="url(#screenglow)" opacity="0.7"/>
+  <!-- Screen text lines (simulated slide content) -->
+  <text x="470" y="90" font-family="system-ui,sans-serif" font-size="22" font-weight="700" fill="#e8f0fe" text-anchor="middle" opacity="0.9">ZSkillup</text>
+  <text x="470" y="116" font-family="system-ui,sans-serif" font-size="13" fill="#a8c4f0" text-anchor="middle" opacity="0.85">Tech Career Summit 2024</text>
+  <line x1="420" y1="130" x2="520" y2="130" stroke="#3d7dd4" stroke-width="1.5" opacity="0.6"/>
+  <text x="470" y="153" font-family="system-ui,sans-serif" font-size="10" fill="#7aaee8" text-anchor="middle" opacity="0.7">Ideas · Skills · Opportunities</text>
+  <text x="470" y="175" font-family="system-ui,sans-serif" font-size="9" fill="#5a8cc4" text-anchor="middle" opacity="0.6">Bengaluru · Nov 16, 2024</text>
+  <!-- Screen frame shine -->
+  <rect x="304" y="24" width="332" height="212" rx="2" fill="none" stroke="#2a5a9e" stroke-width="1" opacity="0.5"/>
+
+  <!-- Screen support / podium area -->
+  <rect x="440" y="240" width="60" height="12" rx="2" fill="#0d1b35" opacity="0.8"/>
+  <rect x="460" y="250" width="20" height="30" fill="#08101e" opacity="0.9"/>
+
+  <!-- Stage floor -->
+  <rect x="0" y="330" width="900" height="90" fill="url(#floor)"/>
+
+  <!-- Stage edge highlight -->
+  <rect x="0" y="328" width="900" height="2" fill="#1e4a80" opacity="0.4"/>
+
+  <!-- ── SPEAKER SILHOUETTE (from behind, center-left of frame) ── -->
+  <g transform="translate(195,145)">
+    <!-- Body -->
+    <ellipse cx="0" cy="130" rx="38" ry="18" fill="#06090f" opacity="0.6"/>
+    <!-- Torso / suit jacket -->
+    <path d="M-34,170 C-36,120 -28,80 -18,55 L0,42 L18,55 C28,80 36,120 34,170 Z" fill="url(#speakerbody)"/>
+    <!-- Shoulders -->
+    <path d="M-38,95 C-42,82 -38,65 -20,58 L0,52 L20,58 C38,65 42,82 38,95 Z" fill="#10141e"/>
+    <!-- Neck -->
+    <rect x="-8" y="24" width="16" height="28" rx="6" fill="#1c1010" opacity="0.9"/>
+    <!-- Head -->
+    <ellipse cx="0" cy="16" rx="22" ry="26" fill="#1a0e0e"/>
+    <!-- Hair -->
+    <ellipse cx="0" cy="-2" rx="22" ry="12" fill="#0d0808"/>
+    <!-- Right arm extended (holding mic) -->
+    <path d="M34,90 C50,85 68,82 80,88 L78,95 C66,90 50,94 34,98 Z" fill="#0d1218"/>
+    <!-- Microphone -->
+    <rect x="78" y="82" width="6" height="16" rx="3" fill="#2a2a3a"/>
+    <ellipse cx="81" cy="82" rx="6" ry="8" fill="#222230"/>
+    <!-- Left arm down -->
+    <path d="M-34,90 C-46,100 -50,120 -48,140 L-42,140 C-44,122 -40,104 -30,96 Z" fill="#0d1218"/>
+  </g>
+
+  <!-- Stage ambient glow under speaker -->
+  <ellipse cx="225" cy="340" rx="80" ry="12" fill="#1e4a80" opacity="0.25"/>
+
+  <!-- ── AUDIENCE SILHOUETTES ── -->
+  <!-- Row 1 (closest, largest) -->
+  <g opacity="0.75">
+    <!-- heads in a row, varied heights -->
+    <ellipse cx="30" cy="355" rx="18" ry="20" fill="#08090f"/>
+    <ellipse cx="75" cy="348" rx="17" ry="19" fill="#08090f"/>
+    <ellipse cx="118" cy="358" rx="16" ry="18" fill="#07080e"/>
+    <ellipse cx="160" cy="345" rx="17" ry="20" fill="#08090f"/>
+    <!-- gap for speaker area -->
+    <ellipse cx="320" cy="352" rx="17" ry="19" fill="#08090f"/>
+    <ellipse cx="365" cy="342" rx="18" ry="20" fill="#08090f"/>
+    <ellipse cx="410" cy="355" rx="16" ry="18" fill="#07080e"/>
+    <ellipse cx="455" cy="348" rx="17" ry="19" fill="#08090f"/>
+    <ellipse cx="498" cy="358" rx="18" ry="20" fill="#08090f"/>
+    <ellipse cx="545" cy="345" rx="17" ry="18" fill="#07080e"/>
+    <ellipse cx="590" cy="352" rx="16" ry="20" fill="#08090f"/>
+    <ellipse cx="635" cy="342" rx="18" ry="19" fill="#08090f"/>
+    <ellipse cx="678" cy="355" rx="17" ry="18" fill="#07080e"/>
+    <ellipse cx="722" cy="348" rx="16" ry="20" fill="#08090f"/>
+    <ellipse cx="765" cy="358" rx="18" ry="19" fill="#08090f"/>
+    <ellipse cx="810" cy="345" rx="17" ry="18" fill="#07080e"/>
+    <ellipse cx="855" cy="352" rx="16" ry="20" fill="#08090f"/>
+  </g>
+
+  <!-- Row 2 (mid-distance) -->
+  <g opacity="0.55">
+    <ellipse cx="20" cy="316" rx="13" ry="15" fill="#0a0c14"/>
+    <ellipse cx="55" cy="308" rx="12" ry="14" fill="#0a0c14"/>
+    <ellipse cx="90" cy="318" rx="13" ry="14" fill="#0a0c14"/>
+    <ellipse cx="124" cy="310" rx="12" ry="15" fill="#0a0c14"/>
+    <ellipse cx="158" cy="316" rx="13" ry="14" fill="#0a0c14"/>
+    <!-- gap near speaker -->
+    <ellipse cx="330" cy="312" rx="13" ry="15" fill="#0a0c14"/>
+    <ellipse cx="368" cy="305" rx="12" ry="14" fill="#0a0c14"/>
+    <ellipse cx="405" cy="315" rx="13" ry="14" fill="#0a0c14"/>
+    <ellipse cx="442" cy="308" rx="12" ry="15" fill="#0a0c14"/>
+    <ellipse cx="480" cy="316" rx="13" ry="14" fill="#0a0c14"/>
+    <ellipse cx="518" cy="306" rx="12" ry="15" fill="#0a0c14"/>
+    <ellipse cx="556" cy="314" rx="13" ry="14" fill="#0a0c14"/>
+    <ellipse cx="594" cy="308" rx="12" ry="15" fill="#0a0c14"/>
+    <ellipse cx="632" cy="318" rx="13" ry="14" fill="#0a0c14"/>
+    <ellipse cx="670" cy="310" rx="12" ry="14" fill="#0a0c14"/>
+    <ellipse cx="708" cy="316" rx="13" ry="15" fill="#0a0c14"/>
+    <ellipse cx="746" cy="306" rx="12" ry="14" fill="#0a0c14"/>
+    <ellipse cx="784" cy="314" rx="13" ry="15" fill="#0a0c14"/>
+    <ellipse cx="822" cy="308" rx="12" ry="14" fill="#0a0c14"/>
+    <ellipse cx="860" cy="316" rx="13" ry="14" fill="#0a0c14"/>
+  </g>
+
+  <!-- Row 3 (far) -->
+  <g opacity="0.35">
+    <ellipse cx="15" cy="284" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="42" cy="278" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="70" cy="285" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="98" cy="278" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="126" cy="284" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="155" cy="278" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="340" cy="282" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="370" cy="276" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="400" cy="283" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="430" cy="277" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="460" cy="283" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="492" cy="277" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="524" cy="283" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="556" cy="277" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="588" cy="283" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="620" cy="277" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="652" cy="283" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="684" cy="277" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="716" cy="283" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="748" cy="277" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="780" cy="283" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="812" cy="277" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="844" cy="283" rx="9" ry="10" fill="#0d1020"/>
+    <ellipse cx="876" cy="277" rx="9" ry="10" fill="#0d1020"/>
+  </g>
+
+  <!-- Atmospheric light beams from top -->
+  <polygon points="380,0 420,0 520,280 480,280" fill="#1e50a0" opacity="0.04"/>
+  <polygon points="480,0 540,0 620,280 560,280" fill="#2a5ab0" opacity="0.03"/>
+  <polygon points="550,0 600,0 700,260 650,260" fill="#1e50a0" opacity="0.03"/>
+
+  <!-- Bottom vignette -->
+  <rect x="0" y="280" width="900" height="140" fill="url(#audiencefade)" opacity="0.5"/>
+
+  <!-- Top vignette -->
+  <linearGradient id="topvign" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" style="stop-color:#060d1a;stop-opacity:0.7"/>
+    <stop offset="100%" style="stop-color:#060d1a;stop-opacity:0"/>
+  </linearGradient>
+  <rect x="0" y="0" width="900" height="80" fill="url(#topvign)"/>
+
+  <!-- Side vignettes -->
+  <linearGradient id="leftvign" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" style="stop-color:#060d1a;stop-opacity:0.8"/>
+    <stop offset="100%" style="stop-color:#060d1a;stop-opacity:0"/>
+  </linearGradient>
+  <rect x="0" y="0" width="120" height="420" fill="url(#leftvign)"/>
+  <linearGradient id="rightvign" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" style="stop-color:#060d1a;stop-opacity:0"/>
+    <stop offset="100%" style="stop-color:#060d1a;stop-opacity:0.7"/>
+  </linearGradient>
+  <rect x="750" y="0" width="150" height="420" fill="url(#rightvign)"/>
+</svg>

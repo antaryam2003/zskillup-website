@@ -154,6 +154,6 @@ export const institutionStats: readonly Stat[] = [
 export const activityStats: readonly Stat[] = [
   { value: "50+", label: "Programs Conducted", verified: false, note: "From the design. Confirm." },
   { value: "100+", label: "Workshops & Events", verified: false, note: "From the design. Confirm." },
-  { value: "15+", label: "Cities & Campuses Reached", verified: false, note: "From the design. Confirm." },
-  { value: "", label: "Student Community", verified: true },
+  { value: "15+", label: "Cities &\nCampuses Reached", verified: false, note: "From the design. Confirm." },
+  { value: "Growing", label: "Student Community", verified: true },
 ];

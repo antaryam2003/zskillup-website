@@ -13,14 +13,18 @@ import { InstitutionsTabs } from "./InstitutionsTabs";
  * Two bands, one page grid (a single <Container> in each, same width and
  * gutters, so every left/right edge lines up):
  *
- *   A. Hero band (white -> pale lavender)
+ *   A. Hero band (white)
  *      eyebrow / headline / supporting copy / two CTAs  |  vertical stat trio
  *      then the tabbed panel: "Programs for Your Campus" + "Partnership Support"
  *      (see InstitutionsTabs - the four former "One partnership" cards live in
  *      the second tab and nowhere else).
  *
- *   B. "A Proven Journey" band (lavender, soft organic shapes)
+ *   B. "A Proven Journey" band (white)
  *      the four-step method (InstitutionsMethod)  |  purple CTA card.
+ *
+ * Both bands sit on plain white. The space above the section (to Choose Your
+ * Route) and between the two bands is deliberately compact; it comes only from
+ * the paddings on the two bands below.
  *
  * The credibility trio (see content/stats.ts) is confirmed and count-up
  * animates once, in black, when it scrolls into view - see InstitutionsStats.
@@ -36,8 +40,6 @@ import { InstitutionsTabs } from "./InstitutionsTabs";
 
 const primaryCta =
   "group inline-flex h-[3.25rem] items-center justify-center gap-3 rounded-[1.15rem] bg-[linear-gradient(135deg,#6a3ee8_0%,#5326d0_100%)] px-7 text-[1rem] font-medium text-white shadow-[0_14px_28px_-14px_rgba(91,43,203,0.75)] transition-[filter,transform] duration-200 hover:brightness-110 sm:h-14 sm:px-9 sm:text-[1.0625rem]";
-const secondaryCta =
-  "inline-flex h-[3.25rem] items-center justify-center rounded-full border border-[#d9d6ee] bg-white px-7 text-[1rem] font-medium text-navy transition-colors duration-200 hover:border-inst/50 hover:bg-inst-soft sm:h-14 sm:px-10 sm:text-[1.0625rem]";
 
 export function Institutions() {
   const stats = publishable(institutionStats);
@@ -47,17 +49,7 @@ export function Institutions() {
   return (
     <section id="institutions" aria-labelledby="institutions-heading" className="scroll-mt-24">
       {/* === A. Hero band + tabbed panel ================================= */}
-      <div className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#faf8ff_100%)] pt-20 pb-16 sm:pt-24 sm:pb-20 lg:pt-28 lg:pb-20">
-        {/* Soft, low-contrast lavender glow behind the right side. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-24 -right-32 h-[34rem] w-[34rem] rounded-full bg-[radial-gradient(closest-side,rgba(124,92,240,0.10),transparent)]"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute top-40 -left-40 h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(closest-side,rgba(124,92,240,0.06),transparent)]"
-        />
-
+      <div className="bg-white pt-6 pb-8 sm:pb-10">
         <Container className="relative">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-0">
             <div className="lg:pr-12">
@@ -73,7 +65,7 @@ export function Institutions() {
                 </span>
               </h2>
 
-              <p className="mt-6 max-w-[44rem] text-[1.0625rem] leading-[1.6] text-muted sm:text-[1.1875rem] lg:text-[1.25rem]">
+              <p className="mt-6 max-w-[40rem] text-[1rem] leading-[1.6] text-muted sm:text-[1.0625rem] lg:text-[1.125rem]">
                 {institutions.supporting}
               </p>
 
@@ -84,9 +76,6 @@ export function Institutions() {
                     name="arrowRight"
                     className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5"
                   />
-                </Link>
-                <Link href={institutions.secondaryCta.href} className={secondaryCta}>
-                  {institutions.secondaryCta.label}
                 </Link>
               </div>
             </div>
@@ -105,42 +94,7 @@ export function Institutions() {
       </div>
 
       {/* === B. A Proven Journey ========================================== */}
-      <div className="relative bg-[linear-gradient(180deg,#f1edfc_0%,#ebe5fa_100%)] pt-14 pb-12 sm:pt-16 sm:pb-16 lg:pt-20 lg:pb-20">
-        {/* Gentle curved top edge, in the band's own colour. */}
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 1440 48"
-          preserveAspectRatio="none"
-          className="pointer-events-none absolute top-0 left-0 h-8 w-full -translate-y-[calc(100%-1px)] text-[#f1edfc] sm:h-12"
-        >
-          <path d="M0 48V22C260 -6 620 4 900 22c220 14 380 6 540 -14V48Z" fill="currentColor" />
-        </svg>
-
-        {/* Soft organic shapes, clipped to the band. */}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-          <svg
-            viewBox="0 0 1440 560"
-            preserveAspectRatio="xMidYMid slice"
-            className="absolute inset-0 h-full w-full"
-          >
-            <path
-              d="M-60 560V440C160 380 320 470 560 430S900 330 1120 380s280 40 380 0V560Z"
-              fill="#ffffff"
-              fillOpacity="0.30"
-            />
-            <path
-              d="M820 0H1500V150C1380 210 1250 130 1120 118 1000 106 900 60 820 0Z"
-              fill="#ffffff"
-              fillOpacity="0.30"
-            />
-            <path
-              d="M-60 0H540C490 64 390 88 300 66 200 42 100 96 -60 74Z"
-              fill="#5b2bcb"
-              fillOpacity="0.05"
-            />
-          </svg>
-        </div>
-
+      <div className="bg-white pt-8 pb-12 sm:pt-10 sm:pb-16 lg:pb-20">
         <Container className="relative">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-12 xl:grid-cols-[minmax(0,1fr)_24rem]">
             <InstitutionsMethod />

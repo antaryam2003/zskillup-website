@@ -17,8 +17,8 @@ import { Icon, type IconName } from "@/components/ui/Icon";
  * content stays crawlable and there is no mount/unmount flash on switching.
  * Standard WAI-ARIA tabs pattern: roving tabindex, Left/Right/Home/End.
  *
- * `id="institution-programs"` is the target of the hero's "Explore Solutions"
- * button, so it stays on the panel's outer wrapper.
+ * `id="institution-programs"` stays on the panel's outer wrapper as a stable
+ * in-page anchor for this panel.
  */
 
 type TabKey = "programs" | "partnership";
@@ -103,7 +103,7 @@ export function InstitutionsTabs() {
               tabIndex={selected ? 0 : -1}
               onClick={() => select(tab.key)}
               onKeyDown={(e) => onKeyDown(e, i)}
-              className={`relative flex-1 px-3 py-4 text-center text-[0.9375rem] leading-snug transition-colors duration-200 sm:flex-none sm:px-8 sm:py-5 sm:text-[1.1875rem] sm:whitespace-nowrap ${
+              className={`relative flex-1 px-3 py-4 text-center text-[0.875rem] leading-snug transition-colors duration-200 sm:flex-none sm:px-8 sm:py-5 sm:text-[1.0625rem] sm:whitespace-nowrap ${
                 selected ? "font-semibold text-inst" : "font-medium text-muted hover:text-navy"
               }`}
             >

@@ -7,7 +7,7 @@
  *
  * So: add entries to the arrays below and the carousel absorbs them. Nothing else
  * changes. The homepage deliberately shows a window onto the network, not a
- * directory - "View All Partners" leads to the complete list.
+ * directory - the static "& Many More" note signals the list runs beyond what shows.
  *
  * ---------------------------------------------------------------------------
  *  LOGOS
@@ -30,11 +30,11 @@ export type Partner = {
 };
 
 export const partners = {
-  eyebrow: "Our partners",
   headline: "Built through strong partnerships.",
   supporting:
     "We collaborate with leading institutions and companies to create industry-ready talent and meaningful career opportunities.",
-  viewAll: { label: "View All Partners", href: "#partner-with-us" },
+  /** Static text (not a link) under the logos - hints at partners beyond those shown. */
+  more: "& Many More",
   explore: { label: "Explore Our Partners", href: "#partner-with-us" },
 } as const;
 
@@ -87,7 +87,21 @@ export const industryPartners: readonly Partner[] = [
   { name: "Deloitte" },
 ];
 
+/**
+ * `eyebrow` is the small label above the section heading; it follows the selected
+ * tab so the two categories read as related but distinct.
+ */
 export const partnerTabs = [
-  { id: "institutional", label: "Institutional Partners", partners: institutionPartners },
-  { id: "industry", label: "Industry & Hiring Network", partners: industryPartners },
+  {
+    id: "institutional",
+    label: "Institutional Partners",
+    eyebrow: "Our Partners",
+    partners: institutionPartners,
+  },
+  {
+    id: "industry",
+    label: "Industry & Hiring Network",
+    eyebrow: "Hiring Network",
+    partners: industryPartners,
+  },
 ] as const;

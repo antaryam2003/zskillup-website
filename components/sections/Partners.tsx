@@ -42,6 +42,7 @@ import { Container, Eyebrow, Heading, Lede, Section } from "@/components/ui/Sect
 
 export function Partners() {
   const [active, setActive] = useState<string>(partnerTabs[0].id);
+  const activeTab = partnerTabs.find((tab) => tab.id === active) ?? partnerTabs[0];
   const stats = publishable(partnerStats);
 
   return (
@@ -50,7 +51,7 @@ export function Partners() {
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-4">
             <Eyebrow tone="gold" rule="above">
-              {partners.eyebrow}
+              {activeTab.eyebrow}
             </Eyebrow>
             <Heading id="partners-heading" plain={partners.headline} className="mt-6" />
             <Lede className="mt-6 max-w-[40ch]">{partners.supporting}</Lede>
@@ -127,11 +128,10 @@ export function Partners() {
               </div>
             ))}
 
-            <div className="mt-6 flex justify-end">
-              <Button href={partners.viewAll.href} variant="underline">
-                {partners.viewAll.label}
-              </Button>
-            </div>
+            {/* Static note, deliberately not a link or button. */}
+            <p className="mt-6 text-right text-[0.9375rem] font-medium tracking-wide text-muted">
+              {partners.more}
+            </p>
           </div>
         </div>
       </Container>
@@ -143,7 +143,7 @@ export function Partners() {
 const MARQUEE_SPEED_PX_PER_SEC = 36;
 
 /** Fixed tile width (not stretchy) so items never resize during the animation. */
-const TILE_WIDTH = "w-[8.5rem] sm:w-[9rem]";
+const TILE_WIDTH = "w-[10rem] sm:w-[11rem]";
 
 /**
  * Two-row marquee: the first 5 partners run top (left-to-right), the next 5
@@ -225,52 +225,38 @@ function PartnerRow({
   );
 }
 
-/** Ignore these when building a monogram from a partner name. */
-const STOPWORDS = new Set([
-  "of", "and", "the", "&", "group", "college", "university",
-  "institute", "institutes", "technology", "engineering",
-]);
-
-function monogram(name: string) {
-  const words = name
-    .replace(/[.,]/g, " ")
-    .split(/\s+/)
-    .filter((w) => w && !STOPWORDS.has(w.toLowerCase()));
-  if (words.length === 0) return name.slice(0, 3).toUpperCase();
-  if (words.length === 1) return words[0].slice(0, 3).toUpperCase();
-  return words.slice(0, 3).map((w) => w[0]).join("").toUpperCase();
-}
-
 /**
- * A single partner tile.
+ * A single partner tile - the logo alone, centred and contained.
  *
- * Renders real artwork when `logo` is set; otherwise a consistent monogram, so
- * the section stays complete and crawlable for entries with no logo file yet.
- * Names are always live text - never baked into an image.
+ * Every tile is the same fixed size and the logo fills the padded box inside it
+ * with `object-contain`, so wide wordmarks and near-square crests both keep their
+ * own aspect ratio and read at a consistent visual weight.
+ *
+ * The name is no longer shown, so it lives in the image's alt text instead (the
+ * crawlable/screen-reader label). When a partner has no artwork yet the tile falls
+ * back to a plain wordmark of the name in the logo's place, so it never looks empty.
  */
 function PartnerTile({ partner }: { partner: Partner }) {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-3 rounded-tile border border-line bg-white px-3 py-5 text-center shadow-card">
-      <span className="grid h-14 w-14 place-items-center">
-        {partner.logo ? (
-          <Image
-            src={asset(partner.logo)}
-            alt=""
-            width={186}
-            height={140}
-            loading="lazy"
-            className="max-h-14 w-auto object-contain"
-          />
-        ) : (
-          <span
-            aria-hidden="true"
-            className="grid h-14 w-14 place-items-center rounded-xl bg-cloud text-[0.875rem] font-extrabold tracking-tight text-navy/70"
-          >
-            {monogram(partner.name)}
-          </span>
-        )}
-      </span>
-      <p className="text-[0.75rem] leading-snug font-medium text-body">{partner.name}</p>
+    <div className="flex h-[6.75rem] items-center justify-center rounded-tile border border-line bg-white px-5 py-4 shadow-card sm:h-[7.5rem]">
+      {partner.logo ? (
+        <Image
+          src={asset(partner.logo)}
+          alt={partner.name}
+          width={186}
+          height={140}
+          loading="lazy"
+          className="h-full w-full object-contain"
+        />
+      ) : (
+        <span
+          className={`text-center leading-tight font-extrabold tracking-tight text-navy ${
+            partner.name.length <= 12 ? "text-[1.375rem]" : "line-clamp-3 text-[1rem]"
+          }`}
+        >
+          {partner.name}
+        </span>
+      )}
     </div>
   );
 }

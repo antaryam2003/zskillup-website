@@ -37,6 +37,6 @@ export const videos: Record<"institutions" | "prephasz" | "commerce", VideoSourc
   },
   commerce: {
     url: null,
-    title: "Inside the B.Com + ACCA pathway",
+    title: "Inside the Global Finance Program pathway",
   },
 };

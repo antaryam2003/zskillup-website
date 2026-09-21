@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { headerCta, nav } from "@/content/site";
-import { ZSkillupLogoMark } from "@/components/ui/Brand";
+import { PrephaszLogo, ZSkillupLogoMark } from "@/components/ui/Brand";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { Container } from "@/components/ui/Section";
@@ -86,9 +86,10 @@ export function SiteHeader() {
                   ) : null}
                   <Link
                     href={item.href}
+                    aria-label={item.label === "prephasz" ? "prephasz, Powered by ZSkillup" : undefined}
                     className="rounded-full px-4 py-2 text-[0.9375rem] font-medium text-navy/85 transition-colors hover:text-navy"
                   >
-                    {item.label}
+                    {item.label === "prephasz" ? <PrephaszLogo className="h-6" /> : item.label}
                   </Link>
                 </li>
               ))}
@@ -133,9 +134,10 @@ export function SiteHeader() {
                   <Link
                     href={item.href}
                     onClick={() => setOpen(false)}
+                    aria-label={item.label === "prephasz" ? "prephasz, Powered by ZSkillup" : undefined}
                     className="block border-b border-line-soft py-3.5 text-lg font-semibold text-navy"
                   >
-                    {item.label}
+                    {item.label === "prephasz" ? <PrephaszLogo className="h-7" /> : item.label}
                   </Link>
                 </li>
               ))}

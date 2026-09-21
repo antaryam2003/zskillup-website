@@ -44,7 +44,7 @@ export const faqCategories = [
   { id: "prephasz", label: "prephasz", blurb: "Placement preparation and platform." },
   {
     id: "commerce",
-    label: "B.Com + ACCA",
+    label: "Global Finance Program",
     blurb: "The commerce degree and career pathway.",
   },
 ] as const;
@@ -62,7 +62,7 @@ export const faqs: readonly Faq[] = [
   {
     category: "general",
     q: "What does ZSkillup do?",
-    a: "ZSkillup supports career readiness across campuses through institutional programs, the prephasz placement-preparation platform, and the B.Com + ACCA career pathway — combining skills, practice and industry exposure.",
+    a: "ZSkillup supports career readiness across campuses through institutional programs, the prephasz placement-preparation platform, and the Global Finance Program career pathway — combining skills, practice and industry exposure.",
   },
   {
     category: "general",
@@ -76,13 +76,13 @@ export const faqs: readonly Faq[] = [
   },
   {
     category: "general",
-    q: "What is the B.Com + ACCA pathway?",
+    q: "What is the Global Finance Program pathway?",
     a: "It is a commerce pathway that brings together a university degree, ACCA preparation, employability development and industry exposure. Program structure and ACCA exemptions vary by university.",
   },
   {
     category: "general",
     q: "Who can use ZSkillup's programs and platforms?",
-    a: "Institutions partner with us to deliver programs to their students. Individual students can prepare for placements on prephasz, and commerce students can explore the B.Com + ACCA pathway.",
+    a: "Institutions partner with us to deliver programs to their students. Individual students can prepare for placements on prephasz, and commerce students can explore the Global Finance Program pathway.",
   },
   {
     category: "general",
@@ -147,7 +147,7 @@ export const faqs: readonly Faq[] = [
   /* --- B.Com + ACCA -------------------------------------------------------- */
   {
     category: "commerce",
-    q: "What does the B.Com + ACCA pathway include?",
+    q: "What does the Global Finance Program pathway include?",
     a: "Four connected parts: a B.Com degree as the academic foundation, ACCA preparation, employability development for workplace skills, and industry exposure.",
   },
   {

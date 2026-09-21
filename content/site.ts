@@ -12,7 +12,7 @@ export const site = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.zskillup.com",
   tagline: "Higher education. Brighter careers.",
   description:
-    "ZSkillup works with universities, colleges and students to turn degrees into industry-ready careers - through institutional employability programs, the prephasz placement-preparation platform and the B.Com + ACCA commerce pathway.",
+    "ZSkillup works with universities, colleges and students to turn degrees into industry-ready careers - through institutional employability programs, the prephasz placement-preparation platform and the Global Finance Program commerce pathway.",
 } as const;
 
 export const contact = {
@@ -44,7 +44,7 @@ export const social = [
 export const nav = [
   { label: "Institutions", href: "/#institutions", page: "/institutions" },
   { label: "prephasz", href: "/#prephasz", page: "/prephasz" },
-  { label: "B.Com + ACCA", href: "/#bcom-acca", page: "/bcom-acca" },
+  { label: "Global Finance Program", href: "/#bcom-acca", page: "/bcom-acca" },
   { label: "Why ZSkillup", href: "/#education-to-career", page: "/why-zskillup" },
   { label: "Insights", href: "/insights", page: "/insights" },
   { label: "About", href: "/#about", page: "/about" },
@@ -62,7 +62,7 @@ export const footerColumns = [
     links: [
       { label: "ZSkillup for Institutions", href: "/#institutions" },
       { label: "prephasz", href: "/#prephasz" },
-      { label: "B.Com + ACCA", href: "/#bcom-acca" },
+      { label: "Global Finance Program", href: "/#bcom-acca" },
       { label: "The Education-to-Career Path", href: "/#education-to-career" },
     ],
   },

@@ -82,10 +82,10 @@ export const heroCards: readonly HeroCard[] = [
   },
   {
     vertical: "commerce",
-    eyebrow: "For Commerce Careers",
+    eyebrow: "For Global Finance Careers",
     /** "For Commerce Careers" alone does not tell a new visitor what the offering is. */
-    brandLabel: "B.Com + ACCA",
-    description: "Start with a degree. Build toward a profession.",
+    brandLabel: "B.Com + Global Finance & AI",
+    description: "Future-Ready. AI-Enabled. Globally Employable.",
     primary: { label: "Explore Program", href: "#bcom-acca" },
     secondary: { label: "Talk to an Advisor", href: "#partner-with-us" },
     video: { label: "Watch Now", href: "#bcom-acca" },
@@ -198,11 +198,11 @@ export const chooseRoute: {
       vertical: "commerce",
       kicker: "Real opportunities",
       eyebrow: "For Commerce Careers",
-      brand: "B.Com + ACCA",
+      brand: "Global Finance Program",
       title: "Start with a degree.\nBuild toward\na profession.",
-      body: "Explore a B.Com + ACCA pathway designed to connect university study, preparation and employability.",
-      features: ["B.Com + ACCA pathway", "Global recognition", "Career opportunities"],
-      cta: { label: "Explore B.Com + ACCA", href: "#bcom-acca" },
+      body: "Explore a Global Finance Program pathway designed to connect university study, preparation and employability.",
+      features: ["Global Finance Program pathway", "Global recognition", "Career opportunities"],
+      cta: { label: "Explore Global Finance Program", href: "#bcom-acca" },
     },
   ],
   /** Ties all three routes back to one ZSkillup proposition. */
@@ -371,7 +371,7 @@ export const prephasz = {
 
 export const commerce = {
   eyebrow: "A ZSkillup career pathway",
-  headline: { plain: "B.Com + ACCA, planned around the", highlight: "career beyond the degree." },
+  headline: { plain: "Global Finance Program, planned around the", highlight: "career beyond the degree." },
   supporting:
     "A career-focused commerce pathway combining a university degree, ACCA preparation, employability development and industry exposure.",
   /** Handwritten accent 2 of 2 on the homepage. */
@@ -398,7 +398,7 @@ export const commerce = {
     "Consulting",
     "Financial Services",
   ],
-  primaryCta: { label: "Explore B.Com + ACCA", href: "#partner-with-us" },
+  primaryCta: { label: "Explore Global Finance Program", href: "#partner-with-us" },
   secondaryCta: { label: "Talk to a Career Advisor", href: "#partner-with-us" },
 } as const;
 
@@ -443,7 +443,7 @@ export const journey = {
     },
     {
       vertical: "commerce",
-      title: "B.Com + ACCA",
+      title: "Global Finance Program",
       body: "From academic choice through professional and career preparation.",
       tags: ["Degree", "ACCA", "Professional Skills", "Career Outcomes"],
       href: "#bcom-acca",
@@ -471,5 +471,5 @@ export const journey = {
 export const finalCta = {
   eyebrow: "Partner with us",
   headline: { plain: "Let's build what comes", gradient: "after the degree." },
-  body: "Whether you are an institution planning employability outcomes, a student preparing for placements, or exploring the B.Com + ACCA pathway — tell us where you are and we'll take it from there.",
+  body: "Whether you are an institution planning employability outcomes, a student preparing for placements, or exploring the Global Finance Program pathway — tell us where you are and we'll take it from there.",
 } as const;

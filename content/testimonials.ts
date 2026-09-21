@@ -65,7 +65,7 @@ export const testimonials: readonly Testimonial[] = [
   {
     slug: "ritika-singh",
     name: "Ritika Singh",
-    role: "B.Com + ACCA Student",
+    role: "Global Finance Program Student",
     institution: "Delhi University",
     category: "Commerce Career Pathway",
     vertical: "commerce",

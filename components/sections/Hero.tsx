@@ -128,7 +128,14 @@ export function Hero() {
               photo's own content is positioned from the left edge. */}
           <div className="w-full px-5 sm:px-8">
             <div className="grid items-start gap-6 pt-14 sm:pt-16 lg:grid-cols-12 lg:pt-20">
-              <div className="lg:col-span-7 lg:translate-x-5 lg:-translate-y-5">
+              {/* translate-x-5 is capped at 1332px - it exists only to clear the
+                  photo's baked-in note in the 1024-1332px band (see the photo's
+                  own comment above). Past 1332px the note-collision risk is gone,
+                  so the offset drops out and this column's left edge lands back
+                  on the same grid line as the navbar logo and the cards row
+                  below (both flat px-5/px-8, no extra shift) - the alignment the
+                  brief requires across logo / hero text / first card. */}
+              <div className="lg:col-span-7 max-[1332px]:lg:translate-x-5 lg:-translate-y-5">
                 <p className="eyebrow text-navy/80 drop-shadow-[0_1px_3px_rgba(255,255,255,0.7)]">{hero.eyebrow}</p>
 
                 {/* Both halves stay inside one <h1> so the sentence reads as a
@@ -300,37 +307,45 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
       </div>
 
       {/* CTA layout: all three actions - primary, secondary, then Watch Now
-          - must now ALWAYS share one row; Watch Now may never drop to a
-          second line at any viewport, so this is flex-nowrap, not
-          flex-wrap.
+          - must share one row on every viewport where that's actually
+          possible; Watch Now may never drop to a second line at sm and up.
 
           Card width isn't the only lever available to make that hold at
-          every width (the brief is explicit it shouldn't be, and cards are
-          narrower now besides - see the grid above) - it's balanced against
-          three responsive tiers of button sizing, sized to each layout
-          mode's actual available width:
+          every width (cards are narrower now besides - see the grid above)
+          - it's balanced against three responsive tiers of button sizing,
+          sized to each layout mode's actual available width:
             - base (<sm, phones - single stacked column, but a narrow one):
-              compact.
+              compact, but still larger than before this pass.
             - sm-lg (640-1279px - still a single stacked column, but a wide
               one - the full card width, not a third of it): full original
               size, unchanged from before this pass.
             - xl+ (1280px+ - three real columns again): compact again, since
               a third of even this row's own width is tighter than a phone
-              screen minus its padding.
-          Both compact tiers use the same sizing - measured (via headless
-          Chrome) against the tightest case across BOTH bands, card 3's
-          "Explore Program" + "Talk to an Advisor" + Watch Now, which is the
-          narrower of the two (~375px viewport) rather than the xl one.
+              screen minus its padding. Verified in-browser at exactly
+              1280px (the tightest xl case) with card 3's own longest labels
+              - still one row with room to spare.
+          At base, card 3's own longest labels ("Explore Program" + "Talk to
+          an Advisor" + "Watch Now") no longer fit on one row at the
+          larger, more legible size this pass asks for, even at the
+          narrowest reasonable padding/type size - verified in-browser down
+          to a 375px viewport. flex-wrap (base only, sm:flex-nowrap from
+          640px up) is the fallback the brief itself calls for in that case
+          ("preserve the existing responsive strategy if the viewport
+          genuinely cannot accommodate the buttons"): cards 1 and 2 still
+          fit and stay on one row regardless (wrap only triggers when a
+          line would otherwise overflow), and this is strictly better than
+          the pre-existing behaviour, where the same overflow was silently
+          clipped by the section's own overflow-hidden instead of wrapping.
           `!` (important) is required here: these override Button's own
           shared `sm` size and VideoDialog's own shared `pill` padding,
           neither of which this pass may edit directly (both are used
           elsewhere on the site, unchanged). */}
-      <div className="mt-auto flex flex-nowrap items-center gap-1 pt-5 sm:gap-2 xl:gap-1">
+      <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-5 sm:flex-nowrap sm:gap-2 xl:gap-1.5">
         <Button
           href={card.primary.href}
           variant="primary"
           size="sm"
-          className="!gap-1 !px-1.5 !py-1.5 !text-[0.625rem] sm:!gap-2 sm:!px-3.5 sm:!py-2.5 sm:!text-[0.8125rem] xl:!gap-1 xl:!px-1.5 xl:!py-1.5 xl:!text-[0.625rem]"
+          className="!gap-1.5 !px-2.5 !py-2 !text-[0.6875rem] sm:!gap-2 sm:!px-3.5 sm:!py-2.5 sm:!text-[0.8125rem] xl:!gap-1.5 xl:!px-2.5 xl:!py-2 xl:!text-[0.6875rem]"
         >
           {card.primary.label}
         </Button>
@@ -338,7 +353,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
           href={card.secondary.href}
           variant="outline"
           size="sm"
-          className="!gap-1 !px-1.5 !py-1.5 !text-[0.625rem] sm:!gap-2 sm:!px-3.5 sm:!py-2.5 sm:!text-[0.8125rem] xl:!gap-1 xl:!px-1.5 xl:!py-1.5 xl:!text-[0.625rem]"
+          className="!gap-1.5 !px-2.5 !py-2 !text-[0.6875rem] sm:!gap-2 sm:!px-3.5 sm:!py-2.5 sm:!text-[0.8125rem] xl:!gap-1.5 xl:!px-2.5 xl:!py-2 xl:!text-[0.6875rem]"
         >
           {card.secondary.label}
         </Button>
@@ -346,7 +361,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
           video={video}
           label={card.video.label}
           variant="pill"
-          className="!gap-1 !py-1 !pl-0.5 !pr-1.5 !text-[0.625rem] sm:!gap-2 sm:!py-1.5 sm:!pl-1.5 sm:!pr-4 sm:!text-[0.875rem] xl:!gap-1 xl:!py-1 xl:!pl-0.5 xl:!pr-1.5 xl:!text-[0.625rem]"
+          className="!gap-1.5 !py-2 !pl-1 !pr-2.5 !text-[0.6875rem] sm:!gap-2 sm:!py-1.5 sm:!pl-1.5 sm:!pr-4 sm:!text-[0.875rem] xl:!gap-1.5 xl:!py-2 xl:!pl-1 xl:!pr-2.5 xl:!text-[0.6875rem]"
         />
       </div>
     </article>

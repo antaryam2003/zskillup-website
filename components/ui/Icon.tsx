@@ -10,6 +10,7 @@
  */
 
 export type IconName =
+  | "star"
   | "graduation"
   | "briefcase"
   | "users"
@@ -30,6 +31,7 @@ export type IconName =
   | "shield"
   | "receipt"
   | "landmark"
+  | "calendar"
   | "clipboard"
   | "coins"
   | "crown"
@@ -51,6 +53,9 @@ export type IconName =
   | "close";
 
 const paths: Record<IconName, React.ReactNode> = {
+  star: (
+    <path d="M12 3 L14.23 8.93 L20.56 9.22 L15.61 13.17 L17.29 19.28 L12 15.8 L6.71 19.28 L8.39 13.17 L3.44 9.22 L9.77 8.93 Z" />
+  ),
   graduation: (
     <>
       <path d="M2 8.5 12 4l10 4.5-10 4.5L2 8.5Z" />
@@ -185,6 +190,14 @@ const paths: Record<IconName, React.ReactNode> = {
       <path d="M3 20.5h18" />
       <path d="M4.5 9.8h15L12 4.5 4.5 9.8Z" />
       <path d="M7 12v5.6M12 12v5.6M17 12v5.6" />
+    </>
+  ),
+  calendar: (
+    <>
+      <rect x="3" y="4.5" width="18" height="16" rx="2" />
+      <path d="M3 9.5h18" />
+      <path d="M8 2.5v4M16 2.5v4" />
+      <path d="M7.5 13.5h.01M12 13.5h.01M16.5 13.5h.01M7.5 17h.01M12 17h.01" />
     </>
   ),
   clipboard: (

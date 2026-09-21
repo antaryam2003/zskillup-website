@@ -200,7 +200,7 @@ function InsightsHero() {
           priority
           sizes="52vw"
           className="object-cover object-[100%_15%]"
-          style={{ filter: "brightness(0.6) saturate(0.55) hue-rotate(195deg)" }}
+          style={{ filter: "brightness(0.45) saturate(0.3)" }}
         />
         {/* Left fade — blends photo into the dark star-field */}
         <div

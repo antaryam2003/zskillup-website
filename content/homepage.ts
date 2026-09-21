@@ -31,8 +31,6 @@ export const hero = {
   cta: { label: "Explore What We Offer", href: "#choose-your-route" },
   /** Handwritten accent 1 of 2 on the homepage. */
   handwritten: "More Than a Degree",
-  /** Reappears as the Testimonials headline - deliberate echo. */
-  footNote: "Real people. Real progress.",
 } as const;
 
 /**

@@ -22,11 +22,13 @@ import { Handwritten } from "@/components/ui/Stats";
  * this is the accent's 3rd use on the homepage (the brief's own cap is
  * "2-3" - see globals.css and Stats.tsx).
  *
- * The outer field is `bg-cloud` - a very light, near-white neutral (not the
- * page's plain white) so the white stat cards still read as distinct cards
- * against it. Figures are `text-navy`, the same "black" the rest of the
- * site's dark text uses, rather than a literal `text-black` this design
- * system doesn't otherwise use anywhere.
+ * The outer field is `bg-white` - the same tone About ZSkillup uses
+ * (`<Section tone="white">`), per the brief. The light cards pick up a
+ * `border-line` hairline (not carried before, when `bg-cloud` alone did
+ * that job) so they still read as distinct cards against a same-toned page
+ * rather than flattening into it. Figures are `text-navy`, the same
+ * "black" the rest of the site's dark text uses, rather than a literal
+ * `text-black` this design system doesn't otherwise use anywhere.
  *
  * Deliberately NOT the shared <Container> (max-w-[1240px]): six cards in one
  * row leaves each just ~179px wide inside that width - checked directly
@@ -66,7 +68,14 @@ import { Handwritten } from "@/components/ui/Stats";
  * absolutely-positioned backdrop clipped to the card's own rounded corners
  * (`overflow-hidden` on the card) - matching the reference's "illustration
  * sitting on a low hill" silhouette without needing a bespoke shape per
- * card. Both layers are `aria-hidden`/`pointer-events-none`.
+ * card, except "Placement Success Rate" (target icon), which the reference
+ * shows floating with no hill under it. Two icons get a second, existing
+ * icon layered in rather than standing alone, closer to the reference's own
+ * composition, without drawing anything bespoke: "Highest Package" pairs
+ * `crown` with the shared `sparkle` glyph behind it (the reference's
+ * radiating lines), and "Average Package" pairs `coins` with a rotated
+ * `arrowRight` above it (the reference's growth arrow). Every layer here is
+ * `aria-hidden`/`pointer-events-none`.
  *
  * COUNT-UP ANIMATION: each figure parses into a numeric target plus the
  * exact prefix/suffix text around it (" LPA", "+", "%" and so on) and how
@@ -199,7 +208,7 @@ export function HomepageStats() {
   }, []);
 
   return (
-    <section ref={sectionRef} aria-label="ZSkillup at a glance" className="bg-cloud py-14 sm:py-16 lg:py-20">
+    <section ref={sectionRef} aria-label="ZSkillup at a glance" className="bg-white py-14 sm:py-16 lg:py-20">
       <div className="mx-auto w-full max-w-[1450px] px-5 sm:px-8">
         <div className="mx-auto max-w-[42rem] text-center">
           <p className="flex items-center justify-center gap-3 text-[0.75rem] font-bold tracking-[0.2em] text-brand uppercase">
@@ -228,7 +237,7 @@ export function HomepageStats() {
             <li key={stat.label}>
               <div
                 className={`relative flex h-full flex-col overflow-hidden rounded-card px-4 py-5 shadow-card transition-shadow duration-200 hover:shadow-lift sm:px-5 sm:py-6 ${
-                  stat.highlight ? "bg-gradient-stat-highlight" : "bg-white"
+                  stat.highlight ? "bg-gradient-stat-highlight" : "border border-line bg-white"
                 }`}
               >
                 <p
@@ -245,14 +254,38 @@ export function HomepageStats() {
                 >
                   {stat.label}
                 </p>
-                <GroundShape className={stat.highlight ? "text-white/10" : "text-brand/[0.07]"} />
+                {stat.icon === "target" ? null : (
+                  <GroundShape className={stat.highlight ? "text-white/10" : "text-brand/[0.07]"} />
+                )}
                 <div className="mt-auto flex justify-end pt-3">
-                  <Icon
-                    name={stat.icon}
-                    className={`h-10 w-10 min-[1450px]:h-12 min-[1450px]:w-12 ${
-                      stat.highlight ? "text-white/30" : "text-brand/20"
-                    }`}
-                  />
+                  {(() => {
+                    const tint = stat.highlight ? "text-white/30" : "text-brand/20";
+                    const iconSize = "h-10 w-10 min-[1450px]:h-12 min-[1450px]:w-12";
+                    if (stat.icon === "crown") {
+                      const glowTint = stat.highlight ? "text-white/15" : "text-brand/10";
+                      return (
+                        <span className="relative grid place-items-center">
+                          <Icon
+                            name="sparkle"
+                            className={`absolute h-16 w-16 min-[1450px]:h-20 min-[1450px]:w-20 ${glowTint}`}
+                          />
+                          <Icon name="crown" className={`relative ${iconSize} ${tint}`} />
+                        </span>
+                      );
+                    }
+                    if (stat.icon === "coins") {
+                      return (
+                        <span className="relative inline-flex">
+                          <Icon
+                            name="arrowRight"
+                            className={`absolute -top-3 -right-1.5 h-4 w-4 -rotate-45 ${tint}`}
+                          />
+                          <Icon name="coins" className={`${iconSize} ${tint}`} />
+                        </span>
+                      );
+                    }
+                    return <Icon name={stat.icon} className={`${iconSize} ${tint}`} />;
+                  })()}
                 </div>
               </div>
             </li>

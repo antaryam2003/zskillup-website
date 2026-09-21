@@ -6,7 +6,7 @@ import { videos } from "@/content/videos";
 import { Button } from "@/components/ui/Button";
 import { PrephaszLogo } from "@/components/ui/Brand";
 import { Icon, type IconName } from "@/components/ui/Icon";
-import { Container, verticalStyles } from "@/components/ui/Section";
+import { verticalStyles } from "@/components/ui/Section";
 import { VideoDialog } from "@/components/ui/VideoDialog";
 
 /**
@@ -225,27 +225,6 @@ export function Hero() {
           </ul>
         </div>
       </div>
-
-      <Container>
-        {/* Footer row sits on the page's own white background, below the
-            photo band entirely - matching the design, where the photo ends
-            at the cards and this strip reads as plain page chrome. */}
-        <div className="mt-12 flex items-center justify-between gap-4 pb-6">
-          <p className="eyebrow flex items-center gap-4 text-navy/70">
-            {hero.footNote}
-            <span aria-hidden="true" className="hidden h-px w-16 bg-navy/20 sm:block" />
-          </p>
-          <a
-            href={hero.cta.href}
-            className="hidden items-center gap-3 text-xs font-semibold tracking-[0.16em] text-navy/70 uppercase transition-colors hover:text-navy sm:flex"
-          >
-            Scroll
-            <span className="grid h-10 w-10 place-items-center rounded-full border border-navy/25">
-              <Icon name="arrowDown" className="h-4 w-4" />
-            </span>
-          </a>
-        </div>
-      </Container>
     </section>
   );
 }

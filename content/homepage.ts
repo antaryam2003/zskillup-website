@@ -321,11 +321,10 @@ export const prephasz = {
   supporting:
     "prephasz is built around the actual recruitment journey — helping students identify gaps, practise the right areas, prepare for target companies and track their progress.",
   primaryCta: { label: "Start on prephasz", href: "https://prephasz.com" },
-  secondaryCta: { label: "Explore prephasz", href: "#prephasz-journey" },
   videoLabel: "Watch prephasz in action",
   videoDuration: "2 min",
 
-  journeyEyebrow: "A Simple Journey",
+  journeyEyebrow: "A Simple Journey on prephasz",
   journeyHeadline: "From practice to placement readiness.",
   /** The line the feedback doc asks for verbatim - do not rewrite it. */
   journeyStatement:

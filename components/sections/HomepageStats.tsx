@@ -2,71 +2,82 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { heroCredibilityStats } from "@/content/stats";
+import { Icon } from "@/components/ui/Icon";
 
 /**
  * CREDIBILITY STRIP - sits directly between Hero and About.
  *
- * A compact row of six figures, each its own white card - no heading, no
- * icons, per the reference this was built from. Kept as its own lightweight
- * section (not the shared <Section> shell) because that component's standard
- * py-20/24/28 vertical padding is built for a full section with a heading;
- * this strip is deliberately much shorter.
+ * A compact row of six figures. Kept as its own lightweight section (not the
+ * shared <Section> shell) because that component's standard py-20/24/28
+ * vertical padding is built for a full section with a heading; this strip is
+ * deliberately much shorter and carries no heading of its own.
  *
  * The outer field is `bg-cloud` - a very light, near-white neutral (not the
  * page's plain white) so the white stat cards still read as distinct cards
- * against it, the same purpose the previous warm-pink field served, just
- * without introducing a saturated colour. Figures are `text-navy`, the same
- * "black" the rest of the site's dark text uses, rather than a literal
- * `text-black` this design system doesn't otherwise use anywhere.
+ * against it. Figures are `text-navy`, the same "black" the rest of the
+ * site's dark text uses, rather than a literal `text-black` this design
+ * system doesn't otherwise use anywhere.
  *
  * Deliberately NOT the shared <Container> (max-w-[1240px]): six cards in one
  * row leaves each just ~179px wide inside that width - checked directly
- * against this layout, that's too narrow for "₹5.6 LPA" (the longest
- * figure) to stay on one line at a legible size, and that width never grows
- * past this regardless of viewport, since Container plateaus at 1240px. A
- * dedicated, wider max-width - the same fix the Hero cards row uses for the
- * same reason - gives every card real room to spare once six-across is safe.
+ * against this layout, that's too narrow for the longest label ("Universities
+ * & Colleges onboarded") to read comfortably. A dedicated, wider max-width -
+ * the same fix the Hero cards row uses for the same reason - gives every
+ * card real room to spare once six-across is safe.
  *
- * Six-across only switches on at 1450px (a checked, not guessed, threshold -
- * see below), not at the `lg` grid's usual 1024px: below 1450px, six cards
- * genuinely can't fit "₹5.6 LPA" at a legible size no matter how the width
- * is redistributed, so per the brief's own fallback ("if necessary, use a
- * 3×2 layout rather than forcing six cramped cards into one row") the strip
- * stays 3×2 for every width from tablet up through smaller desktop screens,
- * and only becomes a single row once there's genuinely enough room for it.
+ * Six-across only switches on at 1450px (checked directly against this
+ * content, not guessed), not at the `lg` grid's usual 1024px: below that,
+ * six cards genuinely can't hold their labels at a legible size no matter
+ * how the width is redistributed, so the strip stays 3x2 for every width
+ * from tablet up through smaller desktop screens, and only becomes a single
+ * row once there's genuinely enough room for it.
  *
  * The 3-up and 6-up breakpoints below both use `min-[Npx]:` rather than the
  * named `sm:` - mixing a named breakpoint with an arbitrary one on the same
- * property (e.g. `sm:text-[...] min-[1450px]:text-[...]`) compiles fine but
- * loses the cascade at wide viewports: both conditions end up true at once,
- * and the named variant's rule sorts after the arbitrary one regardless of
- * which is visually wider, so `sm:` silently wins and 1450px+ never applies.
- * Sticking to `min-[]:` throughout keeps every tier sorted by its actual
- * pixel value, so the widest matching breakpoint reliably wins.
+ * property compiles fine but loses the cascade at wide viewports (both
+ * conditions end up true at once, and the named variant's rule sorts after
+ * the arbitrary one regardless of which is visually wider, so `sm:` silently
+ * wins and 1450px+ never applies). Sticking to `min-[]:` throughout keeps
+ * every tier sorted by its actual pixel value, so the widest matching
+ * breakpoint reliably wins.
+ *
+ * ONE HIGHLIGHTED CARD: `stat.highlight` (content/stats.ts) marks exactly
+ * one figure ("Placements") to render on the brand-purple fill instead of
+ * white - the one deliberate accent among six otherwise-uniform cards, per
+ * the reference this was built from. Every other card stays white/light;
+ * this is not a per-card colour system.
+ *
+ * DECORATIVE ICON: each stat also carries an `icon` name, rendered small,
+ * low-opacity and pinned to the bottom of the card via `mt-auto` (normal
+ * flow, not absolutely positioned) - so it can never overlap the number or a
+ * wrapped label regardless of how long that card's text runs, and always
+ * reads as a quiet watermark rather than a competing visual.
  *
  * COUNT-UP ANIMATION: each figure parses into a numeric target plus the
- * exact prefix/suffix text around it ("₹" / " LPA", "+", "%+" and so on) and
- * how many decimal places it originally had (one for "₹5.6 LPA", zero for
- * every other figure) - so intermediate frames re-attach the same prefix/
- * suffix and decimal precision the final value has, and the animation can
- * never land on anything but the exact original string. Triggered once, by
- * a single IntersectionObserver on the whole strip (not one per card, so
- * all six start together) - it disconnects itself the moment it fires, which
- * is what guarantees "play once" and rules out a restart from scrolling
- * away and back. `prefers-reduced-motion` skips the animation and renders
- * the final values immediately, consistent with how decorative (not user-
+ * exact prefix/suffix text around it (" LPA", "+", "%" and so on) and how
+ * many decimal places it originally had (one for "5.6 LPA", zero for every
+ * other figure) - so intermediate frames re-attach the same prefix/suffix
+ * and decimal precision the final value has, and the animation can never
+ * land on anything but the exact original string. Triggered once, by a
+ * single IntersectionObserver on the whole strip (not one per card, so all
+ * six start together) - it disconnects itself the moment it fires, which is
+ * what guarantees "play once" and rules out a restart from scrolling away
+ * and back. `prefers-reduced-motion` skips the animation and renders the
+ * final values immediately, consistent with how decorative (not user-
  * driven) motion is handled elsewhere on this site. */
 
 const NUMBER_SIZE = "text-[1.5rem] min-[640px]:text-[1.875rem] min-[1450px]:text-[2.25rem]";
 /** min-h reserves two lines' worth of height at each size, regardless of
-    whether a given label actually needs both - "College Partnerships" (the
-    longest label) wraps at several widths while the five shorter labels
-    don't, and without this the grid stretched every card in the row to
-    match whichever one currently had the tallest label, leaving the rest
-    visibly off-centre. Reserving the space up front keeps every card the
-    same height without depending on which label happens to wrap. */
+    whether a given label actually needs both - "Universities & Colleges
+    onboarded" (the longest label) wraps at every width while shorter labels
+    like "Hiring Partners" don't, and without this the grid stretched every
+    card in the row to match whichever one currently had the tallest label,
+    leaving the rest visibly off-centre. Reserving the space up front keeps
+    every card the same height without depending on which label happens to
+    wrap - and the decorative icon below it, pinned by `mt-auto`, still lands
+    on the same baseline across the whole row either way. */
 const LABEL_SIZE =
-  "text-base min-h-11 min-[640px]:text-[1.0625rem] min-[640px]:min-h-12 min-[1450px]:text-[1.125rem] min-[1450px]:min-h-[3.25rem]";
+  "text-[0.9375rem] min-h-10 min-[640px]:text-base min-[640px]:min-h-11 min-[1450px]:text-[1.0625rem] min-[1450px]:min-h-12";
 
 const COUNT_DURATION_MS = 1600;
 
@@ -151,20 +162,36 @@ export function HomepageStats() {
   return (
     <section ref={sectionRef} aria-label="ZSkillup at a glance" className="bg-cloud py-10 sm:py-12">
       <div className="mx-auto w-full max-w-[1450px] px-5 sm:px-8">
-        <ul className="grid grid-cols-2 gap-2 min-[640px]:grid-cols-3 min-[640px]:gap-4 min-[1450px]:grid-cols-6 min-[1450px]:gap-5">
+        <ul className="grid grid-cols-2 gap-3 min-[640px]:grid-cols-3 min-[640px]:gap-4 min-[1450px]:grid-cols-6 min-[1450px]:gap-5">
           {heroCredibilityStats.map((stat) => (
             <li key={stat.label}>
-              <div className="flex h-full flex-col items-center justify-center rounded-tile bg-white px-3 py-5 text-center shadow-card sm:px-4 sm:py-6">
+              <div
+                className={`flex h-full flex-col rounded-card px-4 py-5 shadow-card transition-shadow duration-200 hover:shadow-lift sm:px-5 sm:py-6 ${
+                  stat.highlight ? "bg-gradient-stat-highlight" : "bg-white"
+                }`}
+              >
                 <p
-                  className={`${NUMBER_SIZE} leading-none font-extrabold tracking-tight whitespace-nowrap text-navy tabular-nums`}
+                  className={`${NUMBER_SIZE} leading-none font-extrabold tracking-tight whitespace-nowrap tabular-nums ${
+                    stat.highlight ? "text-white" : "text-navy"
+                  }`}
                 >
                   <AnimatedStatValue value={stat.value} startWhenReady={inView} />
                 </p>
                 <p
-                  className={`${LABEL_SIZE} mt-2.5 flex items-center justify-center leading-snug font-semibold text-navy`}
+                  className={`${LABEL_SIZE} mt-2 flex items-start leading-snug font-semibold ${
+                    stat.highlight ? "text-white/85" : "text-muted"
+                  }`}
                 >
                   {stat.label}
                 </p>
+                <div className="mt-auto flex justify-end pt-3">
+                  <Icon
+                    name={stat.icon}
+                    className={`h-10 w-10 min-[1450px]:h-12 min-[1450px]:w-12 ${
+                      stat.highlight ? "text-white/25" : "text-brand/15"
+                    }`}
+                  />
+                </div>
               </div>
             </li>
           ))}

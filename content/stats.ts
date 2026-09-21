@@ -74,14 +74,21 @@ export const partnerStats: readonly Stat[] = [
  * strip in the Hero" rule noted above: these six figures were supplied
  * directly, by name, for this exact placement, so they're treated the same
  * way `partnerStats` is - given, not invented, hence `verified: true`.
+ *
+ * `icon` and `highlight` drive HomepageStats.tsx's presentation only - they
+ * carry no publishing meaning and are ignored by `publishable()`.
  */
-export const heroCredibilityStats: readonly Stat[] = [
-  { value: "55+", label: "College Partnerships", verified: true },
-  { value: "300+", label: "Hiring Partners", verified: true },
-  { value: "250+", label: "Placements", verified: true },
-  { value: "₹19 LPA", label: "Highest Package", verified: true },
-  { value: "₹5.6 LPA", label: "Average Package", verified: true },
-  { value: "78%+", label: "Placement Success", verified: true },
+export const heroCredibilityStats: readonly (Stat & {
+  icon: "landmark" | "briefcase" | "trending" | "target" | "crown" | "coins";
+  /** The one card HomepageStats renders on the brand-purple fill. */
+  highlight?: boolean;
+})[] = [
+  { value: "55+", label: "Universities & Colleges onboarded", verified: true, icon: "landmark" },
+  { value: "150+", label: "Hiring Partners", verified: true, icon: "briefcase" },
+  { value: "350+", label: "Placements", verified: true, icon: "trending", highlight: true },
+  { value: "78%", label: "Placement Success Rate", verified: true, icon: "target" },
+  { value: "19 LPA", label: "Highest Package", verified: true, icon: "crown" },
+  { value: "5.6 LPA", label: "Average Package", verified: true, icon: "coins" },
 ];
 
 /**

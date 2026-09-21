@@ -171,6 +171,14 @@
   background: var(--brand-gradient-icon);
 }
 
+/* The one highlighted card in the homepage statistics strip - a plain
+   two-stop purple fill (brand -> brand-deep), deliberately not the full
+   multi-colour --brand-gradient used for headline sweeps/CTAs, since a
+   single stat card calls for the quieter, more restrained treatment. */
+.bg-gradient-stat-highlight {
+  background: linear-gradient(135deg, var(--color-brand) 0%, var(--color-brand-deep) 100%);
+}
+
 /* Keeps hyphenated compounds such as "industry-ready" from breaking mid-word. */
 .no-hyphen-break {
   word-break: keep-all;

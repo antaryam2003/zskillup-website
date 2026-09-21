@@ -32,6 +32,7 @@ export type IconName =
   | "landmark"
   | "clipboard"
   | "coins"
+  | "crown"
   | "sparkle"
   | "play"
   | "arrowRight"
@@ -199,6 +200,12 @@ const paths: Record<IconName, React.ReactNode> = {
       <path d="M3.6 7v4.2c0 1.4 2.4 2.5 5.4 2.5s5.4-1.1 5.4-2.5V7" />
       <path d="M9.6 16.6c.6 1.2 2.7 2.1 5.2 2.1 3 0 5.4-1.1 5.4-2.5v-4.3" />
       <ellipse cx="15" cy="12" rx="5.4" ry="2.5" />
+    </>
+  ),
+  crown: (
+    <>
+      <path d="M4 18.5h16" />
+      <path d="M4.5 18 3 9.2l4.8 3.6L12 6l4.2 6.8 4.8-3.6L19.5 18Z" />
     </>
   ),
   sparkle: (

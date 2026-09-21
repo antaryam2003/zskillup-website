@@ -78,11 +78,22 @@ export function Leadership() {
 
             <h2
               id="leadership-heading"
-              className="mt-7 text-[clamp(2.125rem,9.4vw,3.25rem)] font-extrabold leading-[1.04] tracking-[-0.035em] text-navy md:mt-9 md:text-[clamp(2.25rem,4.6vw,3.25rem)] xl:mt-10 xl:text-[clamp(2.25rem,3.9vw-0.25rem,3.3rem)]"
+              className="mt-7 text-[clamp(2rem,10.4vw,3.25rem)] font-extrabold leading-[1.04] tracking-[-0.035em] text-navy md:mt-9 md:text-[clamp(2.25rem,4.6vw,3rem)] xl:mt-10 xl:whitespace-nowrap xl:text-[clamp(2.25rem,3.6vw,3.1rem)]"
             >
-              <span className="block">{headline.lead}</span>
-              <span className="text-gradient-lines block whitespace-nowrap">{headline.accent}</span>
-              <span className="block">{headline.tail}</span>
+              {headline.plain.map((line) => (
+                <span key={line} className="block">
+                  {line}{" "}
+                </span>
+              ))}
+              {/* inline-block so each gradient spans its own text, not the column. */}
+              <span className="block">
+                <span className="-mb-[0.08em] inline-block bg-[linear-gradient(90deg,#2b3fa8_0%,#5b2bcb_62%,#7b3ccb_100%)] bg-clip-text pb-[0.08em] text-transparent">
+                  {headline.blue}
+                </span>{" "}
+              </span>
+              <span className="block">
+                <span className="text-gradient-lines -mb-[0.08em] inline-block">{headline.coral}</span>
+              </span>
             </h2>
 
             <div className="mt-10 flex flex-col md:mt-9 xl:mt-11 xl:flex-1">
@@ -118,7 +129,7 @@ export function Leadership() {
           </div>
 
           {/* --- Right: label + three leadership cards ------------------------- */}
-          <div className="min-w-0">
+          <div className="min-w-0 xl:flex xl:flex-col">
             <div className="flex items-center gap-3.5 xl:pt-0.5">
               <span aria-hidden="true" className="h-px w-8 shrink-0 bg-[#b7bcd1]" />
               <p
@@ -131,7 +142,7 @@ export function Leadership() {
 
             <ul
               aria-labelledby="leadership-label"
-              className="mt-6 grid gap-4 md:grid-cols-3 xl:mt-8"
+              className="mt-6 grid gap-4 md:grid-cols-3 xl:mt-8 xl:flex-1"
             >
               {leadership.people.map((person) => {
                 const photo = media.team[person.slug as keyof typeof media.team];

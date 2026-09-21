@@ -99,7 +99,12 @@ export const heroCards: readonly HeroCard[] = [
 
 export const leadership = {
   eyebrow: ["People", "Purpose", "Progress"],
-  headline: { lead: "Building a", accent: "more employable", tail: "India." },
+  /** Line breaks are part of the design: two navy lines, then two gradient lines. */
+  headline: {
+    plain: ["Education beyond", "classrooms,"],
+    blue: "towards",
+    coral: "real careers.",
+  },
   mission: {
     title: "Our Mission",
     /** Broken to match the design on desktop; wraps naturally on small screens. */

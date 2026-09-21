@@ -218,7 +218,11 @@ export function Hero() {
         <div className="relative z-10 -mt-16 w-full px-5 sm:-mt-20 sm:px-8 lg:-mt-[7.25rem]">
           <ul className="grid gap-5 xl:grid-cols-3 xl:gap-10">
             {heroCards.map((card) => (
-              <li key={card.eyebrow}>
+              // min-w-0: grid items default to min-width:auto, which lets a
+              // wide-enough flex-nowrap button row below force this track
+              // (and the whole page) wider than the viewport instead of
+              // staying clamped to it - this is what makes flex-nowrap safe.
+              <li key={card.eyebrow} className="min-w-0">
                 <HeroCard card={card} />
               </li>
             ))}
@@ -257,7 +261,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
     // scaling the result back down. Removing it is what actually makes the
     // wider/closer-together change in the row below visible on screen.
     <article
-      className={`relative flex h-full flex-col rounded-card border ${style.border} ${style.tint} p-3 shadow-card transition-[scale,translate,box-shadow] duration-[250ms] ease-out hover:z-10 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lift sm:p-4`}
+      className={`relative flex h-full min-w-0 flex-col rounded-card border ${style.border} ${style.tint} p-3 shadow-card transition-[scale,translate,box-shadow] duration-[250ms] ease-out hover:z-10 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lift sm:p-4`}
     >
       <div className="flex items-start gap-4">
         <span className={`grid h-16 w-16 shrink-0 place-items-center rounded-full ${style.icon}`}>
@@ -309,7 +313,17 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
               the previous capsule/pill into the reference's rounded
               rectangle. */}
           {card.vertical !== "prephasz" && card.brandLabel ? (
-            <span className="mt-1.5 inline-block rounded-xl bg-brand-soft px-4 py-2 font-normal text-brand">
+            <span
+              className={`mt-1.5 inline-block rounded-xl px-4 py-2 font-normal ${
+                card.vertical === "commerce"
+                  ? // Pale teal/mint, sampled directly from the supplied reference
+                    // image (Screenshot 2026-09-21 144705.png) rather than guessed -
+                    // this one label only, per the brief. "Tech and Management"
+                    // (institutions) keeps the shared bg-brand-soft/text-brand tokens.
+                    "bg-[#e0f1ee] text-[#037766]"
+                  : "bg-brand-soft text-brand"
+              }`}
+            >
               {card.brandLabel}
             </span>
           ) : null}
@@ -330,43 +344,46 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
         </div>
       </div>
 
-      {/* The button row's left edge must land on the SAME grid line as the
-          heading/label/description above it - i.e. past the icon, not at
-          the card's own padding edge. Rather than a guessed margin, this
-          reuses the exact structural pattern the content row above already
-          uses (`flex items-start gap-4` with a fixed-width first child): an
-          invisible `w-16` spacer stands in for the icon's own `w-16`, so
-          the buttons' own wrapper starts exactly where the text column
-          does, automatically, with no magic-number offset to keep in sync
-          if the icon size ever changes.
+      {/* Five width tiers, keyed to the row's TRUE available budget at each
+          (article width minus card padding minus the spacer), re-measured
+          in-browser - not guessed - against card 3's own longest combination
+          ("Explore" + "Talk to an Advisor" + "Watch Now"), the tightest of
+          the three cards at every tier:
 
-          That spacer eats 80px (icon + gap) out of the row's own available
-          width at every tier, which is what forced the compact tiers'
-          sizing below to shrink again from an earlier pass - re-measured
-          in-browser against the row's TRUE remaining budget (article's own
-          right edge, minus its own padding, minus the 80px spacer) after
-          the shift, not guessed:
-            - xl (1280px, its narrowest): ~261px budget. Card 3's own
-              longest combination ("Explore" + "Talk to an Advisor" +
-              "Watch Now") needs ~250px at this sizing - ~11px to spare.
-            - sm-lg (640px, its narrowest): ~454px budget vs ~437px needed -
-              still comfortable, so that tier's own sizing is unchanged.
-            - base (phones): the same 80px spacer costs relatively more of
-              a narrower card, so nowrap only becomes safe noticeably wider
-              than before the shift - re-bisected in-browser, not guessed;
-              see the row's own flex-wrap breakpoint below.
-          `!` (important) is required here: these override Button's own
-          shared `sm` size and VideoDialog's own shared `pill` padding,
-          neither of which this pass may edit directly (both are used
-          elsewhere on the site, unchanged). */}
-      <div className="mt-auto flex items-start gap-4 pt-5">
-        <span aria-hidden="true" className="w-16 shrink-0" />
-        <div className="flex min-w-0 flex-wrap items-center gap-[2px] min-[420px]:flex-nowrap sm:gap-2 xl:gap-[2px]">
+            - base (<420px): the mathematically tightest phones. Even the
+              ORIGINAL tiny sizing only just fits here, and only once the
+              spacer is fully removed (w-0) - there is no slack left to make
+              these buttons any bigger without either wrapping, clipping, or
+              pushing the page wider than the viewport (all three ruled out).
+              Left at their original size, not shrunk further.
+            - min-420: spacer restored to a partial w-6 (24px, not the full
+              80px icon-width one) - enough slack to size buttons up for real.
+            - sm (640px+): the card is full single-column width here, so the
+              full w-16 spacer (matching the icon above, same alignment as
+              the rest of the card) comes back at no cost, plus a bigger
+              button still.
+            - min-900: comfortably wide single-column cards - room for the
+              biggest treatment of all.
+            - xl (1280px+, 3-across): narrow again, so the spacer shrinks
+              back to w-6 and sizing drops to a compact-but-still-larger-
+              than-original tier, same reasoning as the min-420 tier.
+
+          `!` (important) is required on the buttons/pill below - these
+          override Button's own shared `sm` size and VideoDialog's own shared
+          `pill` padding, neither of which this pass may edit directly (both
+          are used elsewhere on the site, unchanged). flex-nowrap is now
+          unconditional (no flex-wrap fallback at any width): the li/article
+          above are both min-w-0 so an over-budget row can never blow out the
+          grid track or the page - it's the spacer/sizing tiers below that do
+          the real work of making nowrap actually fit. */}
+      <div className="mt-auto flex items-start gap-0 pt-5 min-[420px]:gap-2 min-[640px]:gap-4 xl:gap-2">
+        <span aria-hidden="true" className="w-0 shrink-0 min-[420px]:w-6 min-[640px]:w-16 xl:w-6" />
+        <div className="flex min-w-0 flex-nowrap items-center gap-[2px] min-[420px]:gap-1 min-[640px]:gap-2.5 xl:gap-1">
           <Button
             href={card.primary.href}
             variant="primary"
             size="sm"
-            className="!gap-[2px] !px-[3px] !py-[6px] !text-[0.625rem] sm:!gap-2 sm:!px-4 sm:!py-[11px] sm:!text-[0.9375rem] xl:!gap-[2px] xl:!px-[3px] xl:!py-[6px] xl:!text-[0.625rem]"
+            className="!gap-[2px] !px-[3px] !py-[6px] !text-[0.625rem] min-[420px]:!gap-1 min-[420px]:!px-2 min-[420px]:!py-2 min-[420px]:!text-[0.6875rem] min-[640px]:!gap-2.5 min-[640px]:!px-4 min-[640px]:!py-[14px] min-[640px]:!text-[0.9375rem] min-[900px]:!gap-3 min-[900px]:!px-5 min-[900px]:!py-4 min-[900px]:!text-base xl:!gap-1 xl:!px-1.5 xl:!py-2 xl:!text-[0.6875rem]"
           >
             {card.primary.label}
           </Button>
@@ -374,7 +391,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
             href={card.secondary.href}
             variant="outline"
             size="sm"
-            className="!gap-[2px] !px-[3px] !py-[6px] !text-[0.625rem] sm:!gap-2 sm:!px-4 sm:!py-[11px] sm:!text-[0.9375rem] xl:!gap-[2px] xl:!px-[3px] xl:!py-[6px] xl:!text-[0.625rem]"
+            className="!gap-[2px] !px-[3px] !py-[6px] !text-[0.625rem] min-[420px]:!gap-1 min-[420px]:!px-2 min-[420px]:!py-2 min-[420px]:!text-[0.6875rem] min-[640px]:!gap-2.5 min-[640px]:!px-4 min-[640px]:!py-[14px] min-[640px]:!text-[0.9375rem] min-[900px]:!gap-3 min-[900px]:!px-5 min-[900px]:!py-4 min-[900px]:!text-base xl:!gap-1 xl:!px-1.5 xl:!py-2 xl:!text-[0.6875rem]"
           >
             {card.secondary.label}
           </Button>
@@ -392,7 +409,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
             video={video}
             label={card.video.label}
             variant="pill"
-            className="!h-[29px] !gap-[2px] !py-0 !pl-[1px] !pr-1 !text-[0.625rem] sm:!h-[47px] sm:!gap-2 sm:!py-[11px] sm:!pl-[6px] sm:!pr-[18px] sm:!text-[0.9375rem] xl:!h-[29px] xl:!gap-[2px] xl:!py-0 xl:!pl-[1px] xl:!pr-1 xl:!text-[0.625rem]"
+            className="!h-[29px] !gap-[2px] !py-0 !pl-[1px] !pr-1 !text-[0.625rem] min-[420px]:!h-9 min-[420px]:!gap-1 min-[420px]:!pl-2 min-[420px]:!pr-3 min-[420px]:!text-[0.6875rem] min-[640px]:!h-[50px] min-[640px]:!gap-2.5 min-[640px]:!py-[14px] min-[640px]:!pl-[6px] min-[640px]:!pr-[18px] min-[640px]:!text-[0.9375rem] min-[900px]:!h-14 min-[900px]:!gap-3 min-[900px]:!py-4 min-[900px]:!pl-3 min-[900px]:!pr-6 min-[900px]:!text-base xl:!h-8 xl:!gap-[2px] xl:!py-0 xl:!pl-1 xl:!pr-2 xl:!text-[0.6875rem]"
           />
         </div>
       </div>

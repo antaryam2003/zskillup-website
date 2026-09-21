@@ -51,7 +51,7 @@ const desktop = { width: 1440, height: 900 };
 // Individual section captures, so each can be compared against its comp.
 const sections = [
   ["01-hero", "#main > section:nth-of-type(1)"],
-  ["02-about", "#about"],
+  ["02-leadership", "#about"],
   ["03-choose-route", "#choose-your-route"],
   ["04-institutions", "#institutions"],
   ["05-prephasz", "#prephasz"],

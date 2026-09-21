@@ -1,7 +1,7 @@
 /**
  * Homepage copy, section by section, in the order the brief locks:
  *
- *   01 Hero -> 02 About -> 03 Choose Your Route -> 04 Institutions -> 05 Prephasz
+ *   01 Hero -> 02 Our Leadership -> 03 Choose Your Route -> 04 Institutions -> 05 Prephasz
  *   -> 06 B.Com + ACCA -> 07 Education-to-Career Path -> 08 Partners
  *   -> 09 Testimonials -> 10 ZSkillup in Action -> 11 FAQs -> 12 Final CTA / Footer
  *
@@ -94,34 +94,20 @@ export const heroCards: readonly HeroCard[] = [
 ];
 
 /* ========================================================================== */
-/* 02 - ABOUT ZSKILLUP                                                        */
+/* 02 - OUR LEADERSHIP                                                        */
 /* ========================================================================== */
 
-export const about = {
-  eyebrow: "About ZSkillup",
-  headline: { plain: "Education beyond classrooms,", gradient: "towards real careers." },
-  body: "ZSkillup Education Pvt. Ltd. is on a mission to bridge the gap between education and real-world opportunities. We work with students, institutions and industry to create practical, career-focused learning pathways that lead to meaningful outcomes.",
-  cta: { label: "Read Our Story", href: "#testimonials" },
-  drivesEyebrow: "What drives us",
-  pillars: [
-    {
-      title: "Our Mission",
-      body: "To make high-quality, career-focused education accessible to every learner.",
-    },
-    {
-      title: "Our Vision",
-      body: "A future where every learner has the skills, confidence, and opportunities to thrive.",
-    },
-    {
-      title: "Our Values",
-      body: "Learner-first. Collaboration. Integrity. Continuous growth.",
-    },
-  ],
-  leadershipEyebrow: "Our leadership",
-  leadershipHeadline: { plain: "People who turn vision into", gradient: "opportunity." },
-  leadershipBody:
-    "Our leadership team brings together deep industry experience, academic insight and a shared commitment to making education more accessible, practical and outcome-driven.",
-  leadership: [
+export const leadership = {
+  eyebrow: ["People", "Purpose", "Progress"],
+  headline: { lead: "Building a", accent: "more employable", tail: "India." },
+  mission: {
+    title: "Our Mission",
+    /** Broken to match the design on desktop; wraps naturally on small screens. */
+    lines: ["To make high-quality,", "career-focused education", "accessible to every learner."],
+  },
+  tagline: ["Learners today.", "Leaders tomorrow."],
+  label: "Our leadership",
+  people: [
     {
       slug: "lokesh-mathur",
       name: "Lokesh Mathur",

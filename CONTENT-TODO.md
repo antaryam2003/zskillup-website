@@ -83,7 +83,7 @@ needs to change — `content/media.ts` holds every path, dimension and alt text.
 | Slot | Path | Current | Note |
 |---|---|---|---|
 | Hero (LCP) | `campus-student-hero.png` | 1670×942 | **Closed** — the real photograph, supplied directly |
-| Leadership ×3 | `team/*.jpg` | 512×512 | Cropped from the About comp |
+| Leadership ×3 | `team/*-portrait.jpg` | 208×208 | Trimmed from the old About comp (`scripts/crop-leadership-portraits.py`); **a higher-resolution original (≥600px) is needed to stay sharp on retina screens** |
 | B.Com + ACCA | `commerce-student.jpg` | 322×610 | Small; an original would help most here |
 | Learner photos ×3 | `learners/*.jpg` | 256×256 | Only Ritika, Aman and Sneha exist |
 | Featured event | `events/industry-expert-session.jpg` | 739×362 | Only **one** featured shot exists |

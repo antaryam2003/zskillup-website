@@ -59,7 +59,7 @@ Proof → People → Activity → Questions → Conversion.**
 | # | Section | Base comp |
 |---|---|---|
 | 01 | Hero | Design 13 |
-| 02 | About ZSkillup | Design 4 layout, Design 1 palette |
+| 02 | Our Leadership (purpose panel + three cards; replaces About ZSkillup) | `leadership.png` reference |
 | 03 | Choose Your Route | Design 6 |
 | 04 | Institutions | Design 3 |
 | 05 | Prephasz | Design 2 |

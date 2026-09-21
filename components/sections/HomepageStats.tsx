@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { asset } from "@/lib/asset";
 import { heroCredibilityStats } from "@/content/stats";
-import { Icon } from "@/components/ui/Icon";
 import { Handwritten } from "@/components/ui/Stats";
 
 /**
@@ -59,23 +60,19 @@ import { Handwritten } from "@/components/ui/Stats";
  * the reference this was built from. Every other card stays white/light;
  * this is not a per-card colour system.
  *
- * DECORATIVE ICON: each stat also carries an `icon` name, rendered small,
- * low-opacity and pinned to the bottom of the card via `mt-auto` (normal
- * flow, not absolutely positioned) - so it can never overlap the number or a
- * wrapped label regardless of how long that card's text runs, and always
- * reads as a quiet watermark rather than a competing visual. A shared
- * `GroundShape` SVG (one soft wave, tinted per card) sits behind it as an
- * absolutely-positioned backdrop clipped to the card's own rounded corners
- * (`overflow-hidden` on the card) - matching the reference's "illustration
- * sitting on a low hill" silhouette without needing a bespoke shape per
- * card, except "Placement Success Rate" (target icon), which the reference
- * shows floating with no hill under it. Two icons get a second, existing
- * icon layered in rather than standing alone, closer to the reference's own
- * composition, without drawing anything bespoke: "Highest Package" pairs
- * `crown` with the shared `sparkle` glyph behind it (the reference's
- * radiating lines), and "Average Package" pairs `coins` with a rotated
- * `arrowRight` above it (the reference's growth arrow). Every layer here is
- * `aria-hidden`/`pointer-events-none`.
+ * CARD ARTWORK: each stat's `image` (content/stats.ts) is the officially
+ * supplied card visual, not an icon this component draws itself - every
+ * file already bakes in its own rounded-card look (and, for "Placements",
+ * the purple highlight fill), so the card is just that image plus the
+ * number/label overlaid on top, not a second background/border/shadow of
+ * this component's own layered underneath it (that would double up on what
+ * the artwork already provides). `fill` + `object-contain` inside an
+ * `aspect-square` box shows each image at its own natural proportions,
+ * uncropped, regardless of how close to 1:1 any particular file's own
+ * dimensions are - `aspect-square` also gives all six cards the same
+ * footprint without the min-h reservations the previous icon-drawn version
+ * needed. The number/label sit in the blank upper portion every supplied
+ * image already reserves for them - a purely decorative fill, so `alt=""`.
  *
  * COUNT-UP ANIMATION: each figure parses into a numeric target plus the
  * exact prefix/suffix text around it (" LPA", "+", "%" and so on) and how
@@ -90,18 +87,21 @@ import { Handwritten } from "@/components/ui/Stats";
  * final values immediately, consistent with how decorative (not user-
  * driven) motion is handled elsewhere on this site. */
 
-const NUMBER_SIZE = "text-[1.5rem] min-[640px]:text-[1.875rem] min-[1450px]:text-[2.25rem]";
-/** min-h reserves two lines' worth of height at each size, regardless of
-    whether a given label actually needs both - "Universities & Colleges
-    onboarded" (the longest label) wraps at every width while shorter labels
-    like "Hiring Partners" don't, and without this the grid stretched every
-    card in the row to match whichever one currently had the tallest label,
-    leaving the rest visibly off-centre. Reserving the space up front keeps
-    every card the same height without depending on which label happens to
-    wrap - and the decorative icon below it, pinned by `mt-auto`, still lands
-    on the same baseline across the whole row either way. */
-const LABEL_SIZE =
-  "text-[0.9375rem] min-h-10 min-[640px]:text-base min-[640px]:min-h-11 min-[1450px]:text-[1.0625rem] min-[1450px]:min-h-12";
+const NUMBER_SIZE = "text-[1.25rem] min-[640px]:text-[1.875rem] min-[1450px]:text-[2.25rem]";
+/** Every card is `aspect-square` now (see below), so height parity across
+    the row no longer needs the min-h reservation the previous icon-drawn
+    version relied on - the card's own footprint is fixed regardless of how
+    many lines a given label wraps to.
+
+    The base (2-column, <640px) tier is deliberately smaller than the sm+
+    tiers: at that width the card itself is only ~150-160px square, and the
+    longest labels ("Universities & Colleges onboarded", "Placement Success
+    Rate") wrap to 3 and 2 lines respectively - at the old base size that
+    text block ran tall enough to visually collide with the supplied
+    artwork's own illustration underneath it. Shrinking text/padding here
+    only (sm+ unchanged) buys back enough vertical room to clear it without
+    touching the images themselves. */
+const LABEL_SIZE = "text-[0.6875rem] min-[640px]:text-base min-[1450px]:text-[1.0625rem]";
 
 const COUNT_DURATION_MS = 1600;
 
@@ -163,30 +163,6 @@ function AnimatedStatValue({ value, startWhenReady }: { value: string; startWhen
   return <>{display}</>;
 }
 
-/** One soft wave, stretched to fill each card's own width regardless of its
-    viewBox aspect ratio (`preserveAspectRatio="none"`) - the "low hill" the
-    reference sits its illustrations on. `-z-10` (paired with `relative` on
-    the card) keeps it behind the number/label/icon: an absolutely
-    positioned element still paints above plain in-flow siblings even at
-    z-index:auto, so without this it would sit on top of them instead of
-    behind. */
-function GroundShape({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      aria-hidden="true"
-      focusable="false"
-      viewBox="0 0 200 60"
-      preserveAspectRatio="none"
-      className={`pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-14 w-full min-[1450px]:h-16 ${className}`}
-    >
-      <path
-        d="M0 40 C 36 24, 68 48, 108 32 C 148 16, 172 36, 200 26 L200 60 L0 60 Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
 export function HomepageStats() {
   const sectionRef = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
@@ -235,57 +211,29 @@ export function HomepageStats() {
         <ul className="mt-10 grid grid-cols-2 gap-3 min-[640px]:grid-cols-3 min-[640px]:gap-4 min-[1450px]:mt-12 min-[1450px]:grid-cols-6 min-[1450px]:gap-5">
           {heroCredibilityStats.map((stat) => (
             <li key={stat.label}>
-              <div
-                className={`relative flex h-full flex-col overflow-hidden rounded-card px-4 py-5 shadow-card transition-shadow duration-200 hover:shadow-lift sm:px-5 sm:py-6 ${
-                  stat.highlight ? "bg-gradient-stat-highlight" : "border border-line bg-white"
-                }`}
-              >
-                <p
-                  className={`${NUMBER_SIZE} leading-none font-extrabold tracking-tight whitespace-nowrap tabular-nums ${
-                    stat.highlight ? "text-white" : "text-navy"
-                  }`}
-                >
-                  <AnimatedStatValue value={stat.value} startWhenReady={inView} />
-                </p>
-                <p
-                  className={`${LABEL_SIZE} mt-2 flex items-start leading-snug font-semibold ${
-                    stat.highlight ? "text-white/85" : "text-muted"
-                  }`}
-                >
-                  {stat.label}
-                </p>
-                {stat.icon === "target" ? null : (
-                  <GroundShape className={stat.highlight ? "text-white/10" : "text-brand/[0.07]"} />
-                )}
-                <div className="mt-auto flex justify-end pt-3">
-                  {(() => {
-                    const tint = stat.highlight ? "text-white/30" : "text-brand/20";
-                    const iconSize = "h-10 w-10 min-[1450px]:h-12 min-[1450px]:w-12";
-                    if (stat.icon === "crown") {
-                      const glowTint = stat.highlight ? "text-white/15" : "text-brand/10";
-                      return (
-                        <span className="relative grid place-items-center">
-                          <Icon
-                            name="sparkle"
-                            className={`absolute h-16 w-16 min-[1450px]:h-20 min-[1450px]:w-20 ${glowTint}`}
-                          />
-                          <Icon name="crown" className={`relative ${iconSize} ${tint}`} />
-                        </span>
-                      );
-                    }
-                    if (stat.icon === "coins") {
-                      return (
-                        <span className="relative inline-flex">
-                          <Icon
-                            name="arrowRight"
-                            className={`absolute -top-3 -right-1.5 h-4 w-4 -rotate-45 ${tint}`}
-                          />
-                          <Icon name="coins" className={`${iconSize} ${tint}`} />
-                        </span>
-                      );
-                    }
-                    return <Icon name={stat.icon} className={`${iconSize} ${tint}`} />;
-                  })()}
+              <div className="relative aspect-square overflow-hidden rounded-card transition-transform duration-200 hover:-translate-y-0.5">
+                <Image
+                  src={asset(stat.image.src)}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1450px) 15vw, (min-width: 640px) 30vw, 45vw"
+                  className="object-contain"
+                />
+                <div className="relative flex h-full flex-col px-3 py-3 sm:px-5 sm:py-6">
+                  <p
+                    className={`${NUMBER_SIZE} leading-none font-extrabold tracking-tight whitespace-nowrap tabular-nums ${
+                      stat.highlight ? "text-white" : "text-navy"
+                    }`}
+                  >
+                    <AnimatedStatValue value={stat.value} startWhenReady={inView} />
+                  </p>
+                  <p
+                    className={`${LABEL_SIZE} mt-1 leading-tight font-semibold min-[640px]:mt-2 min-[640px]:leading-snug ${
+                      stat.highlight ? "text-white/85" : "text-muted"
+                    }`}
+                  >
+                    {stat.label}
+                  </p>
                 </div>
               </div>
             </li>

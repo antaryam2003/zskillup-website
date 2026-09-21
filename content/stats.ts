@@ -75,20 +75,58 @@ export const partnerStats: readonly Stat[] = [
  * directly, by name, for this exact placement, so they're treated the same
  * way `partnerStats` is - given, not invented, hence `verified: true`.
  *
- * `icon` and `highlight` drive HomepageStats.tsx's presentation only - they
+ * `image` and `highlight` drive HomepageStats.tsx's presentation only - they
  * carry no publishing meaning and are ignored by `publishable()`.
+ *
+ * `image` is the official supplied card artwork (public/images/stats/) - each
+ * file already bakes in its own rounded-card background and (for Placements)
+ * the purple highlight treatment, so it IS the card's visual, not an icon
+ * dropped into a card HomepageStats draws itself. Dimensions are each
+ * image's own natural size (all ~452-465px, effectively square) - declared
+ * so next/image never upscales or distorts them.
  */
 export const heroCredibilityStats: readonly (Stat & {
-  icon: "landmark" | "building" | "trending" | "target" | "crown" | "coins";
-  /** The one card HomepageStats renders on the brand-purple fill. */
+  image: { src: string; width: number; height: number };
+  /** The one card whose supplied artwork is the brand-purple highlight. */
   highlight?: boolean;
 })[] = [
-  { value: "55+", label: "Universities & Colleges onboarded", verified: true, icon: "landmark" },
-  { value: "150+", label: "Hiring Partners", verified: true, icon: "building" },
-  { value: "350+", label: "Placements", verified: true, icon: "trending", highlight: true },
-  { value: "19 LPA", label: "Highest Package", verified: true, icon: "crown" },
-  { value: "5.6 LPA", label: "Average Package", verified: true, icon: "coins" },
-  { value: "78%", label: "Placement Success Rate", verified: true, icon: "target" },
+  {
+    value: "55+",
+    label: "Universities & Colleges onboarded",
+    verified: true,
+    image: { src: "/images/stats/universities-colleges.png", width: 455, height: 451 },
+  },
+  {
+    value: "150+",
+    label: "Hiring Partners",
+    verified: true,
+    image: { src: "/images/stats/hiring-partners.png", width: 453, height: 452 },
+  },
+  {
+    value: "350+",
+    label: "Placements",
+    verified: true,
+    image: { src: "/images/stats/placements.png", width: 453, height: 453 },
+    highlight: true,
+  },
+  {
+    value: "19 LPA",
+    label: "Highest Package",
+    verified: true,
+    image: { src: "/images/stats/highest-package.png", width: 461, height: 453 },
+  },
+  {
+    value: "5.6 LPA",
+    label: "Average Package",
+    verified: true,
+    image: { src: "/images/stats/average-package.png", width: 462, height: 451 },
+  },
+  {
+    value: "78%",
+    label: "Placement Success Rate",
+    verified: true,
+    image: { src: "/images/stats/placement-success.png", width: 465, height: 453 },
+  },
 ];
 
 /**

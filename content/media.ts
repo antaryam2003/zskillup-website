@@ -43,9 +43,13 @@ export const media = {
     height: 942,
   },
 
-  /** B.Com + ACCA section. Aspirational, natural, no floating elements around it. */
+  /**
+   * Career-pathway section. Aspirational, natural, no floating elements around it.
+   * Cleaned copy of commerce-student.jpg with the baked-in spine labels erased -
+   * they are live text in BcomAcca.tsx (see scripts/clean-commerce-student.mjs).
+   */
   commerceStudent: {
-    src: "/images/commerce-student.jpg",
+    src: "/images/commerce-student-pathway.jpg",
     alt: "A commerce student at her desk with a laptop and an open notebook, looking up thoughtfully",
     width: 609,
     height: 750,

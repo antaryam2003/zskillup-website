@@ -366,29 +366,44 @@ export const prephasz = {
 } as const;
 
 /* ========================================================================== */
-/* 06 - B.COM + ACCA                                                          */
+/* 06 - A ZSKILLUP CAREER PATHWAY (B.Com + Global Finance & AI)               */
 /* ========================================================================== */
 
+/**
+ * Copy is set exactly as given in the final feedback document - do not reword.
+ * The section id (`#bcom-acca`) and the export name are kept because ChooseRoute
+ * links to that anchor.
+ */
 export const commerce = {
-  eyebrow: "A ZSkillup career pathway",
-  headline: { plain: "Global Finance Program, planned around the", highlight: "career beyond the degree." },
+  eyebrow: "A ZSKILLUP CAREER PATHWAY",
+  /** Two deliberate lines; the accent colour lands on the closing phrase. */
+  headline: {
+    line1: "B.Com + Global Finance & AI,",
+    line2Plain: "built for",
+    line2Accent: "careers beyond the degree.",
+  },
   supporting:
-    "A career-focused commerce pathway combining a university degree, ACCA preparation, employability development and industry exposure.",
+    "The Global Finance & AI Professional Program brings together a B.Com degree, finance and AI learning, career development, and industry exposure.",
   /** Handwritten accent 2 of 2 on the homepage. */
   handwritten: "More opportunities ahead",
-  /** Four connected blocks reading as ONE integrated pathway, one colour family. */
+  /** Three connected blocks reading as ONE integrated pathway, one colour family. */
   pathway: [
-    { title: "B.Com", body: "Strong academic foundation." },
-    { title: "ACCA Pathway", body: "Globally recognised professional qualification pathway." },
-    { title: "Employability Development", body: "Skills for the workplace." },
-    { title: "Industry Exposure", body: "Real-world exposure." },
+    { title: "B.Com", body: "Build a strong academic foundation." },
+    { title: "Finance + AI", body: "Develop skills for a changing finance world." },
+    { title: "Career Development", body: "Prepare for the workplace." },
   ],
-  /** The long university/exemption disclaimer belongs on the dedicated page, not here. */
-  shortNote: "Program structure and ACCA exemptions may vary by university.",
+  /** Sits beneath the three blocks as a smaller, secondary note. */
+  industryExposure: {
+    title: "Industry Exposure",
+    body: "Connect learning with real-world practice.",
+  },
+  /** Printed on the stacked books in the photograph, top to bottom. */
+  bookSpines: ["B.Com", "Finance + AI", "Global Careers"],
+  shortNote: "Program components and availability may vary by university.",
   careersHeadline: "Explore career pathways",
   careersBody:
-    "Explore pathways across accounting, audit, business finance, risk, tax, consulting and financial services.",
-  careersCaveat: "These are possible career directions, not guaranteed outcomes.",
+    "Discover possible directions across accounting, audit, business finance, risk, tax, consulting, and financial services.",
+  careersCaveat: "Career outcomes depend on individual skills and opportunities.",
   careers: [
     "Accounting",
     "Audit",
@@ -398,7 +413,7 @@ export const commerce = {
     "Consulting",
     "Financial Services",
   ],
-  primaryCta: { label: "Explore Global Finance Program", href: "#partner-with-us" },
+  primaryCta: { label: "Explore the Program", href: "#partner-with-us" },
   secondaryCta: { label: "Talk to a Career Advisor", href: "#partner-with-us" },
 } as const;
 

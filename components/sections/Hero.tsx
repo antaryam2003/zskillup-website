@@ -299,10 +299,17 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
             {card.eyebrow}
           </h2>
           {card.vertical === "prephasz" ? <PrephaszLogo className="mt-1.5 h-8" /> : null}
+          {/* Shared lavender "soft rounded rectangle" treatment - deliberately
+              NOT each vertical's own `style.band`/`style.text` (unlike every
+              other per-vertical accent on this card): the brief's reference
+              asks institutions' and commerce's program labels to share one
+              identical look, so this uses the master brand tokens
+              (`bg-brand-soft`/`text-brand`) rather than a vertical tint.
+              `rounded-xl` (a finite radius, not `rounded-full`) is what turns
+              the previous capsule/pill into the reference's rounded
+              rectangle. */}
           {card.vertical !== "prephasz" && card.brandLabel ? (
-            <span
-              className={`mt-1.5 inline-block rounded-full font-normal ${style.band} px-2.5 py-1 ${style.text}`}
-            >
+            <span className="mt-1.5 inline-block rounded-xl bg-brand-soft px-4 py-2 font-normal text-brand">
               {card.brandLabel}
             </span>
           ) : null}
@@ -323,81 +330,71 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
         </div>
       </div>
 
-      {/* CTA layout: all three actions - primary, secondary, then Watch Now
-          - share one row at every width that can genuinely hold them;
-          Watch Now never drops to a second line anywhere that fits.
+      {/* The button row's left edge must land on the SAME grid line as the
+          heading/label/description above it - i.e. past the icon, not at
+          the card's own padding edge. Rather than a guessed margin, this
+          reuses the exact structural pattern the content row above already
+          uses (`flex items-start gap-4` with a fixed-width first child): an
+          invisible `w-16` spacer stands in for the icon's own `w-16`, so
+          the buttons' own wrapper starts exactly where the text column
+          does, automatically, with no magic-number offset to keep in sync
+          if the icon size ever changes.
 
-          Card width isn't the only lever available to make that hold at
-          every width (cards are narrower now besides - see the grid above)
-          - it's balanced against three responsive tiers of button sizing,
-          sized to each layout mode's actual available width:
-            - base (<sm, phones - single stacked column, but a narrow one)
-              and xl+ (1280px+ - three real columns again) share the same
-              compact sizing: a third of the xl row's own width is tighter
-              than a phone screen minus its padding, so both tiers need it.
-            - sm-lg (640-1279px - still a single stacked column, but a wide
-              one - the full card width, not a third of it): sized much more
-              generously, since there is real room to spare there.
-          Every tier's numbers (padding, gap, text size, and the pill's
-          matching height) were checked in-browser against each card's own
-          actual button labels at that tier's narrowest width - specifically
-          card 3's own longest combination ("Explore" + "Talk to an Advisor"
-          + "Watch Now"), the tightest of the three cards at every tier -
-          measured against the row's TRUE budget (the grid track's own
-          width, minus the card's own padding), not against the row's own
-          rendered width (which, unconstrained, just grows to fit its
-          content and so trivially always "fits itself" - a mistake this
-          pass caught and corrected by re-measuring properly). Positive
-          margin (never negative, i.e. never overflowing) holds at 1280px
-          (xl's narrowest) and 640px (sm-lg's narrowest) at this size, but
-          NOT all the way down to base's own narrowest real phones - it
-          breaks even somewhere around 400-410px wide, checked in-browser.
-          Below that (~320-409px, a real, non-trivial band - covers e.g. the
-          390-393px iPhone 12-14/Pixel width class), one row of buttons this
-          size genuinely cannot fit without either shrinking the type
-          unreadably or overflowing the card - flex-wrap is the fallback the
-          brief itself allows for exactly this case ("extremely narrow
-          mobile screens where a single-line sentence genuinely cannot fit
-          ... use the smallest responsible responsive adjustment"); it only
-          ever engages when a line would otherwise overflow, never for cards
-          1-2 which stay one row regardless. `!` (important) is required
-          here: these override Button's own shared `sm` size and
-          VideoDialog's own shared `pill` padding, neither of which this
-          pass may edit directly (both are used elsewhere on the site,
-          unchanged). */}
-      <div className="mt-auto flex flex-wrap items-center gap-[5px] pt-5 min-[410px]:flex-nowrap sm:gap-2 xl:gap-[5px]">
-        <Button
-          href={card.primary.href}
-          variant="primary"
-          size="sm"
-          className="!gap-[5px] !px-2 !py-2 !text-[0.75rem] sm:!gap-2 sm:!px-4 sm:!py-[11px] sm:!text-[0.9375rem] xl:!gap-[5px] xl:!px-2 xl:!py-2 xl:!text-[0.75rem]"
-        >
-          {card.primary.label}
-        </Button>
-        <Button
-          href={card.secondary.href}
-          variant="outline"
-          size="sm"
-          className="!gap-[5px] !px-2 !py-2 !text-[0.75rem] sm:!gap-2 sm:!px-4 sm:!py-[11px] sm:!text-[0.9375rem] xl:!gap-[5px] xl:!px-2 xl:!py-2 xl:!text-[0.75rem]"
-        >
-          {card.secondary.label}
-        </Button>
-        {/* Watch Now's own icon well (VideoDialog's `pill` variant) is a
-            fixed h-7 (28px) circle, unaffected by any of these breakpoint
-            paddings - left to its own content-driven height, that circle
-            would make the pill a different height than the other two
-            buttons at every tier here. `!h-*` pins the pill to the
-            primary/secondary buttons' own measured height at each tier
-            (checked in-browser, not guessed) so all three land on the same
-            top/bottom edge via the row's existing `items-center` - the
-            circle (still 28px, untouched) simply centers within the
-            now-matched box instead of dictating it. */}
-        <VideoDialog
-          video={video}
-          label={card.video.label}
-          variant="pill"
-          className="!h-9 !gap-[5px] !py-2 !pl-[3px] !pr-2 !text-[0.75rem] sm:!h-[47px] sm:!gap-2 sm:!py-[11px] sm:!pl-[6px] sm:!pr-[18px] sm:!text-[0.9375rem] xl:!h-9 xl:!gap-[5px] xl:!py-2 xl:!pl-[3px] xl:!pr-2 xl:!text-[0.75rem]"
-        />
+          That spacer eats 80px (icon + gap) out of the row's own available
+          width at every tier, which is what forced the compact tiers'
+          sizing below to shrink again from an earlier pass - re-measured
+          in-browser against the row's TRUE remaining budget (article's own
+          right edge, minus its own padding, minus the 80px spacer) after
+          the shift, not guessed:
+            - xl (1280px, its narrowest): ~261px budget. Card 3's own
+              longest combination ("Explore" + "Talk to an Advisor" +
+              "Watch Now") needs ~250px at this sizing - ~11px to spare.
+            - sm-lg (640px, its narrowest): ~454px budget vs ~437px needed -
+              still comfortable, so that tier's own sizing is unchanged.
+            - base (phones): the same 80px spacer costs relatively more of
+              a narrower card, so nowrap only becomes safe noticeably wider
+              than before the shift - re-bisected in-browser, not guessed;
+              see the row's own flex-wrap breakpoint below.
+          `!` (important) is required here: these override Button's own
+          shared `sm` size and VideoDialog's own shared `pill` padding,
+          neither of which this pass may edit directly (both are used
+          elsewhere on the site, unchanged). */}
+      <div className="mt-auto flex items-start gap-4 pt-5">
+        <span aria-hidden="true" className="w-16 shrink-0" />
+        <div className="flex min-w-0 flex-wrap items-center gap-[2px] min-[420px]:flex-nowrap sm:gap-2 xl:gap-[2px]">
+          <Button
+            href={card.primary.href}
+            variant="primary"
+            size="sm"
+            className="!gap-[2px] !px-[3px] !py-[6px] !text-[0.625rem] sm:!gap-2 sm:!px-4 sm:!py-[11px] sm:!text-[0.9375rem] xl:!gap-[2px] xl:!px-[3px] xl:!py-[6px] xl:!text-[0.625rem]"
+          >
+            {card.primary.label}
+          </Button>
+          <Button
+            href={card.secondary.href}
+            variant="outline"
+            size="sm"
+            className="!gap-[2px] !px-[3px] !py-[6px] !text-[0.625rem] sm:!gap-2 sm:!px-4 sm:!py-[11px] sm:!text-[0.9375rem] xl:!gap-[2px] xl:!px-[3px] xl:!py-[6px] xl:!text-[0.625rem]"
+          >
+            {card.secondary.label}
+          </Button>
+          {/* Watch Now's own icon well (VideoDialog's `pill` variant) is a
+              fixed h-7 (28px) circle, unaffected by any of these breakpoint
+              paddings - left to its own content-driven height, that circle
+              would make the pill a different height than the other two
+              buttons at every tier here. `!h-*` pins the pill to the
+              primary/secondary buttons' own measured height at each tier
+              (checked in-browser, not guessed) so all three land on the same
+              top/bottom edge via the row's existing `items-center` - the
+              circle (still 28px, untouched) simply centers within the
+              now-matched box instead of dictating it. */}
+          <VideoDialog
+            video={video}
+            label={card.video.label}
+            variant="pill"
+            className="!h-[29px] !gap-[2px] !py-0 !pl-[1px] !pr-1 !text-[0.625rem] sm:!h-[47px] sm:!gap-2 sm:!py-[11px] sm:!pl-[6px] sm:!pr-[18px] sm:!text-[0.9375rem] xl:!h-[29px] xl:!gap-[2px] xl:!py-0 xl:!pl-[1px] xl:!pr-1 xl:!text-[0.625rem]"
+          />
+        </div>
       </div>
     </article>
   );

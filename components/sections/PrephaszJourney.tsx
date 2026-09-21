@@ -121,7 +121,7 @@ export function PrephaszJourney() {
             "--open": "calc((100cqw + 5 * var(--ov)) * var(--g) / (var(--g) + 5))",
           } as CSSProperties
         }
-        className="relative [--g:var(--g-md)] [--ov:var(--ov-md)] [container-type:inline-size] md:mx-[calc(var(--arrow)+var(--arrow-gap))] md:min-h-[20rem] lg:[--g:var(--g-lg)] lg:[--ov:var(--ov-lg)] min-[75rem]:min-h-[20.375rem]"
+        className="relative [--g:var(--g-md)] [--ov:var(--ov-md)] [container-type:inline-size] md:mx-[calc(var(--arrow)+var(--arrow-gap))] lg:[--g:var(--g-lg)] lg:[--ov:var(--ov-lg)]"
       >
         {/* Sizer: all six expanded faces stacked in ONE grid cell at the open
             width. Invisible and inert; its only job is to make the viewport
@@ -273,44 +273,43 @@ function ExpandedFace({
   return (
     <div
       {...rest}
-      className={`w-full px-6 py-6 sm:px-8 sm:py-7 md:w-[var(--open)] md:px-6 lg:px-8 ${className}`}
+      className={`w-full px-5 pt-[1.125rem] pb-4 sm:px-8 md:w-[var(--open)] md:px-5 lg:px-8 ${className}`}
     >
-      <span className="absolute top-5 right-6 text-lg font-medium text-[#5b6a92] sm:top-6 sm:right-8 sm:text-xl md:right-6 lg:right-8 min-[75rem]:text-[1.375rem]">
+      <span className="absolute top-5 right-5 text-lg font-medium text-[#5b6a92] sm:top-6 sm:right-8 sm:text-xl md:right-5 lg:right-8 min-[75rem]:text-[1.375rem]">
         {pad(i)}
       </span>
 
-      <div className="flex items-center gap-4 sm:gap-5">
-        <span
-          className={`grid h-16 w-16 shrink-0 place-items-center rounded-full sm:h-[5.25rem] sm:w-[5.25rem] md:h-[4.5rem] md:w-[4.5rem] lg:h-[5.25rem] lg:w-[5.25rem] ${tint.well}`}
-        >
-          <Icon
-            name={icons[i]}
-            className={`h-8 w-8 sm:h-11 sm:w-11 md:h-9 md:w-9 lg:h-11 lg:w-11 ${tint.icon}`}
-          />
-        </span>
-        <h4 className="text-[1.75rem] leading-none font-extrabold tracking-[-0.03em] text-navy sm:text-[2.25rem] md:text-[2rem] lg:text-[2.25rem] min-[75rem]:text-[2.4rem]">
-          {pillar.title}
-        </h4>
-      </div>
+      {/* The card's whole internal layout is this one padded box: the icon,
+          heading, description and pills are all its direct children, so they
+          share the box's left padding edge by construction (no per-element
+          offsets). Vertical rhythm is set once, as the gap above each block. */}
+      <span
+        className={`grid h-[3.25rem] w-[3.25rem] place-items-center rounded-full sm:h-[4.25rem] sm:w-[4.25rem] md:h-[3.7rem] md:w-[3.7rem] lg:h-[4.25rem] lg:w-[4.25rem] ${tint.well}`}
+      >
+        <Icon
+          name={icons[i]}
+          className={`h-[1.625rem] w-[1.625rem] sm:h-9 sm:w-9 md:h-[1.85rem] md:w-[1.85rem] lg:h-9 lg:w-9 ${tint.icon}`}
+        />
+      </span>
 
-      {/* Width cap is in em (26rem at the old 22.4px size) so the
-          description keeps the same line breaks as its type shrinks. */}
-      <p className="mt-5 min-h-[2.578rem] w-[89%] max-w-[18.5em] text-pretty text-[0.834rem] leading-snug font-medium text-[#5b6a92] sm:min-h-[3.025rem] sm:text-[0.979rem] md:min-h-[2.578rem] md:text-[0.834rem] lg:min-h-[3.025rem] lg:text-[0.979rem] min-[75rem]:min-h-[3.369rem] min-[75rem]:text-[1.09rem]">
+      <h4 className="mt-2 text-[1.5rem] leading-none font-extrabold tracking-[-0.03em] text-navy sm:text-[1.95rem] md:text-[1.75rem] lg:text-[1.95rem] min-[75rem]:text-[2.1rem]">
+        {pillar.title}
+      </h4>
+
+      {/* Width cap is in em, so the description keeps the same measure as its
+          type scales. */}
+      <p className="mt-1.5 max-w-[18.5em] text-pretty text-[0.834rem] leading-snug font-medium text-[#5b6a92] sm:text-[0.979rem] md:text-[0.834rem] lg:text-[0.979rem] min-[75rem]:text-[1.09rem]">
         {pillar.tagline}
       </p>
 
-      {/* Description and pill type, pill padding and the pills'
-          horizontal gap are all scaled by 0.89 against the previous
-          size, and each block is 89% of the card's width - so the
-          text shrinks as one block and wraps exactly as it did
-          before instead of re-flowing into the freed room.
-          The min-heights are the previous element heights, so the
-          smaller type never changes the card's height either. */}
-      <ul className="mt-5 flex w-[89%] flex-wrap gap-x-[0.556rem] gap-y-2.5">
+      {/* Pills wear the card's icon-well tint. Their shape, padding and type
+          are unchanged; height now comes from that padding + type alone (the old
+          per-breakpoint min-heights only existed to hold the card height fixed). */}
+      <ul className="mt-3 flex flex-wrap gap-x-[0.556rem] gap-y-2">
         {pillar.features.map((feature) => (
           <li
             key={feature}
-            className="flex min-h-[1.975rem] items-center rounded-full bg-[#eef1f8] px-[0.89rem] py-2 text-[0.694rem] leading-tight font-medium text-[#485a8a] sm:min-h-[2.094rem] sm:px-4 sm:text-[0.779rem] md:min-h-[1.975rem] md:px-[0.89rem] md:text-[0.694rem] lg:min-h-[2.094rem] lg:px-4 lg:text-[0.779rem] min-[75rem]:min-h-[2.5rem] min-[75rem]:px-[1.1125rem] min-[75rem]:py-2.5 min-[75rem]:text-[0.89rem]"
+            className={`flex items-center rounded-full px-[0.89rem] py-2 text-[0.694rem] leading-tight font-medium text-[#485a8a] sm:px-4 sm:text-[0.779rem] md:px-[0.89rem] md:text-[0.694rem] lg:px-4 lg:text-[0.779rem] min-[75rem]:px-[1.1125rem] min-[75rem]:py-2.5 min-[75rem]:text-[0.89rem] ${tint.well}`}
           >
             {feature}
           </li>

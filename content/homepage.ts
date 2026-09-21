@@ -52,8 +52,10 @@ export type HeroCard = {
   vertical: Vertical;
   eyebrow: string;
   /**
-   * Prephasz / B.Com + ACCA name the offering outright, set inline in a tinted
-   * pill after an en dash. Institutions has no second half.
+   * Names the offering outright in a tinted pill. Prephasz gets its own logo
+   * mark below the eyebrow instead (see HeroCard). Commerce sets it inline
+   * after an en dash; institutions sets it as its own line directly below
+   * the (single-line) eyebrow - see HeroCard for both treatments.
    */
   brandLabel?: string;
   description: string;
@@ -65,7 +67,8 @@ export type HeroCard = {
 export const heroCards: readonly HeroCard[] = [
   {
     vertical: "institutions",
-    eyebrow: "For Universities & Institutions",
+    eyebrow: "For Universities and Institutions",
+    brandLabel: "Tech and Management",
     description: "Build employability into the student journey.",
     primary: { label: "Explore", href: "#institutions" },
     secondary: { label: "Partner With Us", href: "#partner-with-us" },
@@ -76,7 +79,7 @@ export const heroCards: readonly HeroCard[] = [
     eyebrow: "For Placement Preparation",
     brandLabel: "prephasz",
     description: "Stop guessing what to prepare next.",
-    primary: { label: "Explore prephasz", href: "#prephasz" },
+    primary: { label: "Explore", href: "#prephasz" },
     secondary: { label: "Get Started", href: "#partner-with-us" },
     video: { label: "Watch Now", href: "#prephasz" },
   },
@@ -84,9 +87,9 @@ export const heroCards: readonly HeroCard[] = [
     vertical: "commerce",
     eyebrow: "For Global Finance Careers",
     /** "For Commerce Careers" alone does not tell a new visitor what the offering is. */
-    brandLabel: "B.Com + Global Finance & AI",
+    brandLabel: "Global Finance & AI",
     description: "Future-Ready. AI-Enabled. Globally Employable.",
-    primary: { label: "Explore Program", href: "#bcom-acca" },
+    primary: { label: "Explore", href: "#bcom-acca" },
     secondary: { label: "Talk to an Advisor", href: "#partner-with-us" },
     video: { label: "Watch Now", href: "#bcom-acca" },
   },

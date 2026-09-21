@@ -114,6 +114,24 @@ export function Hero() {
           className="absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgba(255,255,255,0.78)_0%,rgba(255,255,255,0.72)_28%,rgba(255,255,255,0.55)_52%,rgba(255,255,255,0.24)_76%,rgba(255,255,255,0)_94%)] lg:bg-[linear-gradient(100deg,rgba(255,255,255,0.74)_0%,rgba(255,255,255,0.66)_20%,rgba(255,255,255,0.42)_40%,rgba(255,255,255,0.08)_58%,rgba(255,255,255,0)_68%)]"
         />
 
+        {/* Fades the photograph out before the cards' own lower half, so
+            that half sits on the section's plain white background instead
+            of the image - anchored to the wrapper's bottom edge (which this
+            file's own opening comment establishes always lands exactly on
+            the cards' bottom edge), a fixed height here is therefore always
+            "the last N px of the cards", not a guess at where the cards
+            start. N is ~half a card's own rendered height at each
+            breakpoint tier, checked in-browser against the actual card
+            heights (they don't vary within a tier): ~198px tall at base,
+            ~213px at sm-lg, ~206px at xl - halved and rounded. Sits above
+            the photo/wash (both -z, this is the default z-0) but below the
+            cards (z-10), and fades in rather than cutting in, so the join
+            reads as intentional rather than a hard edge. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[100px] bg-[linear-gradient(to_bottom,rgba(255,255,255,0)_0%,rgba(255,255,255,0.82)_60%,rgba(255,255,255,1)_100%)] sm:h-[107px] xl:h-[103px]"
+        />
+
         <div className="relative pt-[4.5rem]">
           {/* Deliberately NOT <Container>: that component re-centers within
               max-w-[1240px] once the viewport passes 1240px, so its left edge
@@ -268,24 +286,35 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
         </span>
 
         <div className="min-w-0 pt-0.5">
-          {/* The offering is named inline. "For Commerce Careers" alone
-              wouldn't tell a new visitor what's on offer, so a tinted pill
-              names it directly after an en dash - except prephasz, which
-              gets its own brand mark as a small block below the heading
-              instead of a pill (the official artwork includes "Powered by
-              ZSkillup" as an inseparable second line, so it no longer fits
-              inline the way a single-line wordmark did).
-
-              Capped width, same reasoning as the description below: at this
-              card width "For Universities & Institutions" (the one card with
-              no badge) fits on a single line while the other two - each
-              carrying a badge or wordmark after their own, shorter eyebrow -
-              wrap to two, and that mismatch is what left card 1 shorter than
-              its siblings. Wrapping all three to two lines here keeps every
-              card's title block the same height regardless of vertical. */}
-          <h2 className="max-w-[15rem] text-[1.125rem] leading-snug font-bold text-navy">
+          {/* The offering is named outright, in a tinted pill - three
+              treatments, one per vertical:
+                - prephasz: its own brand mark as a small block below the
+                  heading instead of a pill (the official artwork includes
+                  "Powered by ZSkillup" as an inseparable second line, so it
+                  no longer fits inline the way a single-line wordmark did).
+                - commerce: set inline after an en dash, wrapping onto its
+                  own line under the (longer, multi-word) eyebrow above it
+                  when the card is narrow - unchanged from before.
+                - institutions: the eyebrow must stay on one line, but only
+                  from `sm` up - the brief's own "one line" requirement is
+                  scoped to desktop. Below `sm`, the single-column card is
+                  its full (generous) width already comfortably wraps the
+                  eyebrow with no cap needed, but at base-tier phone widths
+                  specifically (~320-415px, checked in-browser, not
+                  guessed - covers most real phones) the card itself is
+                  narrower than the unwrapped text, so forcing nowrap there
+                  pushed the card past its own grid track and got silently
+                  clipped by this section's own overflow-hidden - a real
+                  horizontal-overflow bug the brief explicitly rules out. The
+                  pill below still reads as "immediately underneath" either
+                  way, wrapped or not. */}
+          <h2
+            className={`text-[1.125rem] leading-snug font-bold text-navy ${
+              card.vertical === "institutions" ? "sm:whitespace-nowrap" : "max-w-[15rem]"
+            }`}
+          >
             {card.eyebrow}
-            {card.vertical !== "prephasz" && card.brandLabel ? (
+            {card.vertical === "commerce" && card.brandLabel ? (
               <>
                 {" – "}
                 <span className={`inline-block rounded-full ${style.band} px-2.5 py-1 ${style.text}`}>
@@ -295,6 +324,13 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
             ) : null}
           </h2>
           {card.vertical === "prephasz" ? <PrephaszLogo className="mt-1.5 h-8" /> : null}
+          {card.vertical === "institutions" && card.brandLabel ? (
+            <span
+              className={`mt-1.5 inline-block rounded-full ${style.band} px-2.5 py-1 ${style.text}`}
+            >
+              {card.brandLabel}
+            </span>
+          ) : null}
           {/* Capped width so every description wraps to two lines, the same as
               the longest one. Without this, the shorter descriptions sat on a
               single line while the grid still stretched every card to match
@@ -357,11 +393,21 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
         >
           {card.secondary.label}
         </Button>
+        {/* Watch Now's own icon well (VideoDialog's `pill` variant) is a
+            fixed h-7 (28px) circle, unaffected by any of these breakpoint
+            paddings - left to its own content-driven height, that circle
+            makes the pill taller than the other two buttons at the base/xl
+            (compact) tiers and only coincidentally close at sm-lg. `!h-*`
+            pins the pill to the primary/secondary buttons' own measured
+            height at each tier (checked in-browser, not guessed) so all
+            three land on the same top/bottom edge via the row's existing
+            `items-center` - the circle (still 28px, untouched) simply
+            centers within the now-matched box instead of dictating it. */}
         <VideoDialog
           video={video}
           label={card.video.label}
           variant="pill"
-          className="!gap-1.5 !py-2 !pl-1 !pr-2.5 !text-[0.6875rem] sm:!gap-2 sm:!py-1.5 sm:!pl-1.5 sm:!pr-4 sm:!text-[0.875rem] xl:!gap-1.5 xl:!py-2 xl:!pl-1 xl:!pr-2.5 xl:!text-[0.6875rem]"
+          className="!h-[34px] !gap-1.5 !py-2 !pl-1 !pr-2.5 !text-[0.6875rem] sm:!h-[41px] sm:!gap-2 sm:!py-1.5 sm:!pl-1.5 sm:!pr-4 sm:!text-[0.875rem] xl:!h-[34px] xl:!gap-1.5 xl:!py-2 xl:!pl-1 xl:!pr-2.5 xl:!text-[0.6875rem]"
         />
       </div>
     </article>

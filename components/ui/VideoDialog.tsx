@@ -103,13 +103,29 @@ export function VideoDialog({
         </button>
       )}
 
+      {/* The browser's own `dialog:modal` UA style centers this via
+          `position: fixed; inset: 0; margin: auto` - but Tailwind's
+          preflight resets every element's margin to 0, which is what was
+          actually pinning it to the top-left corner rather than "not quite
+          centering" it: `inset: 0` with a fixed width/height and NO margin
+          just anchors the box at that corner instead of centering it inside
+          that box. `m-auto` is the whole fix - `position`/`inset` are
+          already the browser's own, untouched.
+
+          Width is a `min(cap, vw)` - same pattern as the trigger row's own
+          sizing elsewhere in this file - deliberately smaller than before
+          (56rem/70vw, was 60rem/92vw): at 92vw wide, a 16:9 video plus the
+          header bar could exceed a short/wide viewport's own height (check
+          this in-browser on a ~1536x674 window - the old sizing left under
+          20px of clearance top+bottom combined), which is what actually
+          read as "too large" more than raw width did. */}
       <dialog
         ref={ref}
         aria-label={video.title}
         onClick={(e) => {
           if (e.target === ref.current) ref.current?.close();
         }}
-        className="w-[min(60rem,92vw)] rounded-2xl border-0 bg-navy p-0 text-white backdrop:bg-navy-deep/70"
+        className="m-auto w-[92vw] rounded-2xl border-0 bg-navy p-0 text-white backdrop:bg-navy-deep/70 sm:w-[min(56rem,70vw)]"
       >
         <div className="flex items-center justify-between gap-4 px-5 py-4">
           <h2 className="text-base font-semibold text-white">{video.title}</h2>

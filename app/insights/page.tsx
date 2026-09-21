@@ -183,39 +183,37 @@ function InsightsHero() {
         }}
       />
 
-      {/* Campus student photo — right side, cropped to show the student figure */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[58%] select-none lg:block">
-        {/* Subtle purple glow behind the figure */}
-        <div
-          className="absolute inset-0 z-10"
-          style={{
-            background:
-              "radial-gradient(ellipse at 60% 90%, rgba(91,43,203,0.30) 0%, transparent 50%)",
-          }}
-        />
-        <Image
-          src="/images/campus-student-hero.png"
-          alt=""
-          fill
-          priority
-          sizes="52vw"
-          className="object-cover object-[100%_15%]"
-          style={{ filter: "brightness(0.45) saturate(0.3)" }}
-        />
-        {/* Left fade — blends photo into the dark star-field */}
-        <div
-          className="absolute inset-0 z-10"
-          style={{
-            background:
-              "linear-gradient(to right, #06081a 0%, rgba(6,8,26,0.8) 15%, rgba(6,8,26,0.15) 42%, transparent 100%)",
-          }}
-        />
-        {/* Bottom fade */}
-        <div
-          className="absolute inset-x-0 bottom-0 z-10 h-16"
-          style={{ background: "linear-gradient(to top, #06081a 0%, transparent 100%)" }}
-        />
-      </div>
+      {/* Campus photo — full bleed behind the whole hero */}
+      <Image
+        src="/images/campus-student-hero.png"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-[100%_15%]"
+        style={{ filter: "brightness(0.45) saturate(0.3)" }}
+      />
+      {/* Left-heavy gradient: fully dark on the text side, fades out on the right */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to right, #06081a 0%, rgba(6,8,26,0.92) 30%, rgba(6,8,26,0.55) 55%, rgba(6,8,26,0.15) 78%, transparent 100%)",
+        }}
+      />
+      {/* Bottom fade */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-16"
+        style={{ background: "linear-gradient(to top, #06081a 0%, transparent 100%)" }}
+      />
+      {/* Subtle purple nebula glow on the right */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at 80% 60%, rgba(91,43,203,0.22) 0%, transparent 45%)",
+        }}
+      />
 
       <Container className="relative z-10 py-14 sm:py-16">
         <div className="flex items-center justify-between">

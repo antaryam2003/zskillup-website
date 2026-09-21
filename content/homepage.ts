@@ -216,6 +216,11 @@ export const institutions = {
   primaryCta: { label: "Discuss Your Campus Needs", href: "#partner-with-us" },
   secondaryCta: { label: "Explore Solutions", href: "#institution-programs" },
 
+  /** Labels for the two tabs in the tabbed panel. The "Partnership Support"
+   *  tab now holds the four `pillars` below (formerly the standalone
+   *  "One partnership" block). */
+  tabs: { programs: "Programs for Your Campus", partnership: "Partnership Support" },
+
   partnershipEyebrow: "One partnership",
   partnershipHeadline: { plain: "One partnership. Support across the", gradient: "student journey." },
   partnershipBody:
@@ -271,6 +276,7 @@ export const institutions = {
   ],
   programsCta: { label: "Request a Customised Program", href: "#partner-with-us" },
 
+  methodEyebrow: "A Proven Journey",
   methodHeadline: "Designed around your institution.",
   methodBody: "A structured approach to drive measurable outcomes for your students.",
   /** Reads as ONE connected process, not four independent feature cards. */
@@ -297,10 +303,11 @@ export const institutions = {
     },
   ],
 
+  /** Copy for the purple card beside the journey. Its button is `programsCta`
+   *  (same "Request a Customised Program" action and link as before). */
   finalCta: {
     headline: "Help your students take their next step.",
-    body: "Tell us about your institution and the outcomes you want to achieve. Let's build a program around your campus.",
-    cta: { label: "Discuss a Campus Partnership", href: "#partner-with-us" },
+    body: "Let's build a program around your campus.",
   },
 } as const;
 

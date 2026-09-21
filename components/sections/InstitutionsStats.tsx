@@ -64,7 +64,9 @@ function AnimatedStatValue({ value, startWhenReady }: { value: string; startWhen
     const start = performance.now();
 
     const tick = (now: number) => {
-      const progress = Math.min(1, (now - start) / COUNT_DURATION_MS);
+      // Clamped at 0: the rAF timestamp can precede the performance.now() taken
+      // above, which would otherwise render a negative first frame ("-1+").
+      const progress = Math.min(1, Math.max(0, (now - start) / COUNT_DURATION_MS));
       const eased = easeOutCubic(progress);
       const current = parsed.target * eased;
       setDisplay(`${parsed.prefix}${current.toFixed(animDecimals)}${parsed.suffix}`);
@@ -102,27 +104,33 @@ export function InstitutionsStats({ stats }: { stats: Stat[] }) {
     return () => observer.disconnect();
   }, []);
 
-  // A fixed 3-column grid (rather than the flex-wrap this replaced) is what
-  // actually guarantees one row: flex-wrap drops the third item onto its
-  // own line the moment total content width exceeds the row's available
-  // width - which it reliably did here, since this block sits in a narrow
-  // ~5-of-12 column on desktop. Grid columns can't wrap to a new row at
-  // all; each column just divides the available width evenly and wraps its
-  // OWN label text onto multiple lines instead, which is exactly the
-  // "Placement Readiness / Verified" two-line label the brief itself shows
-  // as acceptable.
+  // Below lg the trio sits in one 3-column row (a fixed grid can't wrap to a
+  // second line the way flex-wrap did; each label wraps inside its own column
+  // instead). From lg up it becomes the reference's vertical stack: big
+  // number, label, then a short hairline before the next figure. The outer
+  // vertical divider lives on the wrapper in Institutions.tsx.
   return (
-    <dl ref={ref} className="mt-10 grid grid-cols-3 gap-x-4 gap-y-5 sm:gap-x-6">
+    <dl
+      ref={ref}
+      className="grid grid-cols-3 gap-x-4 gap-y-6 sm:gap-x-6 lg:grid-cols-1 lg:gap-x-0 lg:gap-y-7"
+    >
       {stats.map((stat, i) => (
-        <div key={stat.label} className={i > 0 ? "border-l border-line pl-3 sm:pl-4" : ""}>
+        <div
+          key={stat.label}
+          className={
+            i > 0
+              ? "border-l border-[#e6e2f3] pl-3 sm:pl-4 lg:border-l-0 lg:pl-0 lg:before:mb-7 lg:before:block lg:before:h-px lg:before:w-24 lg:before:bg-[#e6e2f3] lg:before:content-['']"
+              : ""
+          }
+        >
           <dt className="sr-only">{stat.label}</dt>
           <dd>
-            <span className="block text-[1.5rem] font-extrabold tracking-tight text-black">
+            <span className="block text-[1.5rem] font-extrabold tracking-tight text-black sm:text-[1.75rem] lg:text-[2.25rem] lg:leading-none">
               <AnimatedStatValue value={stat.value} startWhenReady={inView} />
             </span>
             <span
               aria-hidden="true"
-              className="mt-1 block text-[0.8125rem] leading-snug text-muted"
+              className="mt-1 block text-[0.8125rem] leading-snug text-muted lg:mt-2 lg:text-[1.0625rem]"
             >
               {stat.label}
             </span>

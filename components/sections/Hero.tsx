@@ -286,102 +286,112 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
         </span>
 
         <div className="min-w-0 pt-0.5">
-          {/* The offering is named outright, in a tinted pill - three
-              treatments, one per vertical:
-                - prephasz: its own brand mark as a small block below the
-                  heading instead of a pill (the official artwork includes
-                  "Powered by ZSkillup" as an inseparable second line, so it
-                  no longer fits inline the way a single-line wordmark did).
-                - commerce: set inline after an en dash, wrapping onto its
-                  own line under the (longer, multi-word) eyebrow above it
-                  when the card is narrow - unchanged from before.
-                - institutions: the eyebrow must stay on one line, but only
-                  from `sm` up - the brief's own "one line" requirement is
-                  scoped to desktop. Below `sm`, the single-column card is
-                  its full (generous) width already comfortably wraps the
-                  eyebrow with no cap needed, but at base-tier phone widths
-                  specifically (~320-415px, checked in-browser, not
-                  guessed - covers most real phones) the card itself is
-                  narrower than the unwrapped text, so forcing nowrap there
-                  pushed the card past its own grid track and got silently
-                  clipped by this section's own overflow-hidden - a real
-                  horizontal-overflow bug the brief explicitly rules out. The
-                  pill below still reads as "immediately underneath" either
-                  way, wrapped or not. */}
+          {/* The offering is named outright, in a tinted pill of its own
+              line directly below the eyebrow - no dash, no inline wrapping -
+              for institutions and commerce alike; prephasz gets its own
+              brand mark as that same small block instead of a pill (the
+              official artwork includes "Powered by ZSkillup" as an
+              inseparable second line, so it no longer fits inline the way a
+              single-line wordmark did). Both pills share this exact
+              template - font size, weight (normal - deliberately NOT
+              inheriting the h2's font-bold, since a bold pill read as a
+              different kind of label than institutions' non-bold one),
+              padding and radius - so "Global Finance & AI" and "Tech and
+              Management" read as the same type of label; only each
+              vertical's own tint (`style.band`/`style.text`) still differs,
+              matching every other per-vertical accent on this card.
+
+              The eyebrow itself must stay on one line, but only from `sm`
+              up - the brief's own "one line" requirement is scoped to
+              desktop. Below `sm`, the single-column card is its full
+              (generous) width already comfortably wraps the eyebrow with no
+              cap needed, but at base-tier phone widths specifically
+              (~320-415px, checked in-browser, not guessed - covers most
+              real phones) the card itself is narrower than the unwrapped
+              text, so forcing nowrap there pushed the card past its own
+              grid track and got silently clipped by this section's own
+              overflow-hidden - a real horizontal-overflow bug the brief
+              explicitly rules out. */}
           <h2
             className={`text-[1.125rem] leading-snug font-bold text-navy ${
               card.vertical === "institutions" ? "sm:whitespace-nowrap" : "max-w-[15rem]"
             }`}
           >
             {card.eyebrow}
-            {card.vertical === "commerce" && card.brandLabel ? (
-              <>
-                {" – "}
-                <span className={`inline-block rounded-full ${style.band} px-2.5 py-1 ${style.text}`}>
-                  {card.brandLabel}
-                </span>
-              </>
-            ) : null}
           </h2>
           {card.vertical === "prephasz" ? <PrephaszLogo className="mt-1.5 h-8" /> : null}
-          {card.vertical === "institutions" && card.brandLabel ? (
+          {card.vertical !== "prephasz" && card.brandLabel ? (
             <span
-              className={`mt-1.5 inline-block rounded-full ${style.band} px-2.5 py-1 ${style.text}`}
+              className={`mt-1.5 inline-block rounded-full font-normal ${style.band} px-2.5 py-1 ${style.text}`}
             >
               {card.brandLabel}
             </span>
           ) : null}
-          {/* Capped width so every description wraps to two lines, the same as
-              the longest one. Without this, the shorter descriptions sat on a
-              single line while the grid still stretched every card to match
-              the longest card's height - which produced a large empty gap
-              above the CTA row. */}
-          <p className="mt-2 max-w-[14rem] text-[0.875rem] leading-relaxed text-body">
+          {/* One line at sm and up (all three descriptions checked in-browser
+              against each card's own actual width at every tier from 640px
+              up - none needs more room than the card already has) - the
+              previous 14rem cap forced a wrap purely for height parity
+              across the row, which one-lining all three now achieves on its
+              own without it. Below sm, the single-column card is wide
+              enough for two of the three on one line already; the longest
+              ("Future-Ready. AI-Enabled. Globally Employable.") still wraps
+              there rather than overflowing - the brief's own fallback for a
+              sentence that "genuinely cannot fit" at the narrowest phone
+              widths. */}
+          <p className="mt-2 max-w-[16rem] text-[0.875rem] leading-relaxed whitespace-normal text-body sm:max-w-none sm:whitespace-nowrap">
             {card.description}
           </p>
         </div>
       </div>
 
       {/* CTA layout: all three actions - primary, secondary, then Watch Now
-          - must share one row on every viewport where that's actually
-          possible; Watch Now may never drop to a second line at sm and up.
+          - share one row at every width that can genuinely hold them;
+          Watch Now never drops to a second line anywhere that fits.
 
           Card width isn't the only lever available to make that hold at
           every width (cards are narrower now besides - see the grid above)
           - it's balanced against three responsive tiers of button sizing,
           sized to each layout mode's actual available width:
-            - base (<sm, phones - single stacked column, but a narrow one):
-              compact, but still larger than before this pass.
+            - base (<sm, phones - single stacked column, but a narrow one)
+              and xl+ (1280px+ - three real columns again) share the same
+              compact sizing: a third of the xl row's own width is tighter
+              than a phone screen minus its padding, so both tiers need it.
             - sm-lg (640-1279px - still a single stacked column, but a wide
-              one - the full card width, not a third of it): full original
-              size, unchanged from before this pass.
-            - xl+ (1280px+ - three real columns again): compact again, since
-              a third of even this row's own width is tighter than a phone
-              screen minus its padding. Verified in-browser at exactly
-              1280px (the tightest xl case) with card 3's own longest labels
-              - still one row with room to spare.
-          At base, card 3's own longest labels ("Explore Program" + "Talk to
-          an Advisor" + "Watch Now") no longer fit on one row at the
-          larger, more legible size this pass asks for, even at the
-          narrowest reasonable padding/type size - verified in-browser down
-          to a 375px viewport. flex-wrap (base only, sm:flex-nowrap from
-          640px up) is the fallback the brief itself calls for in that case
-          ("preserve the existing responsive strategy if the viewport
-          genuinely cannot accommodate the buttons"): cards 1 and 2 still
-          fit and stay on one row regardless (wrap only triggers when a
-          line would otherwise overflow), and this is strictly better than
-          the pre-existing behaviour, where the same overflow was silently
-          clipped by the section's own overflow-hidden instead of wrapping.
-          `!` (important) is required here: these override Button's own
-          shared `sm` size and VideoDialog's own shared `pill` padding,
-          neither of which this pass may edit directly (both are used
-          elsewhere on the site, unchanged). */}
-      <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-5 sm:flex-nowrap sm:gap-2 xl:gap-1.5">
+              one - the full card width, not a third of it): sized much more
+              generously, since there is real room to spare there.
+          Every tier's numbers (padding, gap, text size, and the pill's
+          matching height) were checked in-browser against each card's own
+          actual button labels at that tier's narrowest width - specifically
+          card 3's own longest combination ("Explore" + "Talk to an Advisor"
+          + "Watch Now"), the tightest of the three cards at every tier -
+          measured against the row's TRUE budget (the grid track's own
+          width, minus the card's own padding), not against the row's own
+          rendered width (which, unconstrained, just grows to fit its
+          content and so trivially always "fits itself" - a mistake this
+          pass caught and corrected by re-measuring properly). Positive
+          margin (never negative, i.e. never overflowing) holds at 1280px
+          (xl's narrowest) and 640px (sm-lg's narrowest) at this size, but
+          NOT all the way down to base's own narrowest real phones - it
+          breaks even somewhere around 400-410px wide, checked in-browser.
+          Below that (~320-409px, a real, non-trivial band - covers e.g. the
+          390-393px iPhone 12-14/Pixel width class), one row of buttons this
+          size genuinely cannot fit without either shrinking the type
+          unreadably or overflowing the card - flex-wrap is the fallback the
+          brief itself allows for exactly this case ("extremely narrow
+          mobile screens where a single-line sentence genuinely cannot fit
+          ... use the smallest responsible responsive adjustment"); it only
+          ever engages when a line would otherwise overflow, never for cards
+          1-2 which stay one row regardless. `!` (important) is required
+          here: these override Button's own shared `sm` size and
+          VideoDialog's own shared `pill` padding, neither of which this
+          pass may edit directly (both are used elsewhere on the site,
+          unchanged). */}
+      <div className="mt-auto flex flex-wrap items-center gap-[5px] pt-5 min-[410px]:flex-nowrap sm:gap-2 xl:gap-[5px]">
         <Button
           href={card.primary.href}
           variant="primary"
           size="sm"
-          className="!gap-1.5 !px-2.5 !py-2 !text-[0.6875rem] sm:!gap-2 sm:!px-3.5 sm:!py-2.5 sm:!text-[0.8125rem] xl:!gap-1.5 xl:!px-2.5 xl:!py-2 xl:!text-[0.6875rem]"
+          className="!gap-[5px] !px-2 !py-2 !text-[0.75rem] sm:!gap-2 sm:!px-4 sm:!py-[11px] sm:!text-[0.9375rem] xl:!gap-[5px] xl:!px-2 xl:!py-2 xl:!text-[0.75rem]"
         >
           {card.primary.label}
         </Button>
@@ -389,25 +399,25 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
           href={card.secondary.href}
           variant="outline"
           size="sm"
-          className="!gap-1.5 !px-2.5 !py-2 !text-[0.6875rem] sm:!gap-2 sm:!px-3.5 sm:!py-2.5 sm:!text-[0.8125rem] xl:!gap-1.5 xl:!px-2.5 xl:!py-2 xl:!text-[0.6875rem]"
+          className="!gap-[5px] !px-2 !py-2 !text-[0.75rem] sm:!gap-2 sm:!px-4 sm:!py-[11px] sm:!text-[0.9375rem] xl:!gap-[5px] xl:!px-2 xl:!py-2 xl:!text-[0.75rem]"
         >
           {card.secondary.label}
         </Button>
         {/* Watch Now's own icon well (VideoDialog's `pill` variant) is a
             fixed h-7 (28px) circle, unaffected by any of these breakpoint
             paddings - left to its own content-driven height, that circle
-            makes the pill taller than the other two buttons at the base/xl
-            (compact) tiers and only coincidentally close at sm-lg. `!h-*`
-            pins the pill to the primary/secondary buttons' own measured
-            height at each tier (checked in-browser, not guessed) so all
-            three land on the same top/bottom edge via the row's existing
-            `items-center` - the circle (still 28px, untouched) simply
-            centers within the now-matched box instead of dictating it. */}
+            would make the pill a different height than the other two
+            buttons at every tier here. `!h-*` pins the pill to the
+            primary/secondary buttons' own measured height at each tier
+            (checked in-browser, not guessed) so all three land on the same
+            top/bottom edge via the row's existing `items-center` - the
+            circle (still 28px, untouched) simply centers within the
+            now-matched box instead of dictating it. */}
         <VideoDialog
           video={video}
           label={card.video.label}
           variant="pill"
-          className="!h-[34px] !gap-1.5 !py-2 !pl-1 !pr-2.5 !text-[0.6875rem] sm:!h-[41px] sm:!gap-2 sm:!py-1.5 sm:!pl-1.5 sm:!pr-4 sm:!text-[0.875rem] xl:!h-[34px] xl:!gap-1.5 xl:!py-2 xl:!pl-1 xl:!pr-2.5 xl:!text-[0.6875rem]"
+          className="!h-9 !gap-[5px] !py-2 !pl-[3px] !pr-2 !text-[0.75rem] sm:!h-[47px] sm:!gap-2 sm:!py-[11px] sm:!pl-[6px] sm:!pr-[18px] sm:!text-[0.9375rem] xl:!h-9 xl:!gap-[5px] xl:!py-2 xl:!pl-[3px] xl:!pr-2 xl:!text-[0.75rem]"
         />
       </div>
     </article>

@@ -142,18 +142,9 @@ export default function EventsPage() {
       {/* Gallery grid */}
       <Section id="all-events" tone="white" labelledBy="all-events-heading">
         <Container>
-          <div className="flex items-baseline justify-between gap-4">
-            <h2 id="all-events-heading" className="text-[1.375rem] font-extrabold text-navy sm:text-2xl">
-              More Events &amp; Moments
-            </h2>
-            <a
-              href="#all-events"
-              className="flex shrink-0 items-center gap-1.5 text-[0.875rem] font-semibold text-brand hover:underline"
-            >
-              View All Events
-              <Icon name="arrowRight" className="h-4 w-4" />
-            </a>
-          </div>
+          <h2 id="all-events-heading" className="text-[1.375rem] font-extrabold text-navy sm:text-2xl">
+            More Events &amp; Moments
+          </h2>
 
           <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {galleryPhotos.map((photo) => {

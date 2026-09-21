@@ -25,6 +25,9 @@ import { VideoDialog } from "@/components/ui/VideoDialog";
  * (B.Com + ACCA) - the brief caps them and the updated designs dropped the rest.
  */
 
+/** The hero's horizontal gutter, shared by its text and its cards row (flat, uncapped - see the note in Hero). */
+const pageGutter = "w-full px-5 sm:px-8";
+
 const cardIcon: Record<Vertical, IconName> = {
   institutions: "graduation",
   prephasz: "briefcase",
@@ -77,8 +80,7 @@ export function Hero() {
             tune further up there. In that 1024-1332px band, though, the crop
             is still live, and a higher X (centering on the student, as the
             values below 1024px do) pulls the note far enough left to
-            collide with the headline - see the wrapper div below for the
-            other half of that fix. Lower X shows more open sky instead,
+            collide with the headline. Lower X shows more open sky instead,
             pushing the note and buildings further right, clear of the text
             column.
 
@@ -143,17 +145,24 @@ export function Hero() {
               headline to creep into the note at ordinary and wide desktop
               widths alike. A flat left padding - no centering, no cap - keeps
               the headline's start position stable instead, matching how the
-              photo's own content is positioned from the left edge. */}
-          <div className="w-full px-5 sm:px-8">
+              photo's own content is positioned from the left edge.
+
+              `pageGutter` is the ONE gutter for this section: the text
+              wrapper here and the cards wrapper below both use it, and the
+              header's logo lands on the same line (its <Container> has the
+              same padding; see the transform note in SiteHeader for the
+              past-1240px case). So logo, hero text and card 1 share one left
+              edge at every width, with no per-element offset on any of them. */}
+          <div className={pageGutter}>
             <div className="grid items-start gap-6 pt-14 sm:pt-16 lg:grid-cols-12 lg:pt-20">
-              {/* translate-x-5 is capped at 1332px - it exists only to clear the
-                  photo's baked-in note in the 1024-1332px band (see the photo's
-                  own comment above). Past 1332px the note-collision risk is gone,
-                  so the offset drops out and this column's left edge lands back
-                  on the same grid line as the navbar logo and the cards row
-                  below (both flat px-5/px-8, no extra shift) - the alignment the
-                  brief requires across logo / hero text / first card. */}
-              <div className="lg:col-span-7 max-[1332px]:lg:translate-x-5 lg:-translate-y-5">
+              {/* No horizontal offset here: this column starts exactly on the
+                  gutter, so its left edge is the same grid line as the navbar
+                  logo and card 1 below. (It used to carry a translate-x-5 at
+                  1024-1332px, which pushed the text 20px right of both. That
+                  is gone - the headline's nearest approach to the photo's
+                  baked-in note anywhere in 1024-1500px is ~84px.) The vertical
+                  lg:-translate-y-5 is unrelated and unchanged. */}
+              <div className="lg:col-span-7 lg:-translate-y-5">
                 <p className="eyebrow text-navy/80 drop-shadow-[0_1px_3px_rgba(255,255,255,0.7)]">{hero.eyebrow}</p>
 
                 {/* Both halves stay inside one <h1> so the sentence reads as a
@@ -215,7 +224,7 @@ export function Hero() {
             to shrink: a bigger gap directly hands less of the row's total
             width to each card, at every viewport, without touching card
             content, padding or the button-fit tuning below. */}
-        <div className="relative z-10 -mt-16 w-full px-5 sm:-mt-20 sm:px-8 lg:-mt-[7.25rem]">
+        <div className={`relative z-10 -mt-16 sm:-mt-20 lg:-mt-[7.25rem] ${pageGutter}`}>
           <ul className="grid gap-5 xl:grid-cols-3 xl:gap-10">
             {heroCards.map((card) => (
               // min-w-0: grid items default to min-width:auto, which lets a
@@ -345,45 +354,70 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
       </div>
 
       {/* Five width tiers, keyed to the row's TRUE available budget at each
-          (article width minus card padding minus the spacer), re-measured
+          (article width minus card padding minus the indent), re-measured
           in-browser - not guessed - against card 3's own longest combination
           ("Explore" + "Talk to an Advisor" + "Watch Now"), the tightest of
           the three cards at every tier:
 
-            - base (<420px): the mathematically tightest phones. Even the
-              ORIGINAL tiny sizing only just fits here, and only once the
-              spacer is fully removed (w-0) - there is no slack left to make
-              these buttons any bigger without either wrapping, clipping, or
-              pushing the page wider than the viewport (all three ruled out).
-              Left at their original size, not shrunk further.
-            - min-420: spacer restored to a partial w-6 (24px, not the full
-              80px icon-width one) - enough slack to size buttons up for real.
-            - sm (640px+): the card is full single-column width here, so the
-              full w-16 spacer (matching the icon above, same alignment as
-              the rest of the card) comes back at no cost, plus a bigger
-              button still.
-            - min-900: comfortably wide single-column cards - room for the
-              biggest treatment of all.
-            - xl (1280px+, 3-across): narrow again, so the spacer shrinks
-              back to w-6 and sizing drops to a compact-but-still-larger-
-              than-original tier, same reasoning as the min-420 tier.
+            - base (<420px): 10px type, no indent.
+            - min-420: 11px type, indent up to 32px.
+            - sm (640px+): 15px type, indent up to 80px - the width of the
+              icon above plus its gap, so the buttons line up under the text.
+            - min-900: 16px type - the same size as the hero's own
+              "Explore What We Offer" CTA.
+            - xl (1280px+, 3-across): 11px type again, in much narrower cards,
+              indent up to 32px.
+
+          Horizontal padding. The hero CTA is size="lg": px-7 = 28px on 16px
+          type = 1.75em. `--hx` is how much wider EACH side of EVERY button in
+          this row gets on top of its tier's original padding (the literals in
+          the calc()s below), capped where the plain buttons reach that same
+          1.75em (14.5 / 11.25 / 10.25 / 8 / 13.25px per tier) - so it is
+          exactly the CTA's 28px at min-900, where the type size matches too.
+
+          Each row was already full to within a few px on the first pixel of
+          a tier (card 3: ~3px at 420, ~-2px at 640, ~11px at 1280) and gets
+          roomier the wider the card goes, so `--hx` is not a fixed step: it is
+          (100cqw - K) / 6, clamped to 0..cap. The row below is a size
+          container, so `cqw` is its own exact width - whatever tier, grid
+          column or scrollbar produced it, with no viewport arithmetic. Six
+          is the number of padded sides on card 3's row when every one of them grows (Watch Now's left side no longer does, which only adds slack); K is the row width
+          at which card 3 (the longest labels) would exactly fill it at the
+          OLD padding with no indent (base 255, min-420 320, sm 464, xl 301),
+          plus ~3px of safety. All three cards share the one value, so all
+          three buttons stay on one line at every width and every card's
+          buttons stay identical - without shrinking the padding to force it.
+
+          The indent (the spacer) is the only thing that yields, and only
+          when the row is pinched: it is whatever room is left once `--hx`
+          has reached its cap (K + 6 x cap), so it is 0 at the start of
+          min-420 and xl and back to its full original width a little
+          higher. The old gap between spacer and buttons is folded into its
+          width. The gaps BETWEEN buttons are untouched.
 
           `!` (important) is required on the buttons/pill below - these
           override Button's own shared `sm` size and VideoDialog's own shared
           `pill` padding, neither of which this pass may edit directly (both
-          are used elsewhere on the site, unchanged). flex-nowrap is now
+          are used elsewhere on the site, unchanged). flex-nowrap is
           unconditional (no flex-wrap fallback at any width): the li/article
           above are both min-w-0 so an over-budget row can never blow out the
-          grid track or the page - it's the spacer/sizing tiers below that do
-          the real work of making nowrap actually fit. */}
-      <div className="mt-auto flex items-start gap-0 pt-5 min-[420px]:gap-2 min-[640px]:gap-4 xl:gap-2">
-        <span aria-hidden="true" className="w-0 shrink-0 min-[420px]:w-6 min-[640px]:w-16 xl:w-6" />
-        <div className="flex min-w-0 flex-nowrap items-center gap-[2px] min-[420px]:gap-1 min-[640px]:gap-2.5 xl:gap-1">
+          grid track or the page - it's the padding/indent budget above that
+          makes nowrap actually fit.
+
+          Arbitrary breakpoints stay in px up to min-900 and hand over to
+          `xl:` (rem) after that - Tailwind sorts px arbitrary variants ahead
+          of rem ones, so `xl:` always wins where both apply. */}
+      <div className="mt-auto flex items-start gap-0 pt-5 [container-type:inline-size]">
+        <span
+          aria-hidden="true"
+          className="w-0 shrink-0 min-[420px]:w-[clamp(0px,calc(100cqw_-_391px),2rem)] min-[640px]:w-[clamp(0px,calc(100cqw_-_529px),5rem)] xl:w-[clamp(0px,calc(100cqw_-_385px),2rem)]"
+        />
+        <div className="flex min-w-0 flex-nowrap items-center gap-[2px] [--hx:clamp(0px,calc((100cqw_-_258px)/6),14.5px)] min-[420px]:gap-1 min-[420px]:[--hx:clamp(0px,calc((100cqw_-_323px)/6),11.25px)] min-[640px]:gap-2.5 min-[640px]:[--hx:clamp(0px,calc((100cqw_-_467px)/6),10.25px)] min-[900px]:[--hx:8px] xl:gap-1 xl:[--hx:clamp(0px,calc((100cqw_-_305px)/6),13.25px)]">
           <Button
             href={card.primary.href}
             variant="primary"
             size="sm"
-            className="!gap-[2px] !px-[3px] !py-[6px] !text-[0.625rem] min-[420px]:!gap-1 min-[420px]:!px-2 min-[420px]:!py-2 min-[420px]:!text-[0.6875rem] min-[640px]:!gap-2.5 min-[640px]:!px-4 min-[640px]:!py-[14px] min-[640px]:!text-[0.9375rem] min-[900px]:!gap-3 min-[900px]:!px-5 min-[900px]:!py-4 min-[900px]:!text-base xl:!gap-1 xl:!px-1.5 xl:!py-2 xl:!text-[0.6875rem]"
+            className="!gap-[2px] !px-[calc(3px_+_var(--hx))] !py-[6px] !text-[0.625rem] min-[420px]:!gap-1 min-[420px]:!px-[calc(8px_+_var(--hx))] min-[420px]:!py-2 min-[420px]:!text-[0.6875rem] min-[640px]:!gap-2.5 min-[640px]:!px-[calc(16px_+_var(--hx))] min-[640px]:!py-[14px] min-[640px]:!text-[0.9375rem] min-[900px]:!gap-3 min-[900px]:!px-[calc(20px_+_var(--hx))] min-[900px]:!py-4 min-[900px]:!text-base xl:!gap-1 xl:!px-[calc(6px_+_var(--hx))] xl:!py-2 xl:!text-[0.6875rem]"
           >
             {card.primary.label}
           </Button>
@@ -391,7 +425,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
             href={card.secondary.href}
             variant="outline"
             size="sm"
-            className="!gap-[2px] !px-[3px] !py-[6px] !text-[0.625rem] min-[420px]:!gap-1 min-[420px]:!px-2 min-[420px]:!py-2 min-[420px]:!text-[0.6875rem] min-[640px]:!gap-2.5 min-[640px]:!px-4 min-[640px]:!py-[14px] min-[640px]:!text-[0.9375rem] min-[900px]:!gap-3 min-[900px]:!px-5 min-[900px]:!py-4 min-[900px]:!text-base xl:!gap-1 xl:!px-1.5 xl:!py-2 xl:!text-[0.6875rem]"
+            className="!gap-[2px] !px-[calc(3px_+_var(--hx))] !py-[6px] !text-[0.625rem] min-[420px]:!gap-1 min-[420px]:!px-[calc(8px_+_var(--hx))] min-[420px]:!py-2 min-[420px]:!text-[0.6875rem] min-[640px]:!gap-2.5 min-[640px]:!px-[calc(16px_+_var(--hx))] min-[640px]:!py-[14px] min-[640px]:!text-[0.9375rem] min-[900px]:!gap-3 min-[900px]:!px-[calc(20px_+_var(--hx))] min-[900px]:!py-4 min-[900px]:!text-base xl:!gap-1 xl:!px-[calc(6px_+_var(--hx))] xl:!py-2 xl:!text-[0.6875rem]"
           >
             {card.secondary.label}
           </Button>
@@ -404,12 +438,16 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
               (checked in-browser, not guessed) so all three land on the same
               top/bottom edge via the row's existing `items-center` - the
               circle (still 28px, untouched) simply centers within the
-              now-matched box instead of dictating it. */}
+              now-matched box instead of dictating it. It has NO left padding
+              at any tier (`!pl-0`, this button only - the sibling buttons
+              keep theirs): the circle sits right in the rounded end cap. Its
+              right padding is its own original value plus the same `--hx`
+              as the buttons beside it. */}
           <VideoDialog
             video={video}
             label={card.video.label}
             variant="pill"
-            className="!h-[29px] !gap-[2px] !py-0 !pl-[1px] !pr-1 !text-[0.625rem] min-[420px]:!h-9 min-[420px]:!gap-1 min-[420px]:!pl-2 min-[420px]:!pr-3 min-[420px]:!text-[0.6875rem] min-[640px]:!h-[50px] min-[640px]:!gap-2.5 min-[640px]:!py-[14px] min-[640px]:!pl-[6px] min-[640px]:!pr-[18px] min-[640px]:!text-[0.9375rem] min-[900px]:!h-14 min-[900px]:!gap-3 min-[900px]:!py-4 min-[900px]:!pl-3 min-[900px]:!pr-6 min-[900px]:!text-base xl:!h-8 xl:!gap-[2px] xl:!py-0 xl:!pl-1 xl:!pr-2 xl:!text-[0.6875rem]"
+            className="!h-[29px] !gap-[2px] !py-0 !pl-0 !pr-[calc(4px_+_var(--hx))] !text-[0.625rem] min-[420px]:!h-9 min-[420px]:!gap-1 min-[420px]:!pr-[calc(12px_+_var(--hx))] min-[420px]:!text-[0.6875rem] min-[640px]:!h-[50px] min-[640px]:!gap-2.5 min-[640px]:!py-[14px] min-[640px]:!pr-[calc(18px_+_var(--hx))] min-[640px]:!text-[0.9375rem] min-[900px]:!h-14 min-[900px]:!gap-3 min-[900px]:!py-4 min-[900px]:!pr-[calc(24px_+_var(--hx))] min-[900px]:!text-base xl:!h-8 xl:!gap-[2px] xl:!py-0 xl:!pr-[calc(8px_+_var(--hx))] xl:!text-[0.6875rem]"
           />
         </div>
       </div>

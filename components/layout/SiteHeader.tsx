@@ -46,7 +46,7 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-colors duration-300 ${
+      className={`sticky top-0 z-50 transition-colors duration-300 [container-type:inline-size] ${
         scrolled || open
           ? "border-b border-line bg-white/90 backdrop-blur-md"
           : "border-b border-transparent bg-transparent"
@@ -60,18 +60,31 @@ export function SiteHeader() {
               viewport passes Container's own max-w-[1240px] cap, where
               Container starts centering (adding growing left margin) while
               the Hero (deliberately uncapped, see Hero.tsx) does not. That
-              growing margin is exactly `max(0px, (100vw - 1240px) / 2)` -
-              pulling the logo left by that same computed amount cancels it
-              out and lands the logo back on the Hero's edge at every width,
-              rather than a guessed fixed offset. Below 1240px the margin is
-              already 0, so this is a no-op there. A transform (not a
-              margin) so it only moves the logo visually - it does not
-              re-flow or shift the nav links/CTA/search/menu button, which
-              keep their exact current position and spacing. */}
+              growing margin is exactly `max(0px, (100% - 1240px) / 2)` of
+              the header's own width - pulling the logo left by that same
+              computed amount cancels it out and lands the logo back on the
+              Hero's edge at every width, rather than a guessed fixed offset.
+              Below 1240px the margin is already 0, so this is a no-op there.
+
+              This measures against `100cqw` (the header's own content-box
+              width, via `[container-type:inline-size]` on <header> above),
+              NOT `100vw`: the two differ by the scrollbar's width whenever
+              one is present, because `100vw` includes the scrollbar in
+              Chrome/Firefox while the header's actual rendered width (and
+              Container's `mx-auto` margin) does not - using `100vw` here
+              previously overshot the cancellation by half the scrollbar
+              width, landing the logo ~7-8px left of the Hero text/card
+              instead of on their shared edge. `100cqw` reads the header's
+              true layout width directly, so it matches exactly whether or
+              not a scrollbar is present.
+
+              A transform (not a margin) so it only moves the logo visually -
+              it does not re-flow or shift the nav links/CTA/search/menu
+              button, which keep their exact current position and spacing. */}
           <Link
             href="/"
             aria-label="ZSkillup home"
-            className="shrink-0 [transform:translateX(min(0px,(1240px_-_100vw)/2))]"
+            className="shrink-0 [transform:translateX(min(0px,(1240px_-_100cqw)/2))]"
           >
             <ZSkillupLogoMark />
           </Link>

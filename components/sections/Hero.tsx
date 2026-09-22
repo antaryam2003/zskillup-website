@@ -359,22 +359,21 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
           ("Explore" + "Talk to an Advisor" + "Watch Now"), the tightest of
           the three cards at every tier:
 
-            - base (<420px): 9.6px type, no indent.
-            - min-420: 10.56px type, indent up to 32px.
-            - sm (640px+): 14.4px type, indent up to 80px - the width of the
+            - base (<420px): 10px type, no indent.
+            - min-420: 11px type, indent up to 32px.
+            - sm (640px+): 15px type, indent up to 80px - the width of the
               icon above plus its gap, so the buttons line up under the text.
-            - min-900: 15.36px type (line-height pinned to 1.5rem, matching
-              the untouched 16px/1.5rem pairing, so this tier's button height
-              doesn't shift) - a shade under the hero's own
+            - min-900: 16px type - the same size as the hero's own
               "Explore What We Offer" CTA.
-            - xl (1280px+, 3-across): 10.56px type again, in much narrower
-              cards, indent up to 32px.
+            - xl (1280px+, 3-across): 11px type again, in much narrower cards,
+              indent up to 32px.
 
-          (All five sizes are the original 10/11/15/16/11px type at a flat
-          4% reduction - a deliberately "barely noticeable" pass over just
-          these three buttons' text, not the padding/indent budget below,
-          which is untouched and still sized off the ORIGINAL type - see the
-          per-tier px numbers a few paragraphs down.)
+          (Two later passes first took this type down 4%, then most of the
+          way back up, chasing a "barely smaller" then "a bit bigger" request
+          each time - this is now back to the original 10/11/15/16/11px type
+          this whole budget was first tuned against, so it carries the exact
+          same proven nowrap-fit margin at every tier as when this comment
+          block was written.)
 
           Horizontal padding. The hero CTA is size="lg": px-7 = 28px on 16px
           type = 1.75em. `--hx` is how much wider EACH side of EVERY button in
@@ -425,7 +424,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
             href={card.primary.href}
             variant="primary"
             size="sm"
-            className="!gap-[2px] !px-[calc(3px_+_var(--hx))] !py-[6px] !text-[0.6rem] min-[420px]:!gap-1 min-[420px]:!px-[calc(8px_+_var(--hx))] min-[420px]:!py-2 min-[420px]:!text-[0.66rem] min-[640px]:!gap-2.5 min-[640px]:!px-[calc(16px_+_var(--hx))] min-[640px]:!py-[14px] min-[640px]:!text-[0.9rem] min-[900px]:!gap-3 min-[900px]:!px-[calc(20px_+_var(--hx))] min-[900px]:!py-4 min-[900px]:!text-[0.96rem]/[1.5rem] xl:!gap-1 xl:!px-[calc(6px_+_var(--hx))] xl:!py-2 xl:!text-[0.66rem]"
+            className="!gap-[2px] !px-[calc(3px_+_var(--hx))] !py-[6px] !text-[0.625rem] min-[420px]:!gap-1 min-[420px]:!px-[calc(8px_+_var(--hx))] min-[420px]:!py-2 min-[420px]:!text-[0.6875rem] min-[640px]:!gap-2.5 min-[640px]:!px-[calc(16px_+_var(--hx))] min-[640px]:!py-[14px] min-[640px]:!text-[0.9375rem] min-[900px]:!gap-3 min-[900px]:!px-[calc(20px_+_var(--hx))] min-[900px]:!py-4 min-[900px]:!text-base xl:!gap-1 xl:!px-[calc(6px_+_var(--hx))] xl:!py-2 xl:!text-[0.6875rem]"
           >
             {card.primary.label}
           </Button>
@@ -433,7 +432,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
             href={card.secondary.href}
             variant="outline"
             size="sm"
-            className="!gap-[2px] !px-[calc(3px_+_var(--hx))] !py-[6px] !text-[0.6rem] min-[420px]:!gap-1 min-[420px]:!px-[calc(8px_+_var(--hx))] min-[420px]:!py-2 min-[420px]:!text-[0.66rem] min-[640px]:!gap-2.5 min-[640px]:!px-[calc(16px_+_var(--hx))] min-[640px]:!py-[14px] min-[640px]:!text-[0.9rem] min-[900px]:!gap-3 min-[900px]:!px-[calc(20px_+_var(--hx))] min-[900px]:!py-4 min-[900px]:!text-[0.96rem]/[1.5rem] xl:!gap-1 xl:!px-[calc(6px_+_var(--hx))] xl:!py-2 xl:!text-[0.66rem]"
+            className="!gap-[2px] !px-[calc(3px_+_var(--hx))] !py-[6px] !text-[0.625rem] min-[420px]:!gap-1 min-[420px]:!px-[calc(8px_+_var(--hx))] min-[420px]:!py-2 min-[420px]:!text-[0.6875rem] min-[640px]:!gap-2.5 min-[640px]:!px-[calc(16px_+_var(--hx))] min-[640px]:!py-[14px] min-[640px]:!text-[0.9375rem] min-[900px]:!gap-3 min-[900px]:!px-[calc(20px_+_var(--hx))] min-[900px]:!py-4 min-[900px]:!text-base xl:!gap-1 xl:!px-[calc(6px_+_var(--hx))] xl:!py-2 xl:!text-[0.6875rem]"
           >
             {card.secondary.label}
           </Button>
@@ -455,7 +454,7 @@ function HeroCard({ card }: { card: (typeof heroCards)[number] }) {
             video={video}
             label={card.video.label}
             variant="pill"
-            className="!h-[29px] !gap-[2px] !py-0 !pl-0 !pr-[calc(4px_+_var(--hx))] !text-[0.6rem] min-[420px]:!h-9 min-[420px]:!gap-1 min-[420px]:!pr-[calc(12px_+_var(--hx))] min-[420px]:!text-[0.66rem] min-[640px]:!h-[50px] min-[640px]:!gap-2.5 min-[640px]:!py-[14px] min-[640px]:!pr-[calc(18px_+_var(--hx))] min-[640px]:!text-[0.9rem] min-[900px]:!h-14 min-[900px]:!gap-3 min-[900px]:!py-4 min-[900px]:!pr-[calc(24px_+_var(--hx))] min-[900px]:!text-[0.96rem]/[1.5rem] xl:!h-8 xl:!gap-[2px] xl:!py-0 xl:!pr-[calc(8px_+_var(--hx))] xl:!text-[0.66rem]"
+            className="!h-[29px] !gap-[2px] !py-0 !pl-0 !pr-[calc(4px_+_var(--hx))] !text-[0.625rem] min-[420px]:!h-9 min-[420px]:!gap-1 min-[420px]:!pr-[calc(12px_+_var(--hx))] min-[420px]:!text-[0.6875rem] min-[640px]:!h-[50px] min-[640px]:!gap-2.5 min-[640px]:!py-[14px] min-[640px]:!pr-[calc(18px_+_var(--hx))] min-[640px]:!text-[0.9375rem] min-[900px]:!h-14 min-[900px]:!gap-3 min-[900px]:!py-4 min-[900px]:!pr-[calc(24px_+_var(--hx))] min-[900px]:!text-base xl:!h-8 xl:!gap-[2px] xl:!py-0 xl:!pr-[calc(8px_+_var(--hx))] xl:!text-[0.6875rem]"
           />
         </div>
       </div>

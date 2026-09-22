@@ -1,0 +1,6 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+
+Host: https://antaryam2003.github.io/zskillup-website
+Sitemap: https://antaryam2003.github.io/zskillup-website/sitemap.xml

@@ -1,0 +1,24 @@
+1:"$Sreact.fragment"
+2:I[47257,["/zskillup-website/_next/static/chunks/1tebfq1idjkpv.js","/zskillup-website/_next/static/chunks/0ny38ta_19anb.js"],"ClientPageRoot"]
+3:I[65398,["/zskillup-website/_next/static/chunks/1tebfq1idjkpv.js","/zskillup-website/_next/static/chunks/0ny38ta_19anb.js","/zskillup-website/_next/static/chunks/1afmcc_n9-7lk.js"],"default"]
+6:I[97367,["/zskillup-website/_next/static/chunks/1tebfq1idjkpv.js","/zskillup-website/_next/static/chunks/0ny38ta_19anb.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+b:I[97367,["/zskillup-website/_next/static/chunks/1tebfq1idjkpv.js","/zskillup-website/_next/static/chunks/0ny38ta_19anb.js"],"ViewportBoundary"]
+c:I[97367,["/zskillup-website/_next/static/chunks/1tebfq1idjkpv.js","/zskillup-website/_next/static/chunks/0ny38ta_19anb.js"],"MetadataBoundary"]
+d:I[27201,["/zskillup-website/_next/static/chunks/1tebfq1idjkpv.js","/zskillup-website/_next/static/chunks/0ny38ta_19anb.js"],"IconMark"]
+f:I[39756,["/zskillup-website/_next/static/chunks/1tebfq1idjkpv.js","/zskillup-website/_next/static/chunks/0ny38ta_19anb.js"],"default"]
+10:I[37457,["/zskillup-website/_next/static/chunks/1tebfq1idjkpv.js","/zskillup-website/_next/static/chunks/0ny38ta_19anb.js"],"default"]
+a:X
+12:X
+12:C
+0:{"buildId":"_XGhrQ7dBsgGcu7xX6OqG","data":[{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"Component":"$3","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@4","$@5"]}}],[["$","script","script-0",{"src":"/zskillup-website/_next/static/chunks/1afmcc_n9-7lk.js","async":true}]],["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],"isPartial":"$@9","staleTime":"$a","varyParams":null},{"rsc":["$","$1","h",{"children":[null,["$","$Lb",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#0a1733"}]]}],["$","div",null,{"hidden":true,"children":["$","$Lc",null,{"children":["$","$7",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"ZSkillup | Industry-Ready Careers for Students & Institutions"}],["$","meta","1",{"name":"description","content":"ZSkillup works with universities, colleges and students to turn degrees into industry-ready careers - through institutional employability programs, the prephasz placement-preparation platform and the Global Finance Program commerce pathway."}],["$","meta","2",{"name":"robots","content":"index, follow"}],["$","link","3",{"rel":"canonical","href":"https://antaryam2003.github.io/zskillup-website/"}],["$","meta","4",{"property":"og:title","content":"ZSkillup | Industry-Ready Careers for Students & Institutions"}],["$","meta","5",{"property":"og:description","content":"ZSkillup works with universities, colleges and students to turn degrees into industry-ready careers - through institutional employability programs, the prephasz placement-preparation platform and the Global Finance Program commerce pathway."}],["$","meta","6",{"property":"og:url","content":"https://antaryam2003.github.io/zskillup-website/"}],["$","meta","7",{"property":"og:site_name","content":"ZSkillup"}],["$","meta","8",{"property":"og:type","content":"website"}],["$","meta","9",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","10",{"name":"twitter:title","content":"ZSkillup | Industry-Ready Careers for Students & Institutions"}],["$","meta","11",{"name":"twitter:description","content":"ZSkillup works with universities, colleges and students to turn degrees into industry-ready careers - through institutional employability programs, the prephasz placement-preparation platform and the Global Finance Program commerce pathway."}],["$","link","12",{"rel":"icon","href":"/zskillup-website/favicon.ico?favicon.2vob68tjqpejf.ico","sizes":"256x256","type":"image/x-icon"}],["$","$Ld","13",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"isPartial":"$@e","staleTime":"$a","varyParams":null},{"rsc":["$","$1","c",{"children":[null,["$","$Lf",null,{"parallelRouterKey":"children","template":["$","$L10",null,{}]}]]}],"isPartial":"$@11","staleTime":"$a","varyParams":"$12"}],"isUpgradeableISRFallback":false,"a":"$@13","rootVaryParams":null,"needsRuntimeRequest":"$@14"}
+4:{}
+5:"$0:data:0:rsc:props:children:0:props:serverProvidedParams:params"
+8:null
+14:true
+a:300
+a:C
+13:0
+e:"$undefined"
+11:"$undefined"
+9:"$undefined"

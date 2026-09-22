@@ -63,8 +63,8 @@ const pillars = prephasz.pillars;
 const COUNT = pillars.length;
 /** How much wider the open card is than a collapsed one (flex-grow ratio):
  *  a touch smaller on tablet, where six panels share far less width. */
-const OPEN_GROW_MD = 3.4;
-const OPEN_GROW_LG = 4.4;
+const OPEN_GROW_MD = 3.6;
+const OPEN_GROW_LG = 5.1;
 /** Flex-grow ratio for each collapsed panel (relative to 1 = the old, narrower
  *  strip). Bumped above 1 so the collapsed panels sit noticeably wider; the
  *  open panel gives up the corresponding share since the row's flex-grow

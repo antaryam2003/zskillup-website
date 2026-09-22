@@ -18,16 +18,17 @@ import { Icon, type IconName } from "@/components/ui/Icon";
  * facing the active card, so every rounded corner shows against a tint rather
  * than a gap. Stacking order is therefore "closest to the active card on top".
  *
- * ---- Layout stability: nothing about the ACTIVE card may size the carousel ----
+ * ---- Height: the viewport always matches the ACTIVE card's own content ----
  *
- * The carousel is a fixed-geometry VIEWPORT. Its height is set by a hidden
- * "sizer" that stacks the expanded face of ALL six cards in one grid cell at
- * the open-card width, so the viewport is always as tall as the tallest card
- * and never depends on which one is open. The accordion itself is absolutely
- * filled into that viewport; every card just stretches to it.
+ * The carousel is a fixed-width VIEWPORT whose height is set by a hidden
+ * "sizer" - the active card's expanded face, in flow at the open-card width -
+ * so no card ever carries dead space to match a taller sibling. The height
+ * therefore does change when a card with more or fewer pill rows becomes
+ * active. The accordion itself is absolutely filled into that viewport;
+ * every card just stretches to it.
  *
  *   wrapper (relative)
- *   |- viewport (relative, container, height = tallest face)
+ *   |- viewport (relative, container, height = active face)
  *   |    |- sizer   (invisible, in flow: gives the viewport its height)
  *   |    `- <ul>    (absolute inset-0: the accordion)
  *   `- arrows       (md+: absolute against the wrapper, top-1/2 -translate-y-1/2;
@@ -64,6 +65,12 @@ const COUNT = pillars.length;
  *  a touch smaller on tablet, where six panels share far less width. */
 const OPEN_GROW_MD = 3.4;
 const OPEN_GROW_LG = 4.4;
+/** Flex-grow ratio for each collapsed panel (relative to 1 = the old, narrower
+ *  strip). Bumped above 1 so the collapsed panels sit noticeably wider; the
+ *  open panel gives up the corresponding share since the row's flex-grow
+ *  total is what's fixed, not any one panel's width. */
+const COLLAPSED_GROW_MD = 1.3;
+const COLLAPSED_GROW_LG = 1.25;
 /** How far each panel tucks under its neighbour (md / lg). */
 const OVERLAP_MD = "1rem";
 const OVERLAP_LG = "1.5rem";
@@ -108,9 +115,9 @@ export function PrephaszJourney() {
       {/* ---- The fixed viewport. `container-type` makes 100cqw its own width,
           which is how --open (the open card's width) is computed for the
           sizer and the faces below without measuring anything in JS.
-          --g / --ov are the open-card grow ratio and the overlap at the
-          current breakpoint; the flex row is
-            free = 100cqw + 5 * ov,   open = free * g / (g + 5).
+          --g / --c / --ov are the open-card grow ratio, the collapsed-card
+          grow ratio, and the overlap at the current breakpoint; the flex row is
+            free = 100cqw + 5 * ov,   open = free * g / (g + 5 * c).
           lg:min-h is the height the COLLAPSED strips (icon, number, title)
           need to sit comfortably: with the open cards this compact, the
           tallest face alone would otherwise dip below it. ---- */}
@@ -119,28 +126,21 @@ export function PrephaszJourney() {
           {
             "--g-md": OPEN_GROW_MD,
             "--g-lg": OPEN_GROW_LG,
+            "--c-md": COLLAPSED_GROW_MD,
+            "--c-lg": COLLAPSED_GROW_LG,
             "--ov-md": OVERLAP_MD,
             "--ov-lg": OVERLAP_LG,
-            "--open": "calc((100cqw + 5 * var(--ov)) * var(--g) / (var(--g) + 5))",
+            "--open": "calc((100cqw + 5 * var(--ov)) * var(--g) / (var(--g) + 5 * var(--c)))",
           } as CSSProperties
         }
-        className="relative [--g:var(--g-md)] [--ov:var(--ov-md)] [container-type:inline-size] md:mx-[calc(var(--arrow)+var(--arrow-gap))] lg:min-h-[13.5rem] lg:[--g:var(--g-lg)] lg:[--ov:var(--ov-lg)]"
+        className="relative [--c:var(--c-md)] [--g:var(--g-md)] [--ov:var(--ov-md)] [container-type:inline-size] md:mx-[calc(var(--arrow)+var(--arrow-gap))] lg:min-h-[13.5rem] lg:[--c:var(--c-lg)] lg:[--g:var(--g-lg)] lg:[--ov:var(--ov-lg)]"
       >
-        {/* Sizer: all six expanded faces stacked in ONE grid cell at the open
-            width. Invisible and inert; its only job is to make the viewport
-            exactly as tall as the tallest face. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none invisible grid w-full select-none md:w-[var(--open)]"
-        >
-          {pillars.map((pillar, i) => (
-            <ExpandedFace
-              key={pillar.title}
-              pillar={pillar}
-              index={i}
-              className="relative col-start-1 row-start-1"
-            />
-          ))}
+        {/* Sizer: the ACTIVE card's expanded face, in flow at the open width.
+            Invisible and inert; its only job is to make the viewport exactly
+            as tall as the active card's own content, so no card ever carries
+            dead space to match a taller sibling. */}
+        <div aria-hidden="true" className="pointer-events-none invisible w-full select-none md:w-[var(--open)]">
+          <ExpandedFace pillar={pillars[active]} index={active} />
         </div>
 
         <ul className="absolute inset-0 flex">
@@ -157,7 +157,7 @@ export function PrephaszJourney() {
             return (
               <li
                 key={pillar.title}
-                style={{ flexGrow: isActive ? "var(--g)" : 1, zIndex: 10 - Math.abs(i - active) }}
+                style={{ flexGrow: isActive ? "var(--g)" : "var(--c)", zIndex: 10 - Math.abs(i - active) }}
                 className={`relative min-w-0 basis-0 overflow-hidden rounded-[1.5rem] bg-white transition-[flex-grow,box-shadow] duration-300 ease-out motion-reduce:transition-none md:rounded-[1.625rem] ${
                   i > 0 ? "md:-ml-[var(--ov)]" : ""
                 } ${isActive ? "block" : "hidden md:block"} ${
@@ -203,8 +203,12 @@ export function PrephaszJourney() {
                   <span className="mt-4 text-base font-medium text-[#485a8a] lg:mt-5 lg:text-xl">
                     {pad(i)}
                   </span>
-                  <span className="mt-1.5 text-[0.75rem] leading-tight font-semibold text-navy lg:mt-2 lg:text-[0.95rem] min-[75rem]:text-[1.05rem]">
-                    {pillar.title}
+                  <span
+                    className={`mt-1.5 text-[0.75rem] leading-tight font-semibold text-navy lg:mt-2 lg:text-[0.95rem] min-[75rem]:text-[1.05rem] ${
+                      i === 4 ? "whitespace-pre-line" : ""
+                    }`}
+                  >
+                    {i === 4 ? pillar.title.replace(" ", "\n") : pillar.title}
                   </span>
                 </div>
 
@@ -299,13 +303,13 @@ function ExpandedFace({
         {/* The right inset keeps the title clear of the step number, which sits
             in the top-right corner of this same row: a long title wraps instead
             of running underneath it. */}
-        <h4 className="pr-7 text-[1.5rem] leading-none font-extrabold tracking-[-0.03em] text-navy sm:text-[1.95rem] md:text-[1.75rem] lg:text-[1.95rem] min-[75rem]:pr-9 min-[75rem]:text-[2.1rem]">
+        <h4 className="pr-7 text-[1.16rem] leading-none font-extrabold tracking-[-0.03em] text-navy sm:text-[1.51rem] md:text-[1.36rem] lg:text-[1.51rem] min-[75rem]:pr-9 min-[75rem]:text-[1.63rem]">
           {pillar.title}
         </h4>
 
         {/* Width cap is in em, so the description keeps the same measure as
             its type scales. */}
-        <p className="mt-1.5 max-w-[18.5em] text-pretty text-[0.834rem] leading-snug font-medium text-[#5b6a92] sm:text-[0.979rem] md:text-[0.834rem] lg:text-[0.979rem] min-[75rem]:text-[1.09rem]">
+        <p className="mt-1.5 max-w-[18.5em] text-pretty text-[0.734rem] leading-snug font-medium text-[#5b6a92] sm:text-[0.861rem] md:text-[0.734rem] lg:text-[0.861rem] min-[75rem]:text-[0.959rem]">
           {pillar.tagline}
         </p>
 

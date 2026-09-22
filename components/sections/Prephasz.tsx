@@ -113,7 +113,7 @@ export function Prephasz() {
             <h3 className="mt-4 text-[1.875rem] leading-[1.1] font-extrabold tracking-[-0.035em] sm:text-[2.5rem] lg:text-[2.75rem]">
               {prephasz.journeyHeadline}
             </h3>
-            <p className="mt-2 max-w-[60ch] text-[0.84rem] leading-snug font-medium text-[#6478a6] sm:text-[1rem] lg:text-[1.15rem]">
+            <p className="mt-2 max-w-[60ch] text-[0.84rem] leading-snug font-normal text-gray-700 sm:text-[1rem] lg:text-[1.15rem]">
               {prephasz.journeyStatement}
             </p>
 
